@@ -1,48 +1,165 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teia da Cidade - Homem-Aranha Pixel</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: #0a0a12;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Courier New', monospace;
-    overflow: hidden;
-  }
-  #gameWrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  canvas {
-    background: #000;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    border: 4px solid #d62828;
-    box-shadow: 0 0 24px rgba(214,40,40,0.5);
-    max-width: 96vw;
-    max-height: 90vh;
-  }
-  #hint {
-    color: #8a8a9a;
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santa Maria Voxel Farm</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0d0d12;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: #eee;
+    }
+    #app { position: relative; width: 100vw; height: 100vh; }
+    canvas { display: block; outline: none; }
+
+    #crosshair {
+      position: fixed;
+      top: 50%; left: 50%;
+      width: 8px; height: 8px;
+      margin: -4px 0 0 -4px;
+      border: 2px solid rgba(255,255,255,0.85);
+      border-radius: 50%;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      z-index: 10;
+    }
+
+    #hud {
+      position: fixed;
+      bottom: 12px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+      user-select: none;
+    }
+    .hotbar-slot {
+      width: 52px; height: 52px;
+      background: rgba(20,20,28,0.75);
+      border: 2px solid #444;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      text-align: center;
+      position: relative;
+      color: #ddd;
+    }
+    .hotbar-slot.active { border-color: #ffd23f; box-shadow: 0 0 8px #ffd23f88; }
+    .hotbar-slot .count {
+      position: absolute; bottom: 2px; right: 4px;
+      font-size: 10px; color: #fff; font-weight: bold;
+      text-shadow: 1px 1px 1px #000;
+    }
+    .hotbar-slot .swatch { width: 26px; height: 26px; border-radius: 3px; border: 1px solid #0006; }
+
+    #topbar {
+      position: fixed; top: 10px; left: 10px; z-index: 10;
+      background: rgba(20,20,28,0.7);
+      padding: 8px 12px; border-radius: 6px;
+      font-size: 12px; line-height: 1.5;
+      max-width: 320px;
+    }
+    #topbar b { color: #ffd23f; }
+
+    #loading {
+      position: fixed; inset: 0; z-index: 30;
+      background: #0d0d12;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; text-align: center; padding: 20px;
+    }
+    #loading h1 { margin: 0; font-size: 26px; color: #ffd23f; }
+    #loading p { margin: 0; max-width: 480px; color: #bbb; font-size: 14px; }
+    #startBtn {
+      margin-top: 10px;
+      padding: 12px 28px;
+      font-size: 16px;
+      background: #2e7d32;
+      border: none; border-radius: 8px;
+      color: white; cursor: pointer;
+      font-weight: bold;
+    }
+    #startBtn:hover { background: #388e3c; }
+    #startBtn:disabled { background: #555; cursor: wait; }
+
+    #credits {
+      font-size: 11px; color: #888; margin-top: 6px; max-width: 480px;
+    }
+    #credits a { color: #9ecbff; }
+
+    #status {
+      position: fixed; top: 10px; right: 10px; z-index: 10;
+      background: rgba(20,20,28,0.7);
+      padding: 6px 10px; border-radius: 6px;
+      font-size: 11px; color: #9f9;
+      max-width: 260px; white-space: pre-line;
+    }
+
+    #pauseOverlay {
+      position: fixed; inset: 0; z-index: 20;
+      background: rgba(10,10,14,0.55);
+      display: none;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 10px;
+    }
+    #pauseOverlay.visible { display: flex; }
+    #pauseOverlay .box {
+      background: rgba(20,20,28,0.95);
+      padding: 24px 32px; border-radius: 10px;
+      text-align: center; max-width: 420px;
+    }
+    #pauseOverlay h2 { margin-top: 0; color: #ffd23f; }
+    #pauseOverlay p.footer-credit { font-size: 11px; color: #999; }
+  </style>
 </head>
 <body>
-  <div id="gameWrap">
-    <canvas id="game" width="960" height="540"></canvas>
-    <div id="hint">Setas/WASD = mover · ESPAÇO = pular · SHIFT ou clique do mouse = teia</div>
+  <div id="app">
+    <div id="loading">
+      <h1>Santa Maria Voxel Farm</h1>
+      <p>
+        Um mundo voxel inspirado em Minecraft, recriando o centro real de
+        Santa Maria &mdash; RS a partir de dados do OpenStreetMap, com
+        mecânicas de construção e mini fazenda.
+      </p>
+      <button id="startBtn">Carregar mundo e jogar</button>
+      <p id="loadingStatus" style="font-size:12px;color:#888;"></p>
+      <p id="credits">
+        Dados de mapa © colaboradores do OpenStreetMap, licença ODbL.
+        <br />
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">openstreetmap.org/copyright</a>
+      </p>
+    </div>
+
+    <div id="crosshair" style="display:none;"></div>
+    <div id="topbar" style="display:none;">
+      Clique na tela para travar o mouse.<br />
+      <b>WASD</b> mover · <b>Espaço</b> pular · <b>Botão esquerdo</b> quebrar bloco<br />
+      <b>Botão direito</b> colocar bloco / plantar / interagir · <b>1-8</b> hotbar<br />
+      <b>Esc</b> pausar
+    </div>
+    <div id="status" style="display:none;"></div>
+
+    <div id="hud" style="display:none;"></div>
+
+    <div id="pauseOverlay">
+      <div class="box">
+        <h2>Pausado</h2>
+        <p>Clique em "Continuar" ou pressione Esc para voltar ao jogo.</p>
+        <button id="resumeBtn" style="padding:10px 22px;font-size:15px;background:#2e7d32;border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:bold;">Continuar</button>
+        <p class="footer-credit">Dados de mapa © colaboradores do OpenStreetMap, licença ODbL.</p>
+      </div>
+    </div>
   </div>
-  <script src="script.js"></script>
+
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
