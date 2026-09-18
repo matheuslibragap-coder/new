@@ -30,7 +30,7 @@ export default function LoginPage() {
       }
       router.replace('/agenda');
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Não foi possível conectar à Órbita.');
+      setError(err instanceof ApiError ? err.message : 'Não foi possível conectar à Orbyta.');
     } finally {
       setSubmitting(false);
     }
@@ -43,7 +43,7 @@ export default function LoginPage() {
           <div className="orbit-ring" />
           <div className="orbit-core" />
         </div>
-        <div className="brand">Órbita</div>
+        <div className="brand">Orbyta</div>
         <div className="tagline">Você sabe que precisa estudar. A gente cuida do quando.</div>
 
         <div className="authtabs">
@@ -98,10 +98,10 @@ export default function LoginPage() {
             />
           </div>
           <button type="submit" className="btn btn-gold btn-block" disabled={submitting}>
-            {submitting ? 'Um instante…' : mode === 'signup' ? 'Criar minha conta' : 'Entrar na Órbita'}
+            {submitting ? 'Um instante…' : mode === 'signup' ? 'Criar minha conta' : 'Entrar na Orbyta'}
           </button>
         </form>
-        <div className="authfoot">Conectado ao backend real da Órbita.</div>
+        <div className="authfoot">Conectado ao backend real da Orbyta.</div>
       </div>
     </section>
   );

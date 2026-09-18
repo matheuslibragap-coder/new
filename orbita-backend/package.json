@@ -1,7 +1,7 @@
 {
   "name": "orbita-backend",
   "version": "0.1.0",
-  "description": "Órbita — backend da Fase 1 (agenda, bloqueio de tempo por IA, notas e modo foco)",
+  "description": "Orbyta — backend da Fase 1 (agenda, bloqueio de tempo por IA, notas e modo foco)",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

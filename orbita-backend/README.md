@@ -1,6 +1,6 @@
-# Órbita — Backend (Fase 1)
+# Orbyta — Backend (Fase 1)
 
-Backend da Fase 1 da Órbita: núcleo de organização de tempo e rotina de estudo.
+Backend da Fase 1 da Orbyta: núcleo de organização de tempo e rotina de estudo.
 Stack: **NestJS + TypeScript + PostgreSQL (Prisma)**, com IA (Anthropic Claude) aplicada
 apenas à *organização* da agenda — não a conteúdo de estudo.
 

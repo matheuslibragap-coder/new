@@ -66,7 +66,7 @@ export class ClaudeService {
     }
 
     const system = [
-      'Você é o motor de organização de agenda da Órbita, um SaaS de produtividade para quem estuda e trabalha.',
+      'Você é o motor de organização de agenda da Orbyta, um SaaS de produtividade para quem estuda e trabalha.',
       'Sua única tarefa é distribuir blocos de estudo dentro dos horários livres reais do usuário.',
       'Regras obrigatórias:',
       '- Cada bloco proposto deve estar totalmente contido em um dos horários livres informados (não pode invadir horário ocupado).',

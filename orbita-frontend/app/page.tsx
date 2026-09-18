@@ -13,5 +13,5 @@ export default function HomePage() {
     router.replace(user ? '/agenda' : '/login');
   }, [isLoading, user, router]);
 
-  return <div className="center-loading">Carregando a Órbita…</div>;
+  return <div className="center-loading">Carregando a Orbyta…</div>;
 }

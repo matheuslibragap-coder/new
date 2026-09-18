@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [isLoading, user, router]);
 
   if (isLoading || !user) {
-    return <div className="center-loading">Carregando a Órbita…</div>;
+    return <div className="center-loading">Carregando a Orbyta…</div>;
   }
 
   return (

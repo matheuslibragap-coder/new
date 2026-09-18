@@ -24,7 +24,7 @@ export function Sidebar() {
     <aside className="sidebar">
       <div className="side-brand">
         <div className="ring" />
-        <span>Órbita</span>
+        <span>Orbyta</span>
       </div>
 
       <nav className="sidenav">

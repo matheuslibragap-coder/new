@@ -1,6 +1,6 @@
-# Órbita — Frontend (Fase 1)
+# Orbyta — Frontend (Fase 1)
 
-Frontend real da Fase 1 da Órbita, conectado ao `orbita-backend`. Next.js (App
+Frontend real da Fase 1 da Orbyta, conectado ao `orbita-backend`. Next.js (App
 Router) + TypeScript, sem framework de CSS — os tokens de design (azul
 marinho escuro, cartões pretos com borda dourada, tipografia arredondada
 Fredoka + Nunito) ficam em `app/globals.css`, seguindo a direção visual já

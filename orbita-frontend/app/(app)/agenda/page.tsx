@@ -153,7 +153,7 @@ export default function AgendaPage() {
             <span className="sparkle">✨</span>
             <h3>Bloqueio de tempo sugerido por IA</h3>
           </div>
-          <p>Diga o que você precisa estudar e a meta semanal — a Órbita acha os horários livres reais de hoje e distribui os blocos.</p>
+          <p>Diga o que você precisa estudar e a meta semanal — a Orbyta acha os horários livres reais de hoje e distribui os blocos.</p>
 
           <div className="subject-row">
             <div className="field">

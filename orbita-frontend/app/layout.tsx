@@ -19,7 +19,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'Órbita',
+  title: 'Orbyta',
   description: 'Organização e produtividade para quem estuda e trabalha ao mesmo tempo.',
 };
 
