@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: orbita
+      POSTGRES_PASSWORD: orbita
+      POSTGRES_DB: orbita
+    ports:
+      - "5432:5432"
+    volumes:
+      - orbita_db_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://orbita:orbita@db:5432/orbita?schema=public"
+      JWT_SECRET: "troque-este-valor-em-producao"
+      JWT_EXPIRES_IN: "7d"
+      ANTHROPIC_API_KEY: ""
+      ANTHROPIC_MODEL: "claude-sonnet-5"
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+volumes:
+  orbita_db_data:

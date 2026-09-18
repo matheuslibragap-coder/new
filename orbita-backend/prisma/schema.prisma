@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EventType {
+  APPOINTMENT
+  ROUTINE
+  STUDY_BLOCK
+}
+
+enum EventSource {
+  MANUAL
+  AI_SUGGESTED
+}
+
+enum FocusStatus {
+  RUNNING
+  PAUSED
+  COMPLETED
+  ABANDONED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  timezone     String   @default("America/Sao_Paulo")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  events        Event[]
+  notes         Note[]
+  focusSessions FocusSession[]
+}
+
+model Event {
+  id             String      @id @default(uuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  type           EventType
+  startAt        DateTime
+  endAt          DateTime
+  allDay         Boolean     @default(false)
+  color          String?
+  source         EventSource @default(MANUAL)
+  recurrenceRule String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  focusSessions FocusSession[]
+
+  @@index([userId, startAt])
+  @@index([userId, type])
+}
+
+model Note {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  contentJson Json
+  contentHtml String
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, updatedAt])
+}
+
+model FocusSession {
+  id                 String      @id @default(uuid())
+  userId             String
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId            String?
+  event              Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  plannedDurationSec Int
+  accumulatedSec     Int         @default(0)
+  status             FocusStatus @default(RUNNING)
+  startedAt          DateTime    @default(now())
+  lastResumedAt      DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime    @default(now())
+
+  @@index([userId, status])
+}
