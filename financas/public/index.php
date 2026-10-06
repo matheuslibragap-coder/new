@@ -13,8 +13,10 @@ require dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
+use App\Controllers\HistoryController;
 use App\Controllers\InstallController;
 use App\Controllers\PlaceholderController;
+use App\Controllers\TransactionController;
 use App\Core\Request;
 use App\Core\Router;
 
@@ -36,11 +38,19 @@ $router->post('/redefinir-senha', [AuthController::class, 'reset'], true);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/', [PlaceholderController::class, 'dashboard']);
-$router->get('/lancamentos', [PlaceholderController::class, 'transactions']);
 $router->get('/contas/obrigatorias', [PlaceholderController::class, 'mandatory']);
 $router->get('/contas/opcionais', [PlaceholderController::class, 'optional']);
-$router->get('/historico', [PlaceholderController::class, 'history']);
 $router->get('/orcamentos', [PlaceholderController::class, 'budgets']);
+
+$router->get('/lancamentos', [TransactionController::class, 'index']);
+$router->post('/lancamentos/salvar', [TransactionController::class, 'store']);
+$router->get('/lancamentos/editar', [TransactionController::class, 'edit']);
+$router->post('/lancamentos/atualizar', [TransactionController::class, 'update']);
+$router->get('/lancamentos/excluir', [TransactionController::class, 'confirmDelete']);
+$router->post('/lancamentos/excluir', [TransactionController::class, 'delete']);
+
+$router->get('/historico', [HistoryController::class, 'index']);
+$router->get('/historico/exportar', [HistoryController::class, 'export']);
 
 $router->get('/categorias', [CategoryController::class, 'index']);
 $router->get('/categorias/nova', [CategoryController::class, 'create']);

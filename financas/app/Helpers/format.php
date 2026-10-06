@@ -100,3 +100,35 @@ function old(array $old, string $key, mixed $default = ''): string
 {
     return (string) ($old[$key] ?? $default);
 }
+
+/** Primeiro dia do mês a partir de 'aaaa-mm'; usa o mês atual se inválido. */
+function month_from_param(mixed $value, ?DateTimeImmutable $default = null): DateTimeImmutable
+{
+    if (is_string($value) && preg_match('/^(\d{4})-(0[1-9]|1[0-2])$/', $value, $m) && $m[1] >= 2000 && $m[1] <= 2100) {
+        return new DateTimeImmutable("{$m[1]}-{$m[2]}-01");
+    }
+    return ($default ?? new DateTimeImmutable('today'))->modify('first day of this month')->setTime(0, 0);
+}
+
+function month_param(DateTimeImmutable $month): string
+{
+    return $month->format('Y-m');
+}
+
+/** 'Abril/2026' */
+function month_label(DateTimeImmutable|string $month): string
+{
+    if (is_string($month)) {
+        $month = new DateTimeImmutable(substr($month, 0, 10));
+    }
+    return month_name((int) $month->format('n')) . '/' . $month->format('Y');
+}
+
+/** Retorna o caminho apenas se for interno (evita redirecionamento para outro site). */
+function safe_return_path(mixed $path, string $fallback): string
+{
+    if (is_string($path) && preg_match('#^/(?!/)[^\s\\\\]*$#', $path)) {
+        return $path;
+    }
+    return $fallback;
+}
