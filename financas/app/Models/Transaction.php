@@ -98,6 +98,63 @@ final class Transaction extends Model
         $this->execute('UPDATE installment_groups SET total_amount = ? WHERE id = ?', [$total, $groupId]);
     }
 
+    // ---------- Contas recorrentes ----------
+
+    public function pendingOfBillFrom(int $billId, DateTimeImmutable $from): array
+    {
+        return $this->fetchAll(
+            "SELECT * FROM transactions WHERE recurring_bill_id = ? AND status = 'pendente' AND competence_month >= ?",
+            [$billId, $from->format('Y-m-d')]
+        );
+    }
+
+    public function updatePendingFromBill(int $id, array $d): void
+    {
+        $this->execute(
+            "UPDATE transactions SET amount = ?, category_id = ?, description = ?, transaction_date = ?
+              WHERE id = ? AND status = 'pendente'",
+            [$d['amount'], $d['category_id'], $d['description'], $d['transaction_date'], $id]
+        );
+    }
+
+    public function deletePendingOfBillFrom(int $billId, DateTimeImmutable $from): void
+    {
+        $this->execute(
+            "DELETE FROM transactions WHERE recurring_bill_id = ? AND status = 'pendente' AND competence_month >= ?",
+            [$billId, $from->format('Y-m-d')]
+        );
+    }
+
+    public function markPaid(int $id, string $amount, string $date): void
+    {
+        $this->execute(
+            "UPDATE transactions SET status = 'efetivado', amount = ?, transaction_date = ? WHERE id = ?",
+            [$amount, $date, $id]
+        );
+    }
+
+    public function markPending(int $id, string $dueDate): void
+    {
+        $this->execute(
+            "UPDATE transactions SET status = 'pendente', transaction_date = ? WHERE id = ?",
+            [$dueDate, $id]
+        );
+    }
+
+    /** Lançamentos gerados por contas de um tipo (obrigatória/opcional) numa competência. */
+    public function billItemsForMonth(string $kind, DateTimeImmutable $month): array
+    {
+        return $this->fetchAll(
+            'SELECT t.*, c.name AS category_name, c.color AS category_color, b.due_day, b.name AS bill_name
+               FROM transactions t
+               JOIN recurring_bills b ON b.id = t.recurring_bill_id
+               JOIN categories c ON c.id = t.category_id
+              WHERE b.kind = ? AND t.competence_month = ?
+              ORDER BY t.status DESC, t.transaction_date, t.id',
+            [$kind, $month->format('Y-m-d')]
+        );
+    }
+
     // ---------- Consultas ----------
 
     public function forMonth(DateTimeImmutable $month): array

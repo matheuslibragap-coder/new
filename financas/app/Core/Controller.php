@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Services\RecurringService;
+use DateTimeImmutable;
+
 abstract class Controller
 {
     protected function view(string $template, array $data = [], ?string $layout = 'layout'): void
@@ -16,6 +19,16 @@ abstract class Controller
         Session::flash('error', implode(' ', $errors));
         Session::flashInput($input);
         redirect($path);
+    }
+
+    /**
+     * Gera as contas recorrentes pendentes até o mês exibido (ou o atual, o que
+     * for maior). Substitui o cron, que hospedagens compartilhadas não oferecem.
+     */
+    protected function syncRecurring(?DateTimeImmutable $viewedMonth = null): void
+    {
+        $current = RecurringService::currentMonth();
+        (new RecurringService())->generateUntil(max($current, $viewedMonth ?? $current));
     }
 
     protected function notFound(): never

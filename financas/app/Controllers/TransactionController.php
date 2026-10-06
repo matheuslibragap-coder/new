@@ -16,6 +16,7 @@ final class TransactionController extends Controller
     public function index(): void
     {
         $month = month_from_param(Request::query('mes'));
+        $this->syncRecurring($month);
         $transactions = new Transaction();
 
         $this->view('transactions/index', [

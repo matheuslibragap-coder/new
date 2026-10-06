@@ -42,6 +42,21 @@ $showCompetence = $showCompetence ?? false;
                 <td data-label="Valor" class="num <?= $isIn ? 'amount-in' : 'amount-out' ?>"><?= $isIn ? '+' : '−' ?> <?= e(money($t['amount'])) ?></td>
                 <td class="col-actions">
                     <div class="actions">
+                        <?php if ($isPending): ?>
+                            <form method="post" action="<?= e(url('/contas/pagar')) ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
+                                <input type="hidden" name="voltar" value="<?= e($returnTo) ?>">
+                                <button type="submit" class="btn btn-small btn-success">Pagar</button>
+                            </form>
+                        <?php elseif ($t['recurring_bill_id'] !== null): ?>
+                            <form method="post" action="<?= e(url('/contas/desfazer-pagamento')) ?>" data-confirm="Desfazer o pagamento de &quot;<?= e($t['description']) ?>&quot;?">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
+                                <input type="hidden" name="voltar" value="<?= e($returnTo) ?>">
+                                <button type="submit" class="btn btn-small">Desfazer</button>
+                            </form>
+                        <?php endif; ?>
                         <a class="btn btn-small" href="<?= e(url('/lancamentos/editar', $query)) ?>">Editar</a>
                         <?php if ($isParcel): ?>
                             <a class="btn btn-small btn-danger" href="<?= e(url('/lancamentos/excluir', $query)) ?>">Excluir</a>

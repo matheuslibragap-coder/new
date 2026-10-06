@@ -15,6 +15,7 @@ require APP_PATH . '/Helpers/format.php';
 
 use App\Services\CompetenceCalculator;
 use App\Services\InstallmentSplitter;
+use App\Services\RecurringService;
 
 $failures = 0;
 function check(string $label, mixed $expected, mixed $actual): void
@@ -44,6 +45,9 @@ check('vence dia 31 em abril vira 30/04', '2026-04-30', $due('2026-04-02', 5, 31
 check('virada de ano: compra 20/12 fecha 15 vence 1 → 01/02', '2027-02-01', $due('2026-12-20', 15, 1));
 check('competência do cartão = mês do vencimento', '2026-04', $comp($card(28, 5), '2026-03-10'));
 check('ano bissexto: fecha 29, compra 29/02/2028 → fatura seguinte', '2028-04-05', $due('2028-02-29', 29, 5));
+
+check('conta recorrente dia 31 em fevereiro → 28/02', '2026-02-28', RecurringService::dueDate(new DateTimeImmutable('2026-02-01'), 31)->format('Y-m-d'));
+check('conta recorrente dia 31 em março → 31/03', '2026-03-31', RecurringService::dueDate(new DateTimeImmutable('2026-03-01'), 31)->format('Y-m-d'));
 
 $split = new InstallmentSplitter();
 check('100,00 em 3x', ['33.34', '33.33', '33.33'], $split->split('100.00', 3));

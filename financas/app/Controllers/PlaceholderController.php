@@ -9,8 +9,6 @@ use App\Core\Controller;
 final class PlaceholderController extends Controller
 {
     public function dashboard(): void    { $this->soon('Painel', 5); }
-    public function mandatory(): void    { $this->soon('Contas obrigatórias', 4); }
-    public function optional(): void     { $this->soon('Contas opcionais', 4); }
     public function budgets(): void      { $this->soon('Orçamentos', 5); }
 
     private function soon(string $title, int $stage): void

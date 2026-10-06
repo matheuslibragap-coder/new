@@ -15,6 +15,7 @@ final class HistoryController extends Controller
     public function index(): void
     {
         [$filters, $params] = $this->filters();
+        $this->syncRecurring($filters['month']);
         $transactions = new Transaction();
         $totals = $transactions->totals($filters);
 

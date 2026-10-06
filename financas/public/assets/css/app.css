@@ -315,6 +315,27 @@ input:focus, select:focus, textarea:focus, .btn:focus-visible, .nav-link:focus-v
 .btn-danger-solid { background: var(--danger); border-color: var(--danger); color: #fff; }
 .btn-danger-solid:hover { background: #a11f25; }
 
+/* ---------- Contas recorrentes ---------- */
+
+section + section { margin-top: 40px; }
+.section-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+.section-header h2 { margin: 0; }
+
+.highlight {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px;
+    background: var(--success-soft); border: 1px solid #abefc6; border-radius: var(--radius);
+    padding: 20px 24px; margin-bottom: 32px;
+}
+.highlight-label { display: block; font-size: 13px; color: var(--success); }
+.highlight-value { font-size: 28px; color: var(--success); }
+.highlight p { margin: 0; color: var(--text); }
+
+.badge-success { background: var(--success-soft); border-color: #abefc6; color: var(--success); }
+.btn-success { color: var(--success); }
+.btn-success:hover { background: var(--success-soft); }
+.btn-success-solid { background: var(--success); border-color: var(--success); color: #fff; }
+.btn-success-solid:hover { background: #0e6a4c; }
+
 /* ---------- Login / instalação ---------- */
 
 .auth-body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 16px; }
