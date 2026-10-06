@@ -24,6 +24,12 @@ $appName = (string) Config::get('app.name', 'Finanças');
     <meta name="theme-color" content="#ffffff">
     <title><?= e($title ?? '') ?> · <?= e($appName) ?></title>
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
+    <link rel="manifest" href="<?= e(url('manifest.webmanifest')) ?>">
+    <link rel="icon" href="<?= e(asset('icons/icon.svg')) ?>" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="<?= e(asset('icons/apple-touch-icon.png')) ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Finanças">
 </head>
 <body>
 <div class="app">
