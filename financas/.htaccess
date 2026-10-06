@@ -1,0 +1,11 @@
+# Usado quando a hospedagem NÃO permite apontar a raiz do site para public/.
+# Todo acesso é redirecionado internamente para public/, então app/, database/
+# e o config.php nunca são servidos diretamente.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

@@ -1,0 +1,14 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<FilesMatch "\.(css|js|svg|png|ico|woff2?)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "public, max-age=2592000"
+    </IfModule>
+</FilesMatch>
