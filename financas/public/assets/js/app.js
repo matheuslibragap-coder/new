@@ -173,8 +173,19 @@
             }
 
             manualFields.hidden = !manual.checked;
-            if (manual.checked || !opt || !opt.value || !dateInput.value) {
+            var firstAmount = cents;
+            if (cents && count > 1) firstAmount = Math.floor(cents / count) + (cents - Math.floor(cents / count) * count);
+
+            if (manual.checked) {
+                var mm = +txForm.querySelector('[name="competence_month"]').value;
+                var yy = +txForm.querySelector('[name="competence_year"]').value;
                 if (!isEdit) preview.textContent = '';
+                scheduleBudgetCheck(type, opt, new Date(yy, mm - 1, 1), firstAmount);
+                return;
+            }
+            if (!opt || !opt.value || !dateInput.value) {
+                if (!isEdit) preview.textContent = '';
+                scheduleBudgetCheck(type, null, null, null);
                 return;
             }
             var parts = dateInput.value.split('-');
@@ -198,16 +209,133 @@
             preview.innerHTML = html;
 
             // Deixa o ajuste manual já posicionado no mês calculado
-            if (!manual.checked) {
-                txForm.querySelector('[name="competence_month"]').value = String(compMonth.getMonth() + 1);
-                var yearSel = txForm.querySelector('[name="competence_year"]');
-                if (yearSel.querySelector('option[value="' + compMonth.getFullYear() + '"]')) yearSel.value = String(compMonth.getFullYear());
+            txForm.querySelector('[name="competence_month"]').value = String(compMonth.getMonth() + 1);
+            var yearSel = txForm.querySelector('[name="competence_year"]');
+            if (yearSel.querySelector('option[value="' + compMonth.getFullYear() + '"]')) yearSel.value = String(compMonth.getFullYear());
+
+            scheduleBudgetCheck(type, opt, compMonth, firstAmount);
+        }
+
+        // Aviso de orçamento: consulta o gasto da categoria no mês de competência
+        var budgetWarning = txForm.querySelector('[data-budget-warning]');
+        var budgetUrl = txForm.getAttribute('data-budget-url');
+        var excludeId = txForm.getAttribute('data-transaction-id');
+        var budgetTimer = null, budgetSeq = 0;
+        function scheduleBudgetCheck(type, opt, month, amountCents) {
+            clearTimeout(budgetTimer);
+            if (type !== 'saida' || !opt || !opt.value || !month || !amountCents) {
+                budgetWarning.hidden = true;
+                return;
             }
+            budgetTimer = setTimeout(function () {
+                var seq = ++budgetSeq;
+                var monthParam = month.getFullYear() + '-' + pad(month.getMonth() + 1);
+                var url = budgetUrl + '?categoria=' + encodeURIComponent(opt.value) + '&mes=' + monthParam + '&excluir=' + encodeURIComponent(excludeId);
+                fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (data) {
+                        if (seq !== budgetSeq) return;
+                        if (!data || data.limit === null) { budgetWarning.hidden = true; return; }
+                        var limit = Math.round(data.limit * 100);
+                        var after = Math.round(data.spent * 100) + amountCents;
+                        var pct = Math.round(after / limit * 100);
+                        if (after <= limit * 0.8) { budgetWarning.hidden = true; return; }
+                        var name = opt.textContent.split('·')[0].trim();
+                        var monthLabel = MONTHS[month.getMonth()] + '/' + month.getFullYear();
+                        budgetWarning.className = 'alert budget-warning ' + (after > limit ? 'alert-error' : 'alert-warning');
+                        budgetWarning.textContent = (after > limit ? 'Este lançamento faz ' + name + ' passar do orçamento' : 'Com este lançamento, ' + name + ' passa de 80% do orçamento') +
+                            ' em ' + monthLabel + ': ' + formatMoney(after) + ' de ' + formatMoney(limit) + ' (' + pct + '%).';
+                        budgetWarning.hidden = false;
+                    })
+                    .catch(function () { budgetWarning.hidden = true; });
+            }, 300);
         }
 
         txForm.querySelectorAll('[data-tx-type]').forEach(function (r) { r.addEventListener('change', update); });
         [categorySel, dateInput, manual].forEach(function (el) { el.addEventListener('change', update); });
+        txForm.querySelectorAll('[name="competence_month"], [name="competence_year"]').forEach(function (el) { el.addEventListener('change', update); });
         [amountInput, installmentsInput].forEach(function (el) { if (el) el.addEventListener('input', update); });
         update();
+    }
+    // ---------- Gráficos do Painel ----------
+    var dataEl = document.getElementById('dashboard-data');
+    if (dataEl && window.Chart) {
+        var data = JSON.parse(dataEl.textContent);
+        var brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+        var compact = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 });
+        var css = getComputedStyle(document.documentElement);
+        var surface = css.getPropertyValue('--surface').trim() || '#ffffff';
+        var ink = css.getPropertyValue('--text').trim();
+        var muted = css.getPropertyValue('--text-muted').trim();
+        var grid = '#eef0f3';
+
+        Chart.defaults.font.family = 'Arial, Helvetica, sans-serif';
+        Chart.defaults.font.size = 12;
+        Chart.defaults.color = muted;
+        var tooltip = {
+            backgroundColor: '#1d2939', titleColor: '#fff', bodyColor: '#fff', padding: 10, cornerRadius: 6,
+            boxPadding: 4, usePointStyle: true
+        };
+
+        var donutCanvas = document.getElementById('chart-categories');
+        if (donutCanvas && data.categories.length) {
+            var total = data.categories.reduce(function (s, c) { return s + c.value; }, 0);
+            new Chart(donutCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: data.categories.map(function (c) { return c.label; }),
+                    datasets: [{
+                        data: data.categories.map(function (c) { return c.value; }),
+                        backgroundColor: data.categories.map(function (c) { return c.color; }),
+                        borderColor: surface, borderWidth: 2, hoverOffset: 6
+                    }]
+                },
+                options: {
+                    cutout: '64%', maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: Object.assign({}, tooltip, {
+                            callbacks: {
+                                label: function (ctx) {
+                                    return ' ' + ctx.label + ': ' + brl.format(ctx.parsed) + ' (' + (ctx.parsed / total * 100).toFixed(1).replace('.', ',') + '%)';
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        }
+
+        var barCanvas = document.getElementById('chart-months');
+        if (barCanvas) {
+            var bar = { borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: 'start', maxBarThickness: 24, categoryPercentage: 0.6, barPercentage: 0.9 };
+            new Chart(barCanvas, {
+                type: 'bar',
+                data: {
+                    labels: data.months.map(function (m) { return m.label; }),
+                    datasets: [
+                        Object.assign({ label: 'Entradas', data: data.months.map(function (m) { return m.income; }), backgroundColor: '#2a78d6' }, bar),
+                        Object.assign({ label: 'Saídas', data: data.months.map(function (m) { return m.expense; }), backgroundColor: '#eb6834' }, bar)
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { grid: { display: false }, border: { color: grid }, ticks: { color: muted } },
+                        y: {
+                            beginAtZero: true, grid: { color: grid }, border: { display: false },
+                            ticks: { color: muted, maxTicksLimit: 5, callback: function (v) { return 'R$ ' + compact.format(v); } }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { usePointStyle: true, pointStyle: 'rectRounded', boxWidth: 10, boxHeight: 10, color: ink } },
+                        tooltip: Object.assign({}, tooltip, {
+                            callbacks: { label: function (ctx) { return ' ' + ctx.dataset.label + ': ' + brl.format(ctx.parsed.y); } }
+                        })
+                    }
+                }
+            });
+        }
     }
 })();

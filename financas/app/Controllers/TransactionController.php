@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Session;
+use App\Models\Budget;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Services\TransactionService;
@@ -40,6 +41,10 @@ final class TransactionController extends Controller
         }
 
         $competence = $service->create($data);
+        if ($data['type'] === Transaction::TYPE_OUT) {
+            $months = array_map(static fn (int $i) => $competence->modify("+{$i} month"), range(0, $data['installments'] - 1));
+            $this->warnIfOverBudget($data['category'], $months);
+        }
         Session::flash('success', $data['installments'] > 1
             ? sprintf('Compra parcelada em %dx, de %s a %s.', $data['installments'], month_label($competence),
                 month_label($competence->modify('+' . ($data['installments'] - 1) . ' month')))
@@ -73,6 +78,14 @@ final class TransactionController extends Controller
         }
 
         $service->update($transaction, $data, $scope);
+        if ($data['type'] === Transaction::TYPE_OUT) {
+            $model = new Transaction();
+            $rows = $transaction['installment_group_id'] !== null && $scope !== TransactionService::SCOPE_THIS
+                ? $model->groupParcels((int) $transaction['installment_group_id'])
+                : [$model->find((int) $transaction['id'])];
+            $months = array_map(static fn (array $r) => new DateTimeImmutable($r['competence_month']), array_filter($rows));
+            $this->warnIfOverBudget($data['category'], $months);
+        }
         Session::flash('success', 'Lançamento atualizado.');
         redirect($returnTo);
     }
@@ -95,6 +108,26 @@ final class TransactionController extends Controller
         $removed = (new TransactionService())->delete($transaction, $this->scope());
         Session::flash('success', $removed > 1 ? "{$removed} parcelas excluídas." : 'Lançamento excluído.');
         redirect($returnTo);
+    }
+
+    /** @param DateTimeImmutable[] $months */
+    private function warnIfOverBudget(array $category, array $months): void
+    {
+        $budget = new Budget();
+        $over = [];
+        foreach ($months as $month) {
+            $key = month_param($month);
+            if (isset($over[$key])) {
+                continue;
+            }
+            $usage = $budget->usage((int) $category['id'], $month);
+            if ($usage['limit'] !== null && $usage['spent'] > $usage['limit']) {
+                $over[$key] = sprintf('%s (%s de %s)', month_label($month), money($usage['spent']), money($usage['limit']));
+            }
+        }
+        if ($over) {
+            Session::flash('warning', sprintf('Atenção: %s passou do orçamento em %s.', $category['name'], implode(', ', $over)));
+        }
     }
 
     private function findOrFail(int $id): array

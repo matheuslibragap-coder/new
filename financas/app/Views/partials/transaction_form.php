@@ -15,7 +15,9 @@ $currentYear = (int) date('Y');
 $compYear = (int) ($form['competence_year'] ?? $currentYear);
 ?>
 <form method="post" action="<?= e(url($action)) ?>" class="form" data-transaction-form
-      data-parcel-number="<?= (int) ($transaction['installment_number'] ?? 1) ?>">
+      data-parcel-number="<?= (int) ($transaction['installment_number'] ?? 1) ?>"
+      data-transaction-id="<?= (int) ($transaction['id'] ?? 0) ?>"
+      data-budget-url="<?= e(url('/orcamentos/consulta')) ?>">
     <?= csrf_field() ?>
     <?php foreach ($hidden ?? [] as $name => $value): ?>
         <input type="hidden" name="<?= e($name) ?>" value="<?= e($value) ?>">
@@ -127,6 +129,8 @@ $compYear = (int) ($form['competence_year'] ?? $currentYear);
             </div>
         </fieldset>
     <?php endif; ?>
+
+    <div class="alert alert-warning budget-warning" data-budget-warning role="status" hidden></div>
 
     <div class="form-actions">
         <button type="submit" class="btn btn-primary"><?= $isNew ? 'Lançar' : 'Salvar alterações' ?></button>

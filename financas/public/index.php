@@ -12,10 +12,11 @@ if (PHP_SAPI === 'cli-server') {
 require dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Controllers\AuthController;
+use App\Controllers\BudgetController;
 use App\Controllers\CategoryController;
+use App\Controllers\DashboardController;
 use App\Controllers\HistoryController;
 use App\Controllers\InstallController;
-use App\Controllers\PlaceholderController;
 use App\Controllers\RecurringController;
 use App\Controllers\TransactionController;
 use App\Core\Request;
@@ -38,8 +39,7 @@ $router->post('/redefinir-senha', [AuthController::class, 'reset'], true);
 // Rotas autenticadas
 $router->post('/logout', [AuthController::class, 'logout']);
 
-$router->get('/', [PlaceholderController::class, 'dashboard']);
-$router->get('/orcamentos', [PlaceholderController::class, 'budgets']);
+$router->get('/', [DashboardController::class, 'index']);
 
 $router->get('/lancamentos', [TransactionController::class, 'index']);
 $router->post('/lancamentos/salvar', [TransactionController::class, 'store']);
@@ -61,6 +61,10 @@ $router->post('/contas/excluir', [RecurringController::class, 'delete']);
 $router->get('/contas/pagar', [RecurringController::class, 'showPay']);
 $router->post('/contas/pagar', [RecurringController::class, 'pay']);
 $router->post('/contas/desfazer-pagamento', [RecurringController::class, 'unpay']);
+
+$router->get('/orcamentos', [BudgetController::class, 'index']);
+$router->post('/orcamentos/salvar', [BudgetController::class, 'save']);
+$router->get('/orcamentos/consulta', [BudgetController::class, 'check']);
 
 $router->get('/categorias', [CategoryController::class, 'index']);
 $router->get('/categorias/nova', [CategoryController::class, 'create']);
