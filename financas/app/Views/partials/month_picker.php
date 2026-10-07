@@ -6,8 +6,7 @@
 $params = $params ?? [];
 $prev = $month->modify('-1 month');
 $next = $month->modify('+1 month');
-$currentYear = (int) date('Y');
-$years = range(min($currentYear - 5, (int) $month->format('Y')), max($currentYear + 5, (int) $month->format('Y')));
+$years = range(APP_MIN_YEAR, APP_MAX_YEAR);
 ?>
 <form method="get" action="<?= e(url($path)) ?>" class="month-picker" data-autosubmit>
     <?php foreach ($params as $key => $value): ?>

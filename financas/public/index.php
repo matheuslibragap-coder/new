@@ -14,13 +14,18 @@ require dirname(__DIR__) . '/app/bootstrap.php';
 use App\Controllers\AuthController;
 use App\Controllers\BudgetController;
 use App\Controllers\CategoryController;
+use App\Controllers\DailyController;
 use App\Controllers\DashboardController;
+use App\Controllers\ExpenseCategoryController;
+use App\Controllers\GuideController;
 use App\Controllers\HistoryController;
 use App\Controllers\InstallController;
 use App\Controllers\RecurringController;
 use App\Controllers\TransactionController;
 use App\Core\Request;
 use App\Core\Router;
+use App\Services\Migrator;
+use App\Services\SchemaInstaller;
 
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
@@ -40,6 +45,18 @@ $router->post('/redefinir-senha', [AuthController::class, 'reset'], true);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/', [DashboardController::class, 'index']);
+
+$router->get('/guia', [GuideController::class, 'index']);
+$router->post('/guia/concluir', [GuideController::class, 'finish']);
+$router->post('/guia/zerar', [GuideController::class, 'reset']);
+
+$router->get('/diario', [DailyController::class, 'index']);
+$router->get('/diario/categorias', [ExpenseCategoryController::class, 'index']);
+$router->get('/diario/categorias/nova', [ExpenseCategoryController::class, 'create']);
+$router->get('/diario/categorias/editar', [ExpenseCategoryController::class, 'edit']);
+$router->post('/diario/categorias/salvar', [ExpenseCategoryController::class, 'save']);
+$router->post('/diario/categorias/alternar', [ExpenseCategoryController::class, 'toggle']);
+$router->post('/diario/categorias/excluir', [ExpenseCategoryController::class, 'delete']);
 
 $router->get('/lancamentos', [TransactionController::class, 'index']);
 $router->post('/lancamentos/salvar', [TransactionController::class, 'store']);
@@ -72,5 +89,10 @@ $router->get('/categorias/editar', [CategoryController::class, 'edit']);
 $router->post('/categorias/salvar', [CategoryController::class, 'save']);
 $router->post('/categorias/alternar', [CategoryController::class, 'toggle']);
 $router->post('/categorias/excluir', [CategoryController::class, 'delete']);
+
+// Atualiza o banco automaticamente quando uma versão nova do sistema é enviada.
+if ((new SchemaInstaller())->isInstalled()) {
+    (new Migrator())->migrate();
+}
 
 $router->dispatch(Request::method(), Request::path());

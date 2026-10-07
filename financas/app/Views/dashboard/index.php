@@ -56,7 +56,7 @@ $overdueTotal = array_sum(array_map(static fn ($r) => (float) $r['amount'], $ove
 
 <div class="charts">
     <section class="card chart-card">
-        <h2>Gastos por categoria</h2>
+        <h2>Gastos por conta/cartão</h2>
         <?php if (!$byCategory): ?>
             <div class="empty-state">Nenhuma saída em <?= e(month_label($month)) ?>.</div>
         <?php else: ?>
@@ -66,7 +66,7 @@ $overdueTotal = array_sum(array_map(static fn ($r) => (float) $r['amount'], $ove
                     <div class="donut-center"><span>Total</span><strong><?= e(money($expenseSum)) ?></strong></div>
                 </div>
                 <table class="legend-table">
-                    <caption class="sr-only">Gastos por categoria</caption>
+                    <caption class="sr-only">Gastos por conta/cartão</caption>
                     <tbody>
                     <?php foreach ($byCategory as $c): ?>
                         <tr>
@@ -82,6 +82,32 @@ $overdueTotal = array_sum(array_map(static fn ($r) => (float) $r['amount'], $ove
     </section>
 
     <section class="card chart-card">
+        <h2>Gastos por categoria</h2>
+        <?php if (!$byExpense): ?>
+            <div class="empty-state">Nenhuma saída em <?= e(month_label($month)) ?>.</div>
+        <?php else: ?>
+            <div class="donut-layout">
+                <div class="donut">
+                    <canvas id="chart-expenses" role="img" aria-label="Gráfico de rosca dos gastos por categoria de gasto em <?= e(month_label($month)) ?>"></canvas>
+                    <div class="donut-center"><span>Total</span><strong><?= e(money($expenseSum)) ?></strong></div>
+                </div>
+                <table class="legend-table">
+                    <caption class="sr-only">Gastos por categoria de gasto</caption>
+                    <tbody>
+                    <?php foreach ($byExpense as $c): ?>
+                        <tr>
+                            <td><span class="tag" style="--tag-color: <?= e($c['color']) ?>"><?= e($c['name']) ?></span></td>
+                            <td class="num"><?= e(money($c['total'])) ?></td>
+                            <td class="num muted"><?= number_format((float) $c['total'] / $expenseSum * 100, 1, ',', '.') ?>%</td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </section>
+
+    <section class="card chart-card chart-wide">
         <h2>Entradas x saídas · últimos 6 meses</h2>
         <div class="bar-chart">
             <canvas id="chart-months" role="img" aria-label="Gráfico de barras com entradas e saídas dos últimos 6 meses"></canvas>

@@ -42,7 +42,8 @@ final class RecurringService
             if ($bill['last_generated'] !== null) {
                 $month = max($month, (new DateTimeImmutable($bill['last_generated']))->modify('+1 month'));
             }
-            for (; $month <= $until; $month = $month->modify('+1 month')) {
+            $limit = $bill['end_month'] !== null ? min($until, new DateTimeImmutable($bill['end_month'])) : $until;
+            for (; $month <= $limit; $month = $month->modify('+1 month')) {
                 $db->beginTransaction();
                 try {
                     if ($this->bills->markGenerated((int) $bill['id'], $month)) {
@@ -51,6 +52,7 @@ final class RecurringService
                             'status'            => Transaction::STATUS_PENDING,
                             'amount'            => $bill['amount'],
                             'category_id'       => (int) $bill['category_id'],
+                            'expense_category_id' => $bill['expense_category_id'] !== null ? (int) $bill['expense_category_id'] : null,
                             'description'       => $bill['name'],
                             'transaction_date'  => self::dueDate($month, (int) $bill['due_day'])->format('Y-m-d'),
                             'competence_month'  => $month->format('Y-m-d'),
@@ -82,9 +84,16 @@ final class RecurringService
                 $this->transactions->updatePendingFromBill((int) $t['id'], [
                     'amount'           => $data['amount'],
                     'category_id'      => $data['category_id'],
+                    'expense_category_id' => $data['expense_category_id'] ?? null,
                     'description'      => $data['name'],
                     'transaction_date' => self::dueDate(new DateTimeImmutable($t['competence_month']), (int) $data['due_day'])->format('Y-m-d'),
                 ]);
+            }
+            // Data de término antecipada: remove os pendentes que passaram do novo último mês.
+            if (!empty($data['end_month'])) {
+                $after = max(self::currentMonth(), (new DateTimeImmutable($data['end_month']))->modify('+1 month'));
+                $this->transactions->deletePendingOfBillFrom((int) $bill['id'], $after);
+                $this->bills->forgetGenerationsFrom((int) $bill['id'], $after);
             }
         });
     }

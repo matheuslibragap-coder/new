@@ -128,35 +128,49 @@ O mesmo login funciona no computador e no celular, e os dados ficam no banco, se
 
 ## 4. Primeiros passos no sistema
 
-1. **Categorias:**
-   - Ajuste o **dia de fechamento** e o **dia de vencimento** de cada cartão. Eles vêm como 1 e 10, de forma provisória.
-   - Se quiser lançar entradas (salário, por exemplo) numa conta corrente, crie uma categoria do tipo **conta/carteira**, como "Conta Sicredi". Entradas só podem ir para categorias desse tipo.
-2. **Contas obrigatórias e opcionais:** cadastre aluguel, luz, internet, streaming, academia etc.
-3. **Orçamentos:** defina um limite mensal para as categorias que você quer controlar.
-4. **Lançamentos:** registre as entradas e saídas do dia a dia.
-5. **Painel:** acompanhe o saldo do mês, os alertas e os gráficos.
+Na primeira vez que você entra, o sistema abre o **Guia inicial**, com os passos na ordem certa e um botão para cada aba:
+
+1. Conferir **Contas e cartões** (as origens do dinheiro).
+2. Conferir as **categorias de gasto**.
+3. Cadastrar as **contas obrigatórias** (aluguel, luz…).
+4. Cadastrar **assinaturas e contas opcionais**, escolhendo em qual cartão cada uma é cobrada.
+5. Lançar as **entradas** (salário como recorrente).
+6. Lançar as **compras parceladas** que ainda estão correndo.
+7. Definir **orçamentos** (opcional).
+8. Usar o **Controle diário** no dia a dia.
+
+Cada passo mostra quantos itens já estão cadastrados. Enquanto você não clicar em "Concluir guia", ele abre no lugar do Painel. Depois continua disponível no menu, em **Guia inicial**.
+
+O guia também tem a opção **"Começar do zero"**, que apaga todos os lançamentos. Opcionalmente, apaga também as contas recorrentes e os orçamentos. Para confirmar, é preciso digitar APAGAR.
 
 ---
 
 ## 5. Como o sistema calcula as coisas
 
-### Mês de competência
-Todo lançamento tem a **data** (da compra ou do recebimento) e o **mês de competência**, que é o mês em que o valor entra no saldo. Saldos, gráficos, orçamentos e filtros usam sempre a competência.
+### Como lançar
+Todo lançamento pergunta **de qual conta ou cartão o dinheiro saiu** (ou em qual entrou). Essas origens são cadastradas por você na aba **Contas e cartões**. A **categoria do gasto** (Alimentação, Lazer…) é opcional em Lançamentos e obrigatória no Controle diário.
 
-- **Conta/carteira:** a competência é o mês da data.
-- **Cartão de crédito:** a competência é o **mês em que vence a fatura** onde a compra cai.
-  - Compra **antes** do dia de fechamento entra na fatura atual. Compra **no dia do fechamento ou depois** entra na seguinte.
-  - Se o dia de vencimento é **maior** que o de fechamento, a fatura vence no mesmo mês em que fecha. Exemplo: fecha dia 1, vence dia 10.
-  - Se não é, vence no mês seguinte. Exemplo: fecha dia 28, vence dia 5. Uma compra em 10/03 entra na fatura que fecha em 28/03, vence em 05/04 e por isso conta em **abril**.
-  - Dia 29, 30 ou 31 num mês que não tem esse dia vira o último dia do mês.
-- No formulário, a prévia mostra a competência calculada antes de salvar. Também dá para ajustar o mês à mão.
+Há três jeitos de lançar:
 
-### Parcelamento (só para saídas no cartão)
-- Você informa o **valor total** e o número de parcelas. O sistema cria uma parcela por mês, a partir da competência da compra.
-- Os centavos que sobram da divisão ficam na 1ª parcela. Exemplo: R$ 100,00 em 3x vira 33,34 + 33,33 + 33,33.
-- Ao editar ou excluir uma parcela, você escolhe: **só esta**, **esta e as próximas** ou **todas**.
+- **Único (à vista):** você escolhe como pagou: débito, dinheiro, Pix ou **crédito 1x**. No débito, dinheiro e Pix, o gasto conta no mês da data. No crédito 1x, o sistema pergunta **em qual mês cai na fatura**. Se o cartão tiver fechamento e vencimento cadastrados, ele já sugere o mês certo; senão, sugere o mês seguinte. Você sempre pode trocar.
+- **Recorrente:** o mesmo valor todo mês. Você informa o mês da primeira cobrança e **por quantos meses** ele se repete, ou marca "Sem data para acabar" para lançar até dezembro de 2040 (bom para o salário). Entradas também podem ser recorrentes.
+- **Parcelado (só saídas):** você informa o **valor total da compra** (com juros, se houver), o **número de parcelas** e o **mês da 1ª parcela**. Os centavos que sobram da divisão ficam na 1ª parcela. Exemplo: R$ 100,00 em 3x vira 33,34 + 33,33 + 33,33.
 
-### Contas recorrentes
+Antes de salvar, o formulário mostra um resumo do que vai ser lançado, por exemplo "10x de R$ 120,00, de Novembro/2026 a Agosto/2027".
+
+Ao editar ou excluir um lançamento recorrente ou uma parcela, você escolhe: **só este**, **este e os próximos** ou **todos**. Mudar o mês de um deles faz os outros do grupo escolhido andarem junto.
+
+Os seletores de mês vão de 2020 até **dezembro de 2040**.
+
+### Controle diário
+Aba para os gastos do dia a dia, como um energético de R$ 12. Você informa valor, o que foi, a **categoria do gasto**, de qual conta ou cartão saiu e como pagou. A aba mostra o total do mês, o total de hoje, a média por dia, os gastos por categoria e a lista agrupada por dia.
+
+As categorias de gasto (Alimentação, Lazer, Esportes e Transporte já vêm cadastradas) são criadas, editadas e desativadas em **Controle diário → Gerenciar categorias**.
+
+Esses gastos também entram no saldo, no Painel e no Histórico. Um gasto no crédito conta no mês da fatura, mas aparece no Controle diário no dia da compra.
+
+### Contas obrigatórias e opcionais
+- Cada conta tem o campo **em qual cartão ou conta é cobrada** (por exemplo, o YT Premium no CC Nubank M), uma categoria de gasto opcional e, também opcional, um **último mês**. Sem último mês, ela continua sendo lançada até você desativar.
 - Todo mês, cada conta ativa vira um lançamento **pendente**. Isso acontece quando você abre o sistema, porque hospedagem compartilhada normalmente não tem agendador de tarefas. Ao navegar para um mês futuro, as contas são geradas até ele.
 - **Marcar como paga** transforma a conta em lançamento efetivado. Dá para pagar com outro valor ou outra data, e também desfazer o pagamento.
 - Pendente com vencimento já passado aparece como **atrasada**, e o Painel mostra um alerta.
@@ -185,6 +199,7 @@ Todo lançamento tem a **data** (da compra ou do recebimento) e o **mês de comp
 ### Atualizar para uma versão nova
 1. Faça backup do banco.
 2. Envie os arquivos novos por cima dos antigos, **sem apagar o `app/config/config.php`**.
+3. Abra o sistema. Ele **atualiza o banco sozinho** (cria as tabelas e colunas novas) sem apagar seus dados nem o seu login. As versões já aplicadas ficam registradas na tabela `schema_migrations`.
 
 ### Esqueci a senha
 1. No `app/config/config.php`, coloque em `reset_token` um texto aleatório com 32 caracteres ou mais. Exemplo: `'reset_token' => 'troque-isto-por-um-texto-bem-longo-e-aleatorio-123',`
@@ -230,6 +245,7 @@ financas/
 │   │   ├── InstallmentSplitter.php   # divisão em parcelas
 │   │   ├── TransactionService.php    # criar/editar/excluir lançamentos e parcelas
 │   │   ├── RecurringService.php      # geração mensal e pagamento das contas
+│   │   ├── Migrator.php              # atualiza o banco automaticamente entre versões
 │   │   └── SchemaInstaller.php       # cria as tabelas na instalação
 │   ├── Helpers/format.php   # R$ 1.234,56, dd/mm/aaaa, meses em português
 │   └── Views/               # telas (layout + uma pasta por aba)

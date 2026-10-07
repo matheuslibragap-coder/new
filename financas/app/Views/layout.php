@@ -4,12 +4,14 @@ use App\Core\Config;
 
 $menu = [
     ['/',                   'Painel',              'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'],
+    ['/diario',             'Controle diário',     'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'],
     ['/lancamentos',        'Lançamentos',         'M12 5v14M5 12h14'],
     ['/contas/obrigatorias','Contas obrigatórias', 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
     ['/contas/opcionais',   'Contas opcionais',    'M21 12a9 9 0 1 1-9-9M12 7v5l3 3'],
     ['/historico',          'Histórico',           'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'],
     ['/orcamentos',         'Orçamentos',          'M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'],
-    ['/categorias',         'Categorias',          'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01'],
+    ['/categorias',         'Contas e cartões',    'M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7zM2 10h20M6 15h4'],
+    ['/guia',               'Guia inicial',        'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01'],
 ];
 $isActive = static fn (string $href): bool =>
     $href === '/' ? $currentPath === '/' : ($currentPath === $href || str_starts_with($currentPath, $href . '/'));

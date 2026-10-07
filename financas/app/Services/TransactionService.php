@@ -5,45 +5,158 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Models\Category;
+use App\Models\ExpenseCategory;
 use App\Models\Transaction;
 use DateTimeImmutable;
 
-/** Regras de criação, edição e exclusão de lançamentos (inclusive parcelados). */
+/**
+ * Regras de criação, edição e exclusão de lançamentos.
+ *
+ * Um lançamento pode ser:
+ *  - único: pago à vista (débito, dinheiro, pix) conta no mês da data;
+ *    no crédito 1x conta no mês da fatura informado pelo usuário;
+ *  - recorrente: o mesmo valor repetido por N meses a partir do mês informado;
+ *  - parcelado: o valor total dividido em N parcelas mensais.
+ * Recorrentes e parcelados ficam ligados por um registro em installment_groups.
+ */
 final class TransactionService
 {
+    public const MODE_SINGLE = 'unico';
+    public const MODE_RECURRING = 'recorrente';
+    public const MODE_INSTALLMENTS = 'parcelado';
+
     public const SCOPE_THIS = 'esta';
     public const SCOPE_NEXT = 'proximas';
     public const SCOPE_ALL = 'todas';
     public const SCOPES = [self::SCOPE_THIS, self::SCOPE_NEXT, self::SCOPE_ALL];
 
     public const MAX_INSTALLMENTS = 72;
+    public const MAX_RECURRING_MONTHS = 240;
     public const MAX_AMOUNT = 9999999999.99;
 
     private Transaction $transactions;
     private Category $categories;
+    private ExpenseCategory $expenseCategories;
     private CompetenceCalculator $calculator;
 
     public function __construct()
     {
         $this->transactions = new Transaction();
         $this->categories = new Category();
+        $this->expenseCategories = new ExpenseCategory();
         $this->calculator = new CompetenceCalculator();
     }
 
     /**
-     * Valida e normaliza os dados do formulário.
-     * $current: lançamento sendo editado (permite manter categoria já desativada).
+     * Valida o formulário de novo lançamento (Lançamentos ou Controle diário).
      *
      * @return array{0: string[], 1: array} [erros, dados normalizados]
      */
-    public function validate(array $input, ?array $current = null): array
+    public function validateCreate(array $input): array
+    {
+        [$errors, $data] = $this->validateCommon($input, null);
+
+        $mode = (string) ($input['mode'] ?? self::MODE_SINGLE);
+        $allowed = $data['type'] === Transaction::TYPE_IN
+            ? [self::MODE_SINGLE, self::MODE_RECURRING]
+            : [self::MODE_SINGLE, self::MODE_RECURRING, self::MODE_INSTALLMENTS];
+        if (!in_array($mode, $allowed, true)) {
+            $errors[] = 'Escolha se o lançamento é único, recorrente ou parcelado.';
+            $mode = self::MODE_SINGLE;
+        }
+
+        $count = 1;
+        $firstMonth = null;
+        $payment = null;
+
+        if ($mode === self::MODE_SINGLE) {
+            if ($data['type'] === Transaction::TYPE_OUT) {
+                $payment = (string) ($input['payment_method'] ?? '');
+                if (!isset(Transaction::PAYMENT_LABELS[$payment])) {
+                    $errors[] = 'Escolha a forma de pagamento.';
+                    $payment = null;
+                }
+            }
+            if ($payment === 'credito') {
+                $firstMonth = month_from_fields($input, 'invoice');
+                if ($firstMonth === null) {
+                    $errors[] = 'Informe em qual mês a compra cai na fatura.';
+                }
+            } elseif ($data['date'] !== null) {
+                $firstMonth = $data['date']->modify('first day of this month');
+            }
+        } else {
+            $firstMonth = month_from_fields($input, 'start');
+            if ($firstMonth === null) {
+                $errors[] = $mode === self::MODE_INSTALLMENTS ? 'Informe o mês da 1ª parcela.' : 'Informe o mês da primeira cobrança.';
+            }
+            if ($mode === self::MODE_INSTALLMENTS) {
+                $count = filter_var($input['installments'] ?? null, FILTER_VALIDATE_INT, [
+                    'options' => ['min_range' => 2, 'max_range' => self::MAX_INSTALLMENTS],
+                ]);
+                if ($count === false) {
+                    $errors[] = sprintf('Informe o número de parcelas (2 a %d).', self::MAX_INSTALLMENTS);
+                    $count = 1;
+                }
+            } elseif (!empty($input['until_end']) && $firstMonth !== null) {
+                $count = self::monthsBetween($firstMonth, last_allowed_month()) + 1;
+            } else {
+                $count = filter_var($input['months'] ?? null, FILTER_VALIDATE_INT, [
+                    'options' => ['min_range' => 1, 'max_range' => self::MAX_RECURRING_MONTHS],
+                ]);
+                if ($count === false) {
+                    $errors[] = 'Informe por quantos meses o lançamento se repete.';
+                    $count = 1;
+                }
+            }
+        }
+
+        if ($firstMonth !== null && $firstMonth->modify('+' . ($count - 1) . ' month') > last_allowed_month()) {
+            $errors[] = sprintf('O último mês ficaria depois de dezembro de %d. Diminua a quantidade de meses.', APP_MAX_YEAR);
+        }
+
+        return [$errors, $data + [
+            'mode'           => $mode,
+            'count'          => (int) $count,
+            'first_month'    => $firstMonth,
+            'payment_method' => $payment,
+            'is_daily'       => !empty($input['is_daily']),
+        ]];
+    }
+
+    /**
+     * Valida a edição. O mês de competência é sempre informado explicitamente.
+     *
+     * @return array{0: string[], 1: array}
+     */
+    public function validateEdit(array $input, array $current): array
+    {
+        [$errors, $data] = $this->validateCommon($input, $current);
+
+        $competence = month_from_fields($input, 'competence');
+        if ($competence === null) {
+            $errors[] = 'Informe o mês em que o lançamento conta no saldo.';
+        }
+
+        $payment = null;
+        if ($current['installment_group_id'] === null && $data['type'] === Transaction::TYPE_OUT) {
+            $payment = (string) ($input['payment_method'] ?? '');
+            $payment = isset(Transaction::PAYMENT_LABELS[$payment]) ? $payment : null;
+        }
+
+        return [$errors, $data + ['competence' => $competence, 'payment_method' => $payment]];
+    }
+
+    /** Campos comuns a criar e editar. */
+    private function validateCommon(array $input, ?array $current): array
     {
         $errors = [];
-        $isParcel = $current !== null && $current['installment_group_id'] !== null;
+        $inGroup = $current !== null && $current['installment_group_id'] !== null;
 
-        $type = $isParcel ? Transaction::TYPE_OUT : (string) ($input['type'] ?? '');
+        $type = $inGroup ? $current['type'] : (string) ($input['type'] ?? '');
         if (!in_array($type, [Transaction::TYPE_IN, Transaction::TYPE_OUT], true)) {
             $errors[] = 'Escolha se é entrada ou saída.';
+            $type = Transaction::TYPE_OUT;
         }
 
         $amount = parse_money($input['amount'] ?? '');
@@ -54,127 +167,112 @@ final class TransactionService
         $category = $this->categories->find((int) ($input['category_id'] ?? 0));
         $keepsCurrent = $current !== null && $category !== null && (int) $category['id'] === (int) $current['category_id'];
         if ($category === null || (!$category['active'] && !$keepsCurrent)) {
-            $errors[] = 'Escolha uma categoria.';
+            $errors[] = $type === Transaction::TYPE_IN ? 'Escolha em qual conta o dinheiro entrou.' : 'Escolha de qual conta ou cartão saiu o dinheiro.';
             $category = null;
-        } elseif ($type === Transaction::TYPE_IN && $category['type'] !== Category::TYPE_ACCOUNT) {
-            $errors[] = 'Entradas só podem ir para categorias do tipo conta/carteira.';
-        } elseif ($isParcel && $category['type'] !== Category::TYPE_CARD) {
-            $errors[] = 'Parcelas precisam estar em um cartão de crédito.';
         }
 
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d', (string) ($input['transaction_date'] ?? ''));
-        if (!$date || $date->format('Y-m-d') !== ($input['transaction_date'] ?? '') || (int) $date->format('Y') < 2000 || (int) $date->format('Y') > 2100) {
+        $expenseCategory = null;
+        $expenseId = (int) ($input['expense_category_id'] ?? 0);
+        if ($expenseId > 0) {
+            $expenseCategory = $this->expenseCategories->find($expenseId);
+            $keepsExpense = $current !== null && (int) ($current['expense_category_id'] ?? 0) === $expenseId;
+            if ($expenseCategory === null || (!$expenseCategory['active'] && !$keepsExpense)) {
+                $errors[] = 'Categoria de gasto inválida.';
+                $expenseCategory = null;
+            }
+        } elseif (!empty($input['is_daily'])) {
+            $errors[] = 'Escolha a categoria do gasto.';
+        }
+
+        $rawDate = (string) ($input['transaction_date'] ?? '');
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $rawDate);
+        if (!$date || $date->format('Y-m-d') !== $rawDate || (int) $date->format('Y') < APP_MIN_YEAR || (int) $date->format('Y') > APP_MAX_YEAR) {
             $errors[] = 'Informe uma data válida.';
             $date = null;
         }
 
-        $description = trim((string) ($input['description'] ?? ''));
-        $description = preg_replace('/\s+/u', ' ', $description) ?? '';
+        $description = preg_replace('/\s+/u', ' ', trim((string) ($input['description'] ?? ''))) ?? '';
         if ($description === '' || mb_strlen($description) > 200) {
             $errors[] = 'Informe a descrição (até 200 caracteres).';
         }
 
-        $installments = 1;
-        if ($current === null && $type === Transaction::TYPE_OUT) {
-            $installments = filter_var($input['installments'] ?? 1, FILTER_VALIDATE_INT, [
-                'options' => ['min_range' => 1, 'max_range' => self::MAX_INSTALLMENTS],
-            ]);
-            if ($installments === false) {
-                $errors[] = sprintf('Número de parcelas deve ser de 1 a %d.', self::MAX_INSTALLMENTS);
-                $installments = 1;
-            } elseif ($installments > 1 && $category !== null && $category['type'] !== Category::TYPE_CARD) {
-                $errors[] = 'Parcelamento só está disponível para cartões de crédito.';
-            }
-        }
-
-        $manual = !empty($input['competence_manual']);
-        $manualMonth = null;
-        if ($manual) {
-            $m = (int) ($input['competence_month'] ?? 0);
-            $y = (int) ($input['competence_year'] ?? 0);
-            if ($m < 1 || $m > 12 || $y < 2000 || $y > 2100) {
-                $errors[] = 'Escolha o mês de competência.';
-            } else {
-                $manualMonth = new DateTimeImmutable(sprintf('%04d-%02d-01', $y, $m));
-            }
-        }
-
-        $data = [
-            'type'              => $type,
-            'amount'            => $amount,
-            'category'          => $category,
-            'date'              => $date,
-            'description'       => $description,
-            'installments'      => (int) $installments,
-            'competence_manual' => $manual,
-            'manual_month'      => $manualMonth,
-        ];
-        return [$errors, $data];
+        return [$errors, [
+            'type'             => $type,
+            'amount'           => $amount,
+            'category'         => $category,
+            'expense_category' => $expenseCategory,
+            'date'             => $date,
+            'description'      => $description,
+        ]];
     }
 
-    /** Competência da 1ª parcela (ou do lançamento simples). */
-    public function competence(array $data): DateTimeImmutable
+    /** Sugestão do mês da fatura para crédito: usa fechamento/vencimento do cartão, se cadastrados; senão, o mês seguinte. */
+    public function suggestInvoiceMonth(array $category, DateTimeImmutable $date): DateTimeImmutable
     {
-        return $data['competence_manual']
-            ? $data['manual_month']
-            : $this->calculator->forCategory($data['category'], $data['date']);
+        if ($category['type'] === Category::TYPE_CARD && $category['closing_day'] && $category['due_day']) {
+            return $this->calculator->forCategory($category, $date);
+        }
+        return $date->modify('first day of next month');
     }
 
-    /** @return DateTimeImmutable competência do primeiro lançamento criado */
-    public function create(array $data): DateTimeImmutable
+    /** @return DateTimeImmutable[] competências de todos os lançamentos criados */
+    public function create(array $data): array
     {
-        $competence = $this->competence($data);
         $db = Database::connection();
         $db->beginTransaction();
         try {
-            if ($data['installments'] > 1) {
-                $this->createInstallments($data, $competence);
-            } else {
-                $this->transactions->create([
-                    'type'              => $data['type'],
-                    'amount'            => $data['amount'],
-                    'category_id'       => (int) $data['category']['id'],
-                    'description'       => $data['description'],
-                    'transaction_date'  => $data['date']->format('Y-m-d'),
-                    'competence_month'  => $competence->format('Y-m-d'),
-                    'competence_manual' => $data['competence_manual'],
-                ]);
-            }
+            $months = $data['mode'] === self::MODE_SINGLE ? $this->createSingle($data) : $this->createGroup($data);
             $db->commit();
         } catch (\Throwable $e) {
             $db->rollBack();
             throw $e;
         }
-        return $competence;
+        return $months;
     }
 
-    private function createInstallments(array $data, DateTimeImmutable $firstCompetence): void
+    private function createSingle(array $data): array
     {
-        $count = $data['installments'];
-        $parts = (new InstallmentSplitter())->split($data['amount'], $count);
+        $this->transactions->create($this->row($data, $data['amount'], $data['description'], $data['first_month']) + [
+            'payment_method'    => $data['payment_method'],
+            'is_daily'          => $data['is_daily'],
+            'competence_manual' => $data['payment_method'] === 'credito',
+        ]);
+        return [$data['first_month']];
+    }
+
+    private function createGroup(array $data): array
+    {
+        $count = $data['count'];
+        $isInstallments = $data['mode'] === self::MODE_INSTALLMENTS;
+        $amounts = $isInstallments
+            ? (new InstallmentSplitter())->split($data['amount'], $count)
+            : array_fill(0, $count, $data['amount']);
+        $total = number_format(array_sum(array_map('floatval', $amounts)), 2, '.', '');
+
         $groupId = $this->transactions->createGroup(
-            $data['description'], $data['amount'], $count, (int) $data['category']['id'], $data['date']->format('Y-m-d')
+            $isInstallments ? Transaction::GROUP_INSTALLMENTS : Transaction::GROUP_RECURRING,
+            $data['description'], $total, $count, (int) $data['category']['id'], $data['date']->format('Y-m-d')
         );
-        foreach ($parts as $i => $value) {
-            $this->transactions->create([
-                'type'                 => Transaction::TYPE_OUT,
-                'amount'               => $value,
-                'category_id'          => (int) $data['category']['id'],
-                'description'          => self::parcelDescription($data['description'], $i + 1, $count),
-                'transaction_date'     => $data['date']->format('Y-m-d'),
-                'competence_month'     => $firstCompetence->modify("+{$i} month")->format('Y-m-d'),
-                'competence_manual'    => $data['competence_manual'],
+
+        $months = [];
+        foreach ($amounts as $i => $value) {
+            $month = $data['first_month']->modify("+{$i} month");
+            $months[] = $month;
+            $description = $isInstallments ? self::parcelDescription($data['description'], $i + 1, $count) : $data['description'];
+            $this->transactions->create($this->row($data, $value, $description, $month) + [
+                'competence_manual'    => true,
                 'installment_group_id' => $groupId,
                 'installment_number'   => $i + 1,
+                'is_daily'             => $data['is_daily'] ?? false,
             ]);
         }
+        return $months;
     }
 
     /**
-     * Atualiza um lançamento. Em parcelas, aplica ao escopo escolhido:
-     * a competência informada vale para a parcela editada e as demais do escopo
-     * andam junto, mantendo um mês de distância entre si. O valor informado é o
-     * valor de cada parcela.
+     * Atualiza um lançamento. Em recorrentes/parcelados, aplica ao escopo escolhido:
+     * o mês informado vale para o lançamento editado e os demais do escopo andam
+     * junto, mantendo um mês de distância entre si.
      */
     public function update(array $current, array $data, string $scope = self::SCOPE_THIS): void
     {
@@ -182,10 +280,12 @@ final class TransactionService
         $db->beginTransaction();
         try {
             if ($current['installment_group_id'] === null) {
-                $competence = $this->competence($data);
-                $this->transactions->update((int) $current['id'], $this->row($data, $data['description'], $competence));
+                $this->transactions->update((int) $current['id'], $this->row($data, $data['amount'], $data['description'], $data['competence']) + [
+                    'payment_method'    => $data['payment_method'],
+                    'competence_manual' => true,
+                ]);
             } else {
-                $this->updateParcels($current, $data, $scope);
+                $this->updateGroupItems($current, $data, $scope);
             }
             $db->commit();
         } catch (\Throwable $e) {
@@ -194,23 +294,24 @@ final class TransactionService
         }
     }
 
-    private function updateParcels(array $current, array $data, string $scope): void
+    private function updateGroupItems(array $current, array $data, string $scope): void
     {
         $groupId = (int) $current['installment_group_id'];
         $number = (int) $current['installment_number'];
         $count = (int) $current['installment_count'];
+        $isInstallments = $current['group_kind'] !== Transaction::GROUP_RECURRING;
 
-        $editedCompetence = $data['competence_manual']
-            ? $data['manual_month']
-            : $this->calculator->forCategory($data['category'], $data['date'])->modify('+' . ($number - 1) . ' month');
-
-        foreach ($this->parcelsInScope($groupId, $number, $scope, (int) $current['id']) as $parcel) {
-            $offset = (int) $parcel['installment_number'] - $number;
-            $this->transactions->update((int) $parcel['id'], $this->row(
+        foreach ($this->itemsInScope($groupId, $number, $scope, (int) $current['id']) as $item) {
+            $offset = (int) $item['installment_number'] - $number;
+            $description = $isInstallments
+                ? self::parcelDescription($data['description'], (int) $item['installment_number'], $count)
+                : $data['description'];
+            $this->transactions->update((int) $item['id'], $this->row(
                 $data,
-                self::parcelDescription($data['description'], (int) $parcel['installment_number'], $count),
-                $editedCompetence->modify(($offset >= 0 ? '+' : '') . $offset . ' month')
-            ));
+                $data['amount'],
+                $description,
+                $data['competence']->modify(($offset >= 0 ? '+' : '') . $offset . ' month')
+            ) + ['payment_method' => $item['payment_method'], 'competence_manual' => true]);
         }
 
         if ($scope === self::SCOPE_ALL) {
@@ -230,9 +331,9 @@ final class TransactionService
         $db = Database::connection();
         $db->beginTransaction();
         try {
-            $parcels = $this->parcelsInScope($groupId, (int) $current['installment_number'], $scope, (int) $current['id']);
-            foreach ($parcels as $parcel) {
-                $this->transactions->delete((int) $parcel['id']);
+            $items = $this->itemsInScope($groupId, (int) $current['installment_number'], $scope, (int) $current['id']);
+            foreach ($items as $item) {
+                $this->transactions->delete((int) $item['id']);
             }
             $this->transactions->syncGroup($groupId);
             $db->commit();
@@ -240,30 +341,34 @@ final class TransactionService
             $db->rollBack();
             throw $e;
         }
-        return count($parcels);
+        return count($items);
     }
 
-    private function parcelsInScope(int $groupId, int $number, string $scope, int $currentId): array
+    private function itemsInScope(int $groupId, int $number, string $scope, int $currentId): array
     {
-        $parcels = $this->transactions->groupParcels($groupId);
-        return array_values(array_filter($parcels, static fn (array $p) => match ($scope) {
+        return array_values(array_filter($this->transactions->groupParcels($groupId), static fn (array $p) => match ($scope) {
             self::SCOPE_ALL  => true,
             self::SCOPE_NEXT => (int) $p['installment_number'] >= $number,
             default          => (int) $p['id'] === $currentId,
         }));
     }
 
-    private function row(array $data, string $description, DateTimeImmutable $competence): array
+    private function row(array $data, string $amount, string $description, DateTimeImmutable $competence): array
     {
         return [
-            'type'              => $data['type'],
-            'amount'            => $data['amount'],
-            'category_id'       => (int) $data['category']['id'],
-            'description'       => $description,
-            'transaction_date'  => $data['date']->format('Y-m-d'),
-            'competence_month'  => $competence->format('Y-m-d'),
-            'competence_manual' => $data['competence_manual'],
+            'type'                => $data['type'],
+            'amount'              => $amount,
+            'category_id'         => (int) $data['category']['id'],
+            'expense_category_id' => $data['expense_category'] !== null ? (int) $data['expense_category']['id'] : null,
+            'description'         => $description,
+            'transaction_date'    => $data['date']->format('Y-m-d'),
+            'competence_month'    => $competence->format('Y-m-d'),
         ];
+    }
+
+    public static function monthsBetween(DateTimeImmutable $from, DateTimeImmutable $to): int
+    {
+        return ((int) $to->format('Y') - (int) $from->format('Y')) * 12 + (int) $to->format('n') - (int) $from->format('n');
     }
 
     public static function parcelDescription(string $base, int $number, int $count): string
@@ -274,7 +379,7 @@ final class TransactionService
     /** Descrição sem o sufixo "(n/N)", para exibir no formulário de edição. */
     public static function baseDescription(array $transaction): string
     {
-        if ($transaction['installment_group_id'] === null) {
+        if ($transaction['installment_group_id'] === null || ($transaction['group_kind'] ?? '') === Transaction::GROUP_RECURRING) {
             return $transaction['description'];
         }
         return preg_replace('/\s\(\d+\/\d+\)$/', '', $transaction['description']) ?? $transaction['description'];

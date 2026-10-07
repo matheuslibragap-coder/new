@@ -47,14 +47,14 @@ $presets = ['#1B5E20', '#EC7000', '#C88A00', '#B388FF', '#4A148C', '#FFD600', '#
 
     <div class="field-row" data-card-fields <?= $type === Category::TYPE_CARD ? '' : 'hidden' ?>>
         <label class="field">
-            <span>Dia de fechamento da fatura</span>
+            <span>Dia de fechamento da fatura <small class="muted">(opcional)</small></span>
             <input type="number" name="closing_day" value="<?= e($v('closing_day')) ?>" min="1" max="31" inputmode="numeric">
         </label>
         <label class="field">
-            <span>Dia de vencimento da fatura</span>
+            <span>Dia de vencimento da fatura <small class="muted">(opcional)</small></span>
             <input type="number" name="due_day" value="<?= e($v('due_day')) ?>" min="1" max="31" inputmode="numeric">
         </label>
-        <p class="muted small field-hint">Compras feitas a partir do dia de fechamento entram na fatura seguinte. O gasto conta no mês em que a fatura vence.</p>
+        <p class="muted small field-hint">Se preencher, o sistema já sugere em qual mês cada compra no crédito cai na fatura. Você sempre pode escolher outro mês na hora de lançar.</p>
     </div>
 
     <div class="form-actions">

@@ -15,7 +15,7 @@ $showCompetence = $showCompetence ?? false;
             <th>Descrição</th>
             <th>Data</th>
             <?php if ($showCompetence): ?><th>Competência</th><?php endif; ?>
-            <th>Categoria</th>
+            <th>Conta/cartão</th>
             <th class="num">Valor</th>
             <th class="col-actions"><span class="sr-only">Ações</span></th>
         </tr>
@@ -32,13 +32,16 @@ $showCompetence = $showCompetence ?? false;
                 <td data-label="Descrição" class="cell-main">
                     <span class="tx-description"><?= e($t['description']) ?></span>
                     <?php if ($isPending): ?><span class="badge badge-warning">Pendente</span><?php endif; ?>
-                    <?php if ($t['competence_manual']): ?><span class="badge" title="Competência ajustada manualmente">Ajustado</span><?php endif; ?>
+                    <?php if (!empty($t['expense_name'])): ?><span class="tag tag-small" style="--tag-color: <?= e($t['expense_color']) ?>"><?= e($t['expense_name']) ?></span><?php endif; ?>
+                    <?php if (($t['group_kind'] ?? '') === 'recorrente'): ?><span class="badge">Recorrente <?= (int) $t['installment_number'] ?>/<?= (int) $t['installment_count'] ?></span><?php endif; ?>
+                    <?php if (!empty($t['is_daily'])): ?><span class="badge">Diário</span><?php endif; ?>
+                    <?php if (!empty($t['payment_method'])): ?><span class="badge"><?= e(\App\Models\Transaction::PAYMENT_LABELS[$t['payment_method']] ?? '') ?></span><?php endif; ?>
                 </td>
                 <td data-label="Data"><?= e(date_br($t['transaction_date'])) ?></td>
                 <?php if ($showCompetence): ?>
                     <td data-label="Competência"><?= e(month_label($t['competence_month'])) ?></td>
                 <?php endif; ?>
-                <td data-label="Categoria"><span class="tag" style="--tag-color: <?= e($t['category_color']) ?>"><?= e($t['category_name']) ?></span></td>
+                <td data-label="Conta/cartão"><span class="tag" style="--tag-color: <?= e($t['category_color']) ?>"><?= e($t['category_name']) ?></span></td>
                 <td data-label="Valor" class="num <?= $isIn ? 'amount-in' : 'amount-out' ?>"><?= $isIn ? '+' : '−' ?> <?= e(money($t['amount'])) ?></td>
                 <td class="col-actions">
                     <div class="actions">

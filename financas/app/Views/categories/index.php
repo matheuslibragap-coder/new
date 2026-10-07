@@ -1,14 +1,14 @@
 <?php use App\Models\Category; ?>
 <div class="page-header">
-    <h1>Categorias</h1>
-    <a href="<?= e(url('/categorias/nova')) ?>" class="btn btn-primary">Nova categoria</a>
+    <h1>Contas e cartões</h1>
+    <a href="<?= e(url('/categorias/nova')) ?>" class="btn btn-primary">Nova conta ou cartão</a>
 </div>
 
 <div class="card card-flush">
     <table class="table table-responsive">
         <thead>
         <tr>
-            <th>Categoria</th>
+            <th>Conta/cartão</th>
             <th>Tipo</th>
             <th>Fechamento</th>
             <th>Vencimento</th>
@@ -19,7 +19,7 @@
         <tbody>
         <?php foreach ($categories as $c): ?>
             <tr class="<?= $c['active'] ? '' : 'is-inactive' ?>">
-                <td data-label="Categoria">
+                <td data-label="Conta/cartão">
                     <span class="tag" style="--tag-color: <?= e($c['color']) ?>"><?= e($c['name']) ?></span>
                 </td>
                 <td data-label="Tipo"><?= e(Category::TYPE_LABELS[$c['type']] ?? $c['type']) ?></td>
@@ -37,7 +37,7 @@
                             <button type="submit" class="btn btn-small"><?= $c['active'] ? 'Desativar' : 'Ativar' ?></button>
                         </form>
                         <?php if ((int) $c['usage_count'] === 0): ?>
-                            <form method="post" action="<?= e(url('/categorias/excluir')) ?>" data-confirm="Excluir a categoria &quot;<?= e($c['name']) ?>&quot;?">
+                            <form method="post" action="<?= e(url('/categorias/excluir')) ?>" data-confirm="Excluir &quot;<?= e($c['name']) ?>&quot;?">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="id" value="<?= (int) $c['id'] ?>">
                                 <button type="submit" class="btn btn-small btn-danger">Excluir</button>
@@ -50,4 +50,4 @@
         </tbody>
     </table>
 </div>
-<p class="muted small">Categorias com lançamentos ou contas vinculadas não podem ser excluídas, apenas desativadas. Categorias inativas somem dos formulários, mas continuam no histórico.</p>
+<p class="muted small">Aqui ficam as <strong>origens</strong> do dinheiro: suas contas bancárias, carteiras e cartões. Em todo lançamento o sistema pergunta de qual delas o dinheiro saiu. Itens com lançamentos não podem ser excluídos, só desativados.</p>

@@ -7,12 +7,17 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Models\Budget;
 use App\Models\Report;
+use App\Models\Setting;
+use App\Models\Transaction;
 use DateTimeImmutable;
 
 final class DashboardController extends Controller
 {
     public function index(): void
     {
+        if ((new Setting())->get(Setting::GUIDE_DONE) === null) {
+            redirect('/guia');
+        }
         $month = month_from_param(Request::query('mes'));
         $this->syncRecurring($month);
 
@@ -21,6 +26,7 @@ final class DashboardController extends Controller
         $summary = $report->monthSummary($month);
         $byCategory = $report->expensesByCategory($month);
         $series = $report->lastMonths($month, 6);
+        $byExpense = (new Transaction())->expensesByExpenseCategory($month);
 
         $this->view('dashboard/index', [
             'title'      => 'Painel',
@@ -29,6 +35,7 @@ final class DashboardController extends Controller
             'current'    => $summary['income_done'] - $summary['expense_done'],
             'forecast'   => ($summary['income_done'] + $summary['income_pending']) - ($summary['expense_done'] + $summary['expense_pending']),
             'byCategory' => $byCategory,
+            'byExpense'  => $byExpense,
             'expenseSum' => array_sum(array_map(static fn ($r) => (float) $r['total'], $byCategory)),
             'series'     => $series,
             'overdue'    => $report->overdue($today),
@@ -38,6 +45,9 @@ final class DashboardController extends Controller
                 'categories' => array_map(static fn ($r) => [
                     'label' => $r['name'], 'value' => (float) $r['total'], 'color' => $r['color'],
                 ], $byCategory),
+                'expenses' => array_map(static fn ($r) => [
+                    'label' => $r['name'], 'value' => (float) $r['total'], 'color' => $r['color'],
+                ], $byExpense),
                 'months' => array_map(static fn ($r) => [
                     'label'   => mb_substr(month_name((int) $r['month']->format('n')), 0, 3) . '/' . $r['month']->format('y'),
                     'income'  => $r['income'],

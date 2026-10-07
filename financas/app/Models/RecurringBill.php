@@ -11,9 +11,11 @@ final class RecurringBill extends Model
     public const KIND_MANDATORY = 'obrigatoria';
     public const KIND_OPTIONAL = 'opcional';
 
-    private const SELECT = 'SELECT b.*, c.name AS category_name, c.color AS category_color
+    private const SELECT = 'SELECT b.*, c.name AS category_name, c.color AS category_color,
+                                   ec.name AS expense_name, ec.color AS expense_color
                               FROM recurring_bills b
-                              JOIN categories c ON c.id = b.category_id';
+                              JOIN categories c ON c.id = b.category_id
+                         LEFT JOIN expense_categories ec ON ec.id = b.expense_category_id';
 
     public function allOfKind(string $kind): array
     {
@@ -49,8 +51,10 @@ final class RecurringBill extends Model
     public function create(array $d): int
     {
         $this->execute(
-            'INSERT INTO recurring_bills (kind, name, amount, due_day, category_id, start_month) VALUES (?, ?, ?, ?, ?, ?)',
-            [$d['kind'], $d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['start_month']]
+            'INSERT INTO recurring_bills (kind, name, amount, due_day, category_id, expense_category_id, start_month, end_month)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [$d['kind'], $d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null,
+             $d['start_month'], $d['end_month'] ?? null]
         );
         return (int) $this->db->lastInsertId();
     }
@@ -58,8 +62,8 @@ final class RecurringBill extends Model
     public function update(int $id, array $d): void
     {
         $this->execute(
-            'UPDATE recurring_bills SET name = ?, amount = ?, due_day = ?, category_id = ? WHERE id = ?',
-            [$d['name'], $d['amount'], $d['due_day'], $d['category_id'], $id]
+            'UPDATE recurring_bills SET name = ?, amount = ?, due_day = ?, category_id = ?, expense_category_id = ?, end_month = ? WHERE id = ?',
+            [$d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null, $d['end_month'] ?? null, $id]
         );
     }
 

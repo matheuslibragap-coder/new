@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Models\Category;
+use App\Models\ExpenseCategory;
 use App\Models\Transaction;
 
 final class HistoryController extends Controller
@@ -34,6 +35,7 @@ final class HistoryController extends Controller
             'params'     => $params,
             'months'     => $months,
             'categories' => (new Category())->allWithUsage(),
+            'expenseCategories' => (new ExpenseCategory())->allWithUsage(),
             'page'       => $page,
             'pages'      => $pages,
             'returnTo'   => '/historico' . ($this->queryString($params, $page) ?: ''),
@@ -53,7 +55,7 @@ final class HistoryController extends Controller
         $out = fopen('php://output', 'wb');
         // BOM para o Excel reconhecer UTF-8 (acentos); ';' e vírgula decimal = Excel em português.
         fwrite($out, "\xEF\xBB\xBF");
-        fputcsv($out, ['Data', 'Competência', 'Tipo', 'Situação', 'Categoria', 'Descrição', 'Valor'], ';', '"', '');
+        fputcsv($out, ['Data', 'Competência', 'Tipo', 'Situação', 'Conta/cartão', 'Categoria de gasto', 'Forma de pagamento', 'Descrição', 'Valor'], ';', '"', '');
         foreach ($items as $t) {
             $signed = $t['type'] === 'saida' ? -(float) $t['amount'] : (float) $t['amount'];
             fputcsv($out, [
@@ -62,6 +64,8 @@ final class HistoryController extends Controller
                 $t['type'] === 'entrada' ? 'Entrada' : 'Saída',
                 $t['status'] === 'pendente' ? 'Pendente' : 'Efetivado',
                 self::csvText($t['category_name']),
+                self::csvText((string) ($t['expense_name'] ?? '')),
+                \App\Models\Transaction::PAYMENT_LABELS[$t['payment_method'] ?? ''] ?? '',
                 self::csvText($t['description']),
                 number_format($signed, 2, ',', ''),
             ], ';', '"', '');
@@ -77,15 +81,17 @@ final class HistoryController extends Controller
         $type = (string) Request::query('tipo', '');
         $type = in_array($type, ['entrada', 'saida'], true) ? $type : '';
         $categoryId = max(0, (int) Request::query('categoria', 0));
+        $expenseId = max(0, (int) Request::query('gasto', 0));
         $q = mb_substr((string) Request::query('q', ''), 0, 100);
 
         $filters = [
             'month'       => $mes !== '' ? month_from_param($mes) : null,
             'category_id' => $categoryId ?: null,
             'type'        => $type ?: null,
+            'expense_category_id' => $expenseId ?: null,
             'q'           => $q,
         ];
-        $params = ['mes' => $mes, 'categoria' => $categoryId ?: '', 'tipo' => $type, 'q' => $q];
+        $params = ['mes' => $mes, 'categoria' => $categoryId ?: '', 'gasto' => $expenseId ?: '', 'tipo' => $type, 'q' => $q];
         return [$filters, $params];
     }
 

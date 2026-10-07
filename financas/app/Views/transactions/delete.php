@@ -18,9 +18,9 @@
         <fieldset class="field">
             <legend>O que excluir?</legend>
             <div class="radio-group radio-stack">
-                <label class="radio"><input type="radio" name="escopo" value="esta" checked> Só esta parcela</label>
+                <label class="radio"><input type="radio" name="escopo" value="esta" checked> Só este mês</label>
                 <label class="radio"><input type="radio" name="escopo" value="proximas"> Esta e as próximas</label>
-                <label class="radio"><input type="radio" name="escopo" value="todas"> Todas as <?= (int) $transaction['installment_count'] ?> parcelas</label>
+                <label class="radio"><input type="radio" name="escopo" value="todas"> Todos (<?= (int) $transaction['installment_count'] ?> no total)</label>
             </div>
         </fieldset>
     <?php endif; ?>

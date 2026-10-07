@@ -13,10 +13,22 @@ final class Transaction extends Model
     public const STATUS_DONE = 'efetivado';
     public const STATUS_PENDING = 'pendente';
 
+    public const GROUP_INSTALLMENTS = 'parcelado';
+    public const GROUP_RECURRING = 'recorrente';
+
+    public const PAYMENT_LABELS = [
+        'debito'   => 'Débito',
+        'dinheiro' => 'Dinheiro',
+        'pix'      => 'Pix',
+        'credito'  => 'Crédito',
+    ];
+
     private const SELECT = 'SELECT t.*, c.name AS category_name, c.color AS category_color, c.type AS category_type,
-                                   g.installment_count, g.description AS group_description
+                                   ec.name AS expense_name, ec.color AS expense_color,
+                                   g.installment_count, g.description AS group_description, g.kind AS group_kind
                               FROM transactions t
                               JOIN categories c ON c.id = t.category_id
+                         LEFT JOIN expense_categories ec ON ec.id = t.expense_category_id
                          LEFT JOIN installment_groups g ON g.id = t.installment_group_id';
 
     public function find(int $id): ?array
@@ -28,12 +40,14 @@ final class Transaction extends Model
     {
         $this->execute(
             'INSERT INTO transactions
-                (type, status, amount, category_id, description, transaction_date, competence_month,
-                 competence_manual, installment_group_id, installment_number, recurring_bill_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (type, status, amount, category_id, expense_category_id, payment_method, is_daily, description,
+                 transaction_date, competence_month, competence_manual, installment_group_id, installment_number,
+                 recurring_bill_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
-                $d['type'], $d['status'] ?? self::STATUS_DONE, $d['amount'], $d['category_id'], $d['description'],
-                $d['transaction_date'], $d['competence_month'], (int) ($d['competence_manual'] ?? 0),
+                $d['type'], $d['status'] ?? self::STATUS_DONE, $d['amount'], $d['category_id'],
+                $d['expense_category_id'] ?? null, $d['payment_method'] ?? null, (int) ($d['is_daily'] ?? 0),
+                $d['description'], $d['transaction_date'], $d['competence_month'], (int) ($d['competence_manual'] ?? 0),
                 $d['installment_group_id'] ?? null, $d['installment_number'] ?? null, $d['recurring_bill_id'] ?? null,
             ]
         );
@@ -44,12 +58,12 @@ final class Transaction extends Model
     {
         $this->execute(
             'UPDATE transactions
-                SET type = ?, amount = ?, category_id = ?, description = ?, transaction_date = ?,
-                    competence_month = ?, competence_manual = ?
+                SET type = ?, amount = ?, category_id = ?, expense_category_id = ?, payment_method = ?,
+                    description = ?, transaction_date = ?, competence_month = ?, competence_manual = ?
               WHERE id = ?',
             [
-                $d['type'], $d['amount'], $d['category_id'], $d['description'], $d['transaction_date'],
-                $d['competence_month'], (int) $d['competence_manual'], $id,
+                $d['type'], $d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['payment_method'] ?? null,
+                $d['description'], $d['transaction_date'], $d['competence_month'], (int) $d['competence_manual'], $id,
             ]
         );
     }
@@ -61,12 +75,12 @@ final class Transaction extends Model
 
     // ---------- Parcelamento ----------
 
-    public function createGroup(string $description, string $total, int $count, int $categoryId, string $purchaseDate): int
+    public function createGroup(string $kind, string $description, string $total, int $count, int $categoryId, string $purchaseDate): int
     {
         $this->execute(
-            'INSERT INTO installment_groups (description, total_amount, installment_count, category_id, purchase_date)
-             VALUES (?, ?, ?, ?, ?)',
-            [$description, $total, $count, $categoryId, $purchaseDate]
+            'INSERT INTO installment_groups (kind, description, total_amount, installment_count, category_id, purchase_date)
+             VALUES (?, ?, ?, ?, ?, ?)',
+            [$kind, $description, $total, $count, $categoryId, $purchaseDate]
         );
         return (int) $this->db->lastInsertId();
     }
@@ -111,9 +125,9 @@ final class Transaction extends Model
     public function updatePendingFromBill(int $id, array $d): void
     {
         $this->execute(
-            "UPDATE transactions SET amount = ?, category_id = ?, description = ?, transaction_date = ?
+            "UPDATE transactions SET amount = ?, category_id = ?, expense_category_id = ?, description = ?, transaction_date = ?
               WHERE id = ? AND status = 'pendente'",
-            [$d['amount'], $d['category_id'], $d['description'], $d['transaction_date'], $id]
+            [$d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['description'], $d['transaction_date'], $id]
         );
     }
 
@@ -208,6 +222,40 @@ final class Transaction extends Model
         );
     }
 
+    /** Gastos do Controle diário de um mês, do mais recente ao mais antigo. */
+    public function dailyForMonth(DateTimeImmutable $month): array
+    {
+        return $this->fetchAll(
+            self::SELECT . ' WHERE t.is_daily = 1 AND t.transaction_date >= ? AND t.transaction_date < ?
+                              ORDER BY t.transaction_date DESC, t.id DESC',
+            [$month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
+        );
+    }
+
+    /** Saídas de um mês de competência agrupadas por categoria de gasto (sem categoria = NULL). */
+    public function expensesByExpenseCategory(DateTimeImmutable $month, bool $dailyOnly = false, string $dateField = 'competence'): array
+    {
+        $range = $dateField === 'date'
+            ? 't.transaction_date >= ? AND t.transaction_date < ?'
+            : 't.competence_month >= ? AND t.competence_month < ?';
+        return $this->fetchAll(
+            "SELECT ec.id, COALESCE(ec.name, 'Sem categoria') AS name, COALESCE(ec.color, '#98A2B3') AS color,
+                    SUM(t.amount) AS total, COUNT(*) AS items
+               FROM transactions t
+          LEFT JOIN expense_categories ec ON ec.id = t.expense_category_id
+              WHERE t.type = 'saida' AND {$range}" . ($dailyOnly ? ' AND t.is_daily = 1' : '') . "
+           GROUP BY ec.id, ec.name, ec.color
+           ORDER BY total DESC",
+            [$month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
+        );
+    }
+
+    /** Último gasto do Controle diário (para pré-selecionar origem e forma de pagamento). */
+    public function lastDaily(): ?array
+    {
+        return $this->fetchOne('SELECT category_id, payment_method FROM transactions WHERE is_daily = 1 ORDER BY id DESC LIMIT 1');
+    }
+
     /** Descrições mais usadas, para sugerir no campo de descrição. */
     public function frequentDescriptions(int $limit = 80): array
     {
@@ -236,6 +284,13 @@ final class Transaction extends Model
         if (!empty($f['type'])) {
             $clauses[] = 't.type = ?';
             $params[] = $f['type'];
+        }
+        if (!empty($f['expense_category_id'])) {
+            $clauses[] = 't.expense_category_id = ?';
+            $params[] = (int) $f['expense_category_id'];
+        }
+        if (!empty($f['daily'])) {
+            $clauses[] = 't.is_daily = 1';
         }
         if (isset($f['q']) && $f['q'] !== '') {
             $clauses[] = "t.description LIKE ? ESCAPE '!'";

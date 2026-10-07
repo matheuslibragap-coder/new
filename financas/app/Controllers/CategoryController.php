@@ -13,7 +13,7 @@ final class CategoryController extends Controller
     public function index(): void
     {
         $this->view('categories/index', [
-            'title'      => 'Categorias',
+            'title'      => 'Contas e cartões',
             'categories' => (new Category())->allWithUsage(),
         ]);
     }
@@ -21,7 +21,7 @@ final class CategoryController extends Controller
     public function create(): void
     {
         $this->view('categories/form', [
-            'title'    => 'Nova categoria',
+            'title'    => 'Nova conta ou cartão',
             'category' => null,
             'old'      => Session::pullOldInput(),
         ]);
@@ -34,7 +34,7 @@ final class CategoryController extends Controller
             $this->notFound();
         }
         $this->view('categories/form', [
-            'title'    => 'Editar categoria',
+            'title'    => 'Editar conta ou cartão',
             'category' => $category,
             'old'      => Session::pullOldInput(),
         ]);
@@ -60,7 +60,7 @@ final class CategoryController extends Controller
         if ($input['name'] === '' || mb_strlen($input['name']) > 60) {
             $errors[] = 'Informe o nome (até 60 caracteres).';
         } elseif ($model->nameExists($input['name'], $id ?: null)) {
-            $errors[] = 'Já existe uma categoria com esse nome.';
+            $errors[] = 'Já existe uma conta ou cartão com esse nome.';
         }
         if (!preg_match('/^#[0-9A-F]{6}$/', $input['color'])) {
             $errors[] = 'Escolha uma cor válida.';
@@ -77,10 +77,11 @@ final class CategoryController extends Controller
             'due_day'     => null,
         ];
         if ($input['type'] === Category::TYPE_CARD) {
-            $closing = filter_var($input['closing_day'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 31]]);
-            $due = filter_var($input['due_day'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 31]]);
-            if ($closing === false || $due === false) {
-                $errors[] = 'Para cartões, informe dia de fechamento e de vencimento (1 a 31).';
+            // Opcionais: servem só para sugerir o mês da fatura nas compras no crédito.
+            $closing = $input['closing_day'] === '' ? null : filter_var($input['closing_day'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 31]]);
+            $due = $input['due_day'] === '' ? null : filter_var($input['due_day'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 31]]);
+            if ($closing === false || $due === false || ($closing === null) !== ($due === null)) {
+                $errors[] = 'Preencha os dois dias (fechamento e vencimento, de 1 a 31) ou deixe os dois em branco.';
             }
             $data['closing_day'] = $closing ?: null;
             $data['due_day'] = $due ?: null;
@@ -93,10 +94,10 @@ final class CategoryController extends Controller
 
         if ($id > 0) {
             $model->update($id, $data);
-            Session::flash('success', 'Categoria atualizada.');
+            Session::flash('success', 'Conta/cartão atualizado.');
         } else {
             $model->create($data);
-            Session::flash('success', 'Categoria criada.');
+            Session::flash('success', 'Conta/cartão cadastrado.');
         }
         redirect('/categorias');
     }
@@ -110,7 +111,7 @@ final class CategoryController extends Controller
         }
         $activate = !$category['active'];
         $model->setActive((int) $category['id'], $activate);
-        Session::flash('success', $activate ? 'Categoria reativada.' : 'Categoria desativada. Ela continua aparecendo no histórico.');
+        Session::flash('success', $activate ? 'Reativado.' : 'Desativado. Os lançamentos antigos continuam no histórico.');
         redirect('/categorias');
     }
 
@@ -122,11 +123,11 @@ final class CategoryController extends Controller
             $this->notFound();
         }
         if ($model->isInUse((int) $category['id'])) {
-            Session::flash('error', 'Esta categoria já tem lançamentos ou contas vinculadas. Desative-a em vez de excluir.');
+            Session::flash('error', 'Já existem lançamentos ou contas ligados a ele. Desative em vez de excluir.');
             redirect('/categorias');
         }
         $model->delete((int) $category['id']);
-        Session::flash('success', 'Categoria excluída.');
+        Session::flash('success', 'Excluído.');
         redirect('/categorias');
     }
 }

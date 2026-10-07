@@ -12,12 +12,11 @@ $returnTo = '/lancamentos?mes=' . month_param($month);
     <section class="card split-side">
         <h2>Novo lançamento</h2>
         <?php View::partial('partials/transaction_form', [
-            'form'         => $form,
-            'categories'   => $categories,
-            'descriptions' => $descriptions,
-            'action'       => '/lancamentos/salvar',
-            'transaction'  => null,
-            'hidden'       => ['mes' => month_param($month)],
+            'form'              => $form,
+            'categories'        => $categories,
+            'expenseCategories' => $expenseCategories,
+            'descriptions'      => $descriptions,
+            'hidden'            => ['mes' => month_param($month)],
         ]); ?>
     </section>
 

@@ -43,7 +43,7 @@ $isOptional = $kind === RecurringBill::KIND_OPTIONAL;
                 <tr>
                     <th>Conta</th>
                     <th>Vencimento</th>
-                    <th>Categoria</th>
+                    <th>Cartão/conta</th>
                     <th>Situação</th>
                     <th class="num">Valor</th>
                     <th class="col-actions"><span class="sr-only">Ações</span></th>
@@ -55,7 +55,7 @@ $isOptional = $kind === RecurringBill::KIND_OPTIONAL;
                     <tr>
                         <td data-label="Conta" class="cell-main"><?= e($t['description']) ?></td>
                         <td data-label="<?= $isPaid ? 'Pago em' : 'Vencimento' ?>"><?= e(date_br($t['transaction_date'])) ?></td>
-                        <td data-label="Categoria"><span class="tag" style="--tag-color: <?= e($t['category_color']) ?>"><?= e($t['category_name']) ?></span></td>
+                        <td data-label="Cartão/conta"><span class="tag" style="--tag-color: <?= e($t['category_color']) ?>"><?= e($t['category_name']) ?></span></td>
                         <td data-label="Situação">
                             <?php if ($isPaid): ?>
                                 <span class="badge badge-success">Paga</span>
@@ -100,7 +100,7 @@ $isOptional = $kind === RecurringBill::KIND_OPTIONAL;
         <?php if (!$bills): ?>
             <div class="empty-state">
                 Nenhuma conta cadastrada.
-                <?= $isOptional ? 'Ex.: streaming, academia, assinaturas.' : 'Ex.: aluguel, luz, internet.' ?>
+                <?= $isOptional ? 'Ex.: YT Premium, streaming, academia.' : 'Ex.: aluguel, luz, internet.' ?>
             </div>
         <?php else: ?>
             <table class="table table-responsive">
@@ -108,7 +108,7 @@ $isOptional = $kind === RecurringBill::KIND_OPTIONAL;
                 <tr>
                     <th>Nome</th>
                     <th>Vencimento</th>
-                    <th>Categoria</th>
+                    <th>Cartão/conta</th>
                     <th>Situação</th>
                     <th class="num">Valor</th>
                     <th class="col-actions"><span class="sr-only">Ações</span></th>
@@ -117,9 +117,13 @@ $isOptional = $kind === RecurringBill::KIND_OPTIONAL;
                 <tbody>
                 <?php foreach ($bills as $b): ?>
                     <tr class="<?= $b['active'] ? '' : 'is-inactive' ?>">
-                        <td data-label="Nome" class="cell-main"><?= e($b['name']) ?></td>
+                        <td data-label="Nome" class="cell-main">
+                            <?= e($b['name']) ?>
+                            <?php if ($b['expense_name']): ?><span class="tag tag-small" style="--tag-color: <?= e($b['expense_color']) ?>"><?= e($b['expense_name']) ?></span><?php endif; ?>
+                            <span class="badge"><?= $b['end_month'] ? 'até ' . e(month_label($b['end_month'])) : 'sem data para acabar' ?></span>
+                        </td>
                         <td data-label="Vencimento">Dia <?= (int) $b['due_day'] ?></td>
-                        <td data-label="Categoria"><span class="tag" style="--tag-color: <?= e($b['category_color']) ?>"><?= e($b['category_name']) ?></span></td>
+                        <td data-label="Cartão/conta"><span class="tag" style="--tag-color: <?= e($b['category_color']) ?>"><?= e($b['category_name']) ?></span></td>
                         <td data-label="Situação"><span class="status <?= $b['active'] ? 'status-ok' : 'status-off' ?>"><?= $b['active'] ? 'Ativa' : 'Inativa' ?></span></td>
                         <td data-label="Valor" class="num"><?= e(money($b['amount'])) ?></td>
                         <td class="col-actions">

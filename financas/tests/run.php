@@ -16,6 +16,7 @@ require APP_PATH . '/Helpers/format.php';
 use App\Services\CompetenceCalculator;
 use App\Services\InstallmentSplitter;
 use App\Services\RecurringService;
+use App\Services\TransactionService;
 
 $failures = 0;
 function check(string $label, mixed $expected, mixed $actual): void
@@ -48,6 +49,10 @@ check('ano bissexto: fecha 29, compra 29/02/2028 → fatura seguinte', '2028-04-
 
 check('conta recorrente dia 31 em fevereiro → 28/02', '2026-02-28', RecurringService::dueDate(new DateTimeImmutable('2026-02-01'), 31)->format('Y-m-d'));
 check('conta recorrente dia 31 em março → 31/03', '2026-03-31', RecurringService::dueDate(new DateTimeImmutable('2026-03-01'), 31)->format('Y-m-d'));
+
+check('meses de out/2026 até dez/2040 = 170 (171 lançamentos)', 170, TransactionService::monthsBetween(new DateTimeImmutable('2026-10-01'), new DateTimeImmutable('2040-12-01')));
+check('mês/ano do formulário', '2040-12-01', month_from_fields(['x_month' => '12', 'x_year' => '2040'], 'x')?->format('Y-m-d'));
+check('ano depois de 2040 é recusado', null, month_from_fields(['x_month' => '1', 'x_year' => '2041'], 'x'));
 
 $split = new InstallmentSplitter();
 check('100,00 em 3x', ['33.34', '33.33', '33.33'], $split->split('100.00', 3));

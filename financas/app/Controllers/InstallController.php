@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
 use App\Models\User;
+use App\Services\Migrator;
 use App\Services\SchemaInstaller;
 use PDOException;
 
@@ -58,6 +59,7 @@ final class InstallController extends Controller
         if (!$installer->isInstalled()) {
             $installer->install();
         }
+        (new Migrator())->migrate();
 
         $users = new User();
         $id = $users->create($name, $email, $password);

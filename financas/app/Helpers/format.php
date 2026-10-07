@@ -4,6 +4,10 @@ declare(strict_types=1);
 use App\Core\Csrf;
 use App\Core\Request;
 
+/** Intervalo de anos disponível nos seletores e lançamentos futuros. */
+const APP_MIN_YEAR = 2020;
+const APP_MAX_YEAR = 2040;
+
 function e(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -104,7 +108,7 @@ function old(array $old, string $key, mixed $default = ''): string
 /** Primeiro dia do mês a partir de 'aaaa-mm'; usa o mês atual se inválido. */
 function month_from_param(mixed $value, ?DateTimeImmutable $default = null): DateTimeImmutable
 {
-    if (is_string($value) && preg_match('/^(\d{4})-(0[1-9]|1[0-2])$/', $value, $m) && $m[1] >= 2000 && $m[1] <= 2100) {
+    if (is_string($value) && preg_match('/^(\d{4})-(0[1-9]|1[0-2])$/', $value, $m) && $m[1] >= APP_MIN_YEAR && $m[1] <= APP_MAX_YEAR) {
         return new DateTimeImmutable("{$m[1]}-{$m[2]}-01");
     }
     return ($default ?? new DateTimeImmutable('today'))->modify('first day of this month')->setTime(0, 0);
@@ -131,4 +135,21 @@ function safe_return_path(mixed $path, string $fallback): string
         return $path;
     }
     return $fallback;
+}
+
+/** Lê um par de campos mês/ano do formulário (ex.: invoice_month + invoice_year). Null se inválido. */
+function month_from_fields(array $input, string $prefix): ?DateTimeImmutable
+{
+    $m = filter_var($input[$prefix . '_month'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 12]]);
+    $y = filter_var($input[$prefix . '_year'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => APP_MIN_YEAR, 'max_range' => APP_MAX_YEAR]]);
+    if ($m === false || $y === false) {
+        return null;
+    }
+    return new DateTimeImmutable(sprintf('%04d-%02d-01', $y, $m));
+}
+
+/** Último mês permitido para lançamentos (dezembro do ano máximo). */
+function last_allowed_month(): DateTimeImmutable
+{
+    return new DateTimeImmutable(APP_MAX_YEAR . '-12-01');
 }

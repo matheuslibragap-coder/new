@@ -59,7 +59,6 @@
         var checked = document.querySelector('[data-category-type]:checked');
         var isCard = checked && checked.value === 'cartao';
         cardFields.hidden = !isCard;
-        cardFields.querySelectorAll('input').forEach(function (input) { input.required = !!isCard; });
     }
     if (typeRadios.length && cardFields) {
         typeRadios.forEach(function (r) { r.addEventListener('change', syncCardFields); });
@@ -101,10 +100,14 @@
         });
     });
 
-    // ---------- Formulário de lançamento ----------
+    // ---------- Formulários de lançamento (Lançamentos, Controle diário e edição) ----------
     var MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    var LAST_MONTH = new Date(2040, 11, 1);
     function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
     function pad(n) { return String(n).padStart(2, '0'); }
+    function monthLabel(d) { return MONTHS[d.getMonth()] + '/' + d.getFullYear(); }
+    function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth() + n, 1); }
+    function monthsBetween(a, b) { return (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth(); }
 
     // Mesma regra de CompetenceCalculator::invoiceDueDate (o servidor é quem decide).
     function invoiceDueDate(date, closingDay, dueDay) {
@@ -116,147 +119,204 @@
         return new Date(dy, dm, Math.min(dueDay, daysInMonth(dy, dm)));
     }
 
-    var txForm = document.querySelector('[data-transaction-form]');
-    if (txForm) {
-        var categorySel = txForm.querySelector('[data-tx-category]');
-        var dateInput = txForm.querySelector('[data-tx-date]');
-        var amountInput = txForm.querySelector('[data-money]');
-        var installmentsField = txForm.querySelector('[data-installments-field]');
-        var installmentsInput = txForm.querySelector('[data-installments]');
-        var installmentsPreview = txForm.querySelector('[data-installments-preview]');
-        var preview = txForm.querySelector('[data-competence-preview]');
-        var manual = txForm.querySelector('[data-competence-manual]');
-        var manualFields = txForm.querySelector('[data-competence-fields]');
-        var inHint = txForm.querySelector('[data-in-hint]');
-        var parcelNumber = parseInt(txForm.getAttribute('data-parcel-number'), 10) || 1;
-        var isEdit = !installmentsField;
+    function setupTxForm(form) {
+        var keepMonths = !!document.querySelector('.alert-error'); // voltou com erro: respeita o que foi escolhido
+        var dirty = {};
 
-        function currentType() {
-            var checked = txForm.querySelector('[data-tx-type]:checked');
-            return checked ? checked.value : 'saida';
+        function value(name) {
+            var checked = form.querySelector('[name="' + name + '"]:checked');
+            if (checked) return checked.value;
+            var el = form.querySelector('[name="' + name + '"]');
+            return el && el.type !== 'radio' && el.type !== 'checkbox' ? el.value : '';
         }
-        function selectedCategory() {
-            return categorySel.options[categorySel.selectedIndex];
+        function monthFrom(prefix) {
+            var m = form.querySelector('select[name="' + prefix + '_month"]:not(:disabled)');
+            var y = form.querySelector('select[name="' + prefix + '_year"]:not(:disabled)');
+            return m && y ? new Date(+y.value, +m.value - 1, 1) : null;
+        }
+        function setMonthFields(box, date) {
+            var selects = box.querySelectorAll('select');
+            selects[0].value = String(date.getMonth() + 1);
+            if (selects[1].querySelector('option[value="' + date.getFullYear() + '"]')) selects[1].value = String(date.getFullYear());
+        }
+        function originOption() {
+            var sel = form.querySelector('[data-origin]');
+            return sel ? sel.options[sel.selectedIndex] : null;
+        }
+        function purchaseDate() {
+            var input = form.querySelector('[data-date]');
+            if (!input || !input.value) return null;
+            var p = input.value.split('-');
+            return new Date(+p[0], +p[1] - 1, +p[2]);
         }
 
-        function update() {
-            var type = currentType();
-            // Entradas: só contas/carteiras
-            Array.prototype.forEach.call(categorySel.options, function (opt) {
-                if (!opt.value) return;
-                var blocked = type === 'entrada' && opt.getAttribute('data-type') !== 'conta';
-                opt.disabled = blocked;
-                opt.hidden = blocked;
+        // Mostra/esconde blocos conforme as escolhas; campos escondidos ficam desabilitados.
+        var showables = form.querySelectorAll('[data-show]');
+        function applyVisibility() {
+            showables.forEach(function (el) {
+                el.hidden = !el.getAttribute('data-show').split(';').every(function (cond) {
+                    var parts = cond.split('=');
+                    return parts[1].split('|').indexOf(value(parts[0])) >= 0;
+                });
             });
-            if (selectedCategory().disabled) categorySel.value = '';
-            if (inHint) inHint.hidden = type !== 'entrada';
-
-            var opt = selectedCategory();
-            var isCard = opt && opt.getAttribute('data-type') === 'cartao';
-            if (installmentsField) {
-                installmentsField.hidden = !(type === 'saida' && isCard);
-                if (installmentsField.hidden) installmentsInput.value = 1;
-            }
-
-            var count = installmentsInput ? parseInt(installmentsInput.value, 10) || 1 : 1;
-            var cents = parseMoney(amountInput.value);
-            if (installmentsPreview) {
-                if (count > 1 && cents) {
-                    var base = Math.floor(cents / count);
-                    var first = base + (cents - base * count);
-                    installmentsPreview.textContent = first === base
-                        ? count + 'x de ' + formatMoney(base)
-                        : '1ª de ' + formatMoney(first) + ' + ' + (count - 1) + 'x de ' + formatMoney(base);
-                } else {
-                    installmentsPreview.textContent = '';
-                }
-            }
-
-            manualFields.hidden = !manual.checked;
-            var firstAmount = cents;
-            if (cents && count > 1) firstAmount = Math.floor(cents / count) + (cents - Math.floor(cents / count) * count);
-
-            if (manual.checked) {
-                var mm = +txForm.querySelector('[name="competence_month"]').value;
-                var yy = +txForm.querySelector('[name="competence_year"]').value;
-                if (!isEdit) preview.textContent = '';
-                scheduleBudgetCheck(type, opt, new Date(yy, mm - 1, 1), firstAmount);
-                return;
-            }
-            if (!opt || !opt.value || !dateInput.value) {
-                if (!isEdit) preview.textContent = '';
-                scheduleBudgetCheck(type, null, null, null);
-                return;
-            }
-            var parts = dateInput.value.split('-');
-            var date = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-            var compMonth, html;
-            if (isCard) {
-                var due = invoiceDueDate(date, +opt.getAttribute('data-closing'), +opt.getAttribute('data-due'));
-                compMonth = new Date(due.getFullYear(), due.getMonth() + (parcelNumber - 1), 1);
-                html = (parcelNumber > 1
-                    ? 'Parcela ' + parcelNumber
-                    : 'Fatura com vencimento em ' + pad(due.getDate()) + '/' + pad(due.getMonth() + 1) + '/' + due.getFullYear()) +
-                    ' → competência <strong>' + MONTHS[compMonth.getMonth()] + '/' + compMonth.getFullYear() + '</strong>';
-                if (count > 1) {
-                    var last = new Date(compMonth.getFullYear(), compMonth.getMonth() + count - 1, 1);
-                    html += ' até <strong>' + MONTHS[last.getMonth()] + '/' + last.getFullYear() + '</strong>';
-                }
-            } else {
-                compMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-                html = 'Competência <strong>' + MONTHS[compMonth.getMonth()] + '/' + compMonth.getFullYear() + '</strong>';
-            }
-            preview.innerHTML = html;
-
-            // Deixa o ajuste manual já posicionado no mês calculado
-            txForm.querySelector('[name="competence_month"]').value = String(compMonth.getMonth() + 1);
-            var yearSel = txForm.querySelector('[name="competence_year"]');
-            if (yearSel.querySelector('option[value="' + compMonth.getFullYear() + '"]')) yearSel.value = String(compMonth.getFullYear());
-
-            scheduleBudgetCheck(type, opt, compMonth, firstAmount);
+            form.querySelectorAll('input, select, textarea').forEach(function (c) {
+                if (c.type === 'hidden') return;
+                c.disabled = !!c.closest('[data-show][hidden]');
+            });
+            var untilEnd = form.querySelector('[data-until-end]');
+            var monthsInput = form.querySelector('[data-months]');
+            if (untilEnd && monthsInput && !untilEnd.disabled) monthsInput.disabled = untilEnd.checked;
+        }
+        // Se a opção marcada ficou escondida (ex.: "Parcelado" ao trocar para Entrada), marca a primeira visível.
+        function fixHiddenChoices() {
+            var changed = false;
+            form.querySelectorAll('input[type="radio"]:checked:disabled').forEach(function (r) {
+                var alt = form.querySelector('input[type="radio"][name="' + r.name + '"]:not(:disabled)');
+                if (alt) { alt.checked = true; changed = true; }
+            });
+            return changed;
         }
 
-        // Aviso de orçamento: consulta o gasto da categoria no mês de competência
-        var budgetWarning = txForm.querySelector('[data-budget-warning]');
-        var budgetUrl = txForm.getAttribute('data-budget-url');
-        var excludeId = txForm.getAttribute('data-transaction-id');
+        function suggestion() {
+            var date = purchaseDate();
+            if (!date) return null;
+            var opt = originOption();
+            var closing = opt ? +opt.getAttribute('data-closing') : 0, due = opt ? +opt.getAttribute('data-due') : 0;
+            if (opt && opt.getAttribute('data-type') === 'cartao' && closing && due) {
+                var d = invoiceDueDate(date, closing, due);
+                return { month: new Date(d.getFullYear(), d.getMonth(), 1), hint: 'Sugestão pelo fechamento do cartão: fatura com vencimento em ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + '. Pode trocar se quiser.' };
+            }
+            return { month: addMonths(date, 1), hint: 'Sugestão: mês seguinte ao da compra. Cadastre o fechamento e o vencimento do cartão em "Contas e cartões" para sugestões exatas.' };
+        }
+        function applySuggestion() {
+            var s = suggestion();
+            form.querySelectorAll('[data-suggest]').forEach(function (box) {
+                var hint = box.parentElement.querySelector('[data-suggest-hint]');
+                if (!s) { if (hint) hint.textContent = ''; return; }
+                if (!dirty[box.getAttribute('data-suggest')] && !keepMonths) setMonthFields(box, s.month);
+                if (hint) hint.textContent = s.hint;
+            });
+        }
+        form.querySelectorAll('[data-suggest]').forEach(function (box) {
+            box.querySelectorAll('select').forEach(function (sel) {
+                sel.addEventListener('change', function () { dirty[box.getAttribute('data-suggest')] = true; update(); });
+            });
+        });
+
+        // Calcula o que vai ser lançado: mês, quantidade e valor do primeiro lançamento.
+        function plan() {
+            var cents = parseMoney(value('amount'));
+            var mode = value('mode');
+            var date = purchaseDate();
+            var first = null, count = 1, firstCents = cents, eachCents = cents;
+            if (form.querySelector('[data-competence]')) {
+                first = monthFrom('competence');
+            } else if (mode === 'recorrente' || mode === 'parcelado') {
+                first = monthFrom('start');
+                if (mode === 'parcelado') {
+                    count = parseInt(value('installments'), 10) || 0;
+                    if (cents && count > 1) {
+                        eachCents = Math.floor(cents / count);
+                        firstCents = eachCents + (cents - eachCents * count);
+                    }
+                } else {
+                    var untilEnd = form.querySelector('[data-until-end]');
+                    count = untilEnd && untilEnd.checked && first ? monthsBetween(first, LAST_MONTH) + 1 : (parseInt(value('months'), 10) || 0);
+                }
+            } else if (value('payment_method') === 'credito') {
+                first = monthFrom('invoice');
+            } else if (date) {
+                first = new Date(date.getFullYear(), date.getMonth(), 1);
+            }
+            return { mode: mode, first: first, count: count, cents: cents, firstCents: firstCents, eachCents: eachCents };
+        }
+
+        function renderSummary(p) {
+            var el = form.querySelector('[data-tx-summary]');
+            if (!el) return;
+            if (!p.first || !p.cents || p.count < 1) { el.hidden = true; return; }
+            var last = addMonths(p.first, p.count - 1);
+            var range = p.count > 1 ? ', de <strong>' + monthLabel(p.first) + '</strong> a <strong>' + monthLabel(last) + '</strong>' : ' em <strong>' + monthLabel(p.first) + '</strong>';
+            var html;
+            if (p.mode === 'parcelado') {
+                html = p.count + 'x de ' + formatMoney(p.eachCents) + (p.firstCents !== p.eachCents ? ' (1ª de ' + formatMoney(p.firstCents) + ')' : '') + range + '.';
+            } else if (p.mode === 'recorrente') {
+                html = p.count + ' lançamento(s) de ' + formatMoney(p.cents) + range + '.';
+            } else {
+                html = 'Vai contar' + range + (value('payment_method') === 'credito' ? ' (fatura do cartão)' : '') + '.';
+            }
+            if (last > LAST_MONTH) html += ' <span class="amount-out">Passa de dezembro de 2040: diminua a quantidade.</span>';
+            el.innerHTML = html;
+            el.hidden = false;
+        }
+
+        // Aviso de orçamento: consulta o gasto da conta/cartão no mês do primeiro lançamento.
+        var budgetWarning = form.querySelector('[data-budget-warning]');
+        var budgetUrl = form.getAttribute('data-budget-url');
+        var excludeId = form.getAttribute('data-transaction-id') || '0';
         var budgetTimer = null, budgetSeq = 0;
-        function scheduleBudgetCheck(type, opt, month, amountCents) {
+        function scheduleBudgetCheck(p) {
+            if (!budgetWarning) return;
             clearTimeout(budgetTimer);
-            if (type !== 'saida' || !opt || !opt.value || !month || !amountCents) {
+            var opt = originOption();
+            if (value('type') !== 'saida' || !opt || !opt.value || !p.first || !p.firstCents) {
                 budgetWarning.hidden = true;
                 return;
             }
             budgetTimer = setTimeout(function () {
                 var seq = ++budgetSeq;
-                var monthParam = month.getFullYear() + '-' + pad(month.getMonth() + 1);
-                var url = budgetUrl + '?categoria=' + encodeURIComponent(opt.value) + '&mes=' + monthParam + '&excluir=' + encodeURIComponent(excludeId);
-                fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                var monthParam = p.first.getFullYear() + '-' + pad(p.first.getMonth() + 1);
+                fetch(budgetUrl + '?categoria=' + encodeURIComponent(opt.value) + '&mes=' + monthParam + '&excluir=' + encodeURIComponent(excludeId),
+                    { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
                     .then(function (r) { return r.ok ? r.json() : null; })
                     .then(function (data) {
                         if (seq !== budgetSeq) return;
                         if (!data || data.limit === null) { budgetWarning.hidden = true; return; }
                         var limit = Math.round(data.limit * 100);
-                        var after = Math.round(data.spent * 100) + amountCents;
-                        var pct = Math.round(after / limit * 100);
+                        var after = Math.round(data.spent * 100) + p.firstCents;
                         if (after <= limit * 0.8) { budgetWarning.hidden = true; return; }
                         var name = opt.textContent.split('·')[0].trim();
-                        var monthLabel = MONTHS[month.getMonth()] + '/' + month.getFullYear();
                         budgetWarning.className = 'alert budget-warning ' + (after > limit ? 'alert-error' : 'alert-warning');
                         budgetWarning.textContent = (after > limit ? 'Este lançamento faz ' + name + ' passar do orçamento' : 'Com este lançamento, ' + name + ' passa de 80% do orçamento') +
-                            ' em ' + monthLabel + ': ' + formatMoney(after) + ' de ' + formatMoney(limit) + ' (' + pct + '%).';
+                            ' em ' + monthLabel(p.first) + ': ' + formatMoney(after) + ' de ' + formatMoney(limit) + ' (' + Math.round(after / limit * 100) + '%).';
                         budgetWarning.hidden = false;
                     })
                     .catch(function () { budgetWarning.hidden = true; });
             }, 300);
         }
 
-        txForm.querySelectorAll('[data-tx-type]').forEach(function (r) { r.addEventListener('change', update); });
-        [categorySel, dateInput, manual].forEach(function (el) { el.addEventListener('change', update); });
-        txForm.querySelectorAll('[name="competence_month"], [name="competence_year"]').forEach(function (el) { el.addEventListener('change', update); });
-        [amountInput, installmentsInput].forEach(function (el) { if (el) el.addEventListener('input', update); });
+        function update() {
+            applyVisibility();
+            if (fixHiddenChoices()) applyVisibility();
+            var p = plan();
+            renderSummary(p);
+            scheduleBudgetCheck(p);
+        }
+
+        form.addEventListener('change', function (e) {
+            if (e.target.matches('[data-origin], [data-date], [name="payment_method"], [name="mode"]')) applySuggestion();
+            update();
+        });
+        form.addEventListener('input', function (e) {
+            if (e.target.matches('[data-money], [data-months], [data-installments]')) update();
+        });
+        applySuggestion();
+        keepMonths = false;
         update();
     }
+    document.querySelectorAll('form[data-tx-form]').forEach(setupTxForm);
+
+    // Mostra/esconde um bloco ligado a um checkbox (ex.: "Tem data para acabar")
+    document.querySelectorAll('[data-toggle-target]').forEach(function (box) {
+        var target = document.getElementById(box.getAttribute('data-toggle-target'));
+        function sync() {
+            target.hidden = !box.checked;
+            target.querySelectorAll('input, select').forEach(function (c) { c.disabled = !box.checked; });
+        }
+        box.addEventListener('change', sync);
+        sync();
+    });
+
     // ---------- Gráficos do Painel ----------
     var dataEl = document.getElementById('dashboard-data');
     if (dataEl && window.Chart) {
@@ -277,16 +337,17 @@
             boxPadding: 4, usePointStyle: true
         };
 
-        var donutCanvas = document.getElementById('chart-categories');
-        if (donutCanvas && data.categories.length) {
-            var total = data.categories.reduce(function (s, c) { return s + c.value; }, 0);
-            new Chart(donutCanvas, {
+        function donut(canvasId, items) {
+            var canvas = document.getElementById(canvasId);
+            if (!canvas || !items.length) return;
+            var total = items.reduce(function (s, c) { return s + c.value; }, 0);
+            new Chart(canvas, {
                 type: 'doughnut',
                 data: {
-                    labels: data.categories.map(function (c) { return c.label; }),
+                    labels: items.map(function (c) { return c.label; }),
                     datasets: [{
-                        data: data.categories.map(function (c) { return c.value; }),
-                        backgroundColor: data.categories.map(function (c) { return c.color; }),
+                        data: items.map(function (c) { return c.value; }),
+                        backgroundColor: items.map(function (c) { return c.color; }),
                         borderColor: surface, borderWidth: 2, hoverOffset: 6
                     }]
                 },
@@ -305,6 +366,8 @@
                 }
             });
         }
+        donut('chart-categories', data.categories);
+        donut('chart-expenses', data.expenses || []);
 
         var barCanvas = document.getElementById('chart-months');
         if (barCanvas) {

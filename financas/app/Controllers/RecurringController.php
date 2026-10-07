@@ -7,6 +7,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Session;
 use App\Models\Category;
+use App\Models\ExpenseCategory;
 use App\Models\RecurringBill;
 use App\Models\Transaction;
 use App\Services\RecurringService;
@@ -68,6 +69,7 @@ final class RecurringController extends Controller
             'kind'       => $kind,
             'bill'       => null,
             'categories' => (new Category())->active(),
+            'expenseCategories' => (new ExpenseCategory())->active(),
             'old'        => Session::pullOldInput(),
             'backPath'   => self::PAGES[$kind]['path'],
         ]);
@@ -85,6 +87,7 @@ final class RecurringController extends Controller
             'kind'       => $bill['kind'],
             'bill'       => $bill,
             'categories' => $categories,
+            'expenseCategories' => (new ExpenseCategory())->active(),
             'old'        => Session::pullOldInput(),
             'backPath'   => self::PAGES[$bill['kind']]['path'],
         ]);
@@ -97,13 +100,14 @@ final class RecurringController extends Controller
         $kind = $bill['kind'] ?? $this->kindFromInput();
 
         $input = [
-            'name'        => preg_replace('/\s+/u', ' ', (string) Request::input('name', '')) ?? '',
-            'amount'      => (string) Request::input('amount', ''),
-            'due_day'     => (string) Request::input('due_day', ''),
-            'category_id' => (string) Request::input('category_id', ''),
-            'start_month' => (string) Request::input('start_month', ''),
-            'kind'        => $kind,
-        ];
+            'name'                => preg_replace('/\s+/u', ' ', (string) Request::input('name', '')) ?? '',
+            'amount'              => (string) Request::input('amount', ''),
+            'due_day'             => (string) Request::input('due_day', ''),
+            'category_id'         => (string) Request::input('category_id', ''),
+            'expense_category_id' => (string) Request::input('expense_category_id', ''),
+            'has_end'             => (string) Request::input('has_end', ''),
+            'kind'                => $kind,
+        ] + array_intersect_key($_POST, array_flip(['start_month', 'start_year', 'end_month', 'end_year']));
 
         $errors = [];
         if ($input['name'] === '' || mb_strlen($input['name']) > 100) {
@@ -120,9 +124,25 @@ final class RecurringController extends Controller
         $category = (new Category())->find((int) $input['category_id']);
         $keepsCurrent = $bill !== null && $category !== null && (int) $category['id'] === (int) $bill['category_id'];
         if ($category === null || (!$category['active'] && !$keepsCurrent)) {
-            $errors[] = 'Escolha uma categoria.';
+            $errors[] = 'Escolha em qual cartão ou conta a cobrança é feita.';
         }
-        $startMonth = month_from_param($input['start_month']);
+        $expenseCategory = null;
+        if ((int) $input['expense_category_id'] > 0) {
+            $expenseCategory = (new ExpenseCategory())->find((int) $input['expense_category_id']);
+            if ($expenseCategory === null) {
+                $errors[] = 'Categoria de gasto inválida.';
+            }
+        }
+        $startMonth = $bill !== null
+            ? new DateTimeImmutable($bill['start_month'])
+            : (month_from_fields($input, 'start') ?? RecurringService::currentMonth());
+        $endMonth = null;
+        if ($input['has_end'] !== '') {
+            $endMonth = month_from_fields($input, 'end');
+            if ($endMonth === null || $endMonth < $startMonth) {
+                $errors[] = 'O último mês precisa ser igual ou depois do primeiro.';
+            }
+        }
 
         if ($errors) {
             $back = $bill ? '/contas/editar?id=' . $bill['id'] : '/contas/nova?tipo=' . $kind;
@@ -135,7 +155,9 @@ final class RecurringController extends Controller
             'amount'      => $amount,
             'due_day'     => $dueDay,
             'category_id' => (int) $category['id'],
+            'expense_category_id' => $expenseCategory !== null ? (int) $expenseCategory['id'] : null,
             'start_month' => $startMonth->format('Y-m-d'),
+            'end_month'   => $endMonth?->format('Y-m-d'),
         ];
 
         $service = new RecurringService();
@@ -144,7 +166,9 @@ final class RecurringController extends Controller
             Session::flash('success', 'Conta atualizada. Os lançamentos pendentes a partir deste mês foram ajustados.');
         } else {
             $service->create($data);
-            Session::flash('success', sprintf('Conta cadastrada. Ela será lançada todo mês a partir de %s.', month_label($startMonth)));
+            Session::flash('success', $endMonth !== null
+                ? sprintf('Conta cadastrada. Ela será lançada todo mês de %s a %s.', month_label($startMonth), month_label($endMonth))
+                : sprintf('Conta cadastrada. Ela será lançada todo mês a partir de %s.', month_label($startMonth)));
         }
         redirect(self::PAGES[$kind]['path']);
     }

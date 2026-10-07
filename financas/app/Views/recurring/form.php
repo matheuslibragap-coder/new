@@ -1,9 +1,12 @@
 <?php
-use App\Models\Category;
+use App\Core\View;
 
 $v = static fn (string $key, mixed $default = '') => old($old, $key, $bill[$key] ?? $default);
 $amount = $old['amount'] ?? ($bill ? money_input($bill['amount']) : '');
-$startMonth = old($old, 'start_month', date('Y-m'));
+$now = new DateTimeImmutable('first day of this month');
+$end = !empty($bill['end_month']) ? new DateTimeImmutable($bill['end_month']) : $now->modify('+11 months');
+$hasEnd = $old ? !empty($old['has_end']) : !empty($bill['end_month']);
+$isOptional = $kind === 'opcional';
 ?>
 <div class="page-header">
     <h1><?= e($title) ?></h1>
@@ -17,7 +20,7 @@ $startMonth = old($old, 'start_month', date('Y-m'));
     <label class="field">
         <span>Nome</span>
         <input type="text" name="name" value="<?= e($v('name')) ?>" required maxlength="100" autofocus
-               placeholder="<?= $kind === 'opcional' ? 'Ex.: Netflix, Academia' : 'Ex.: Aluguel, Luz, Internet' ?>">
+               placeholder="<?= $isOptional ? 'Ex.: YT Premium, Netflix, Academia' : 'Ex.: Aluguel, Luz, Internet' ?>">
     </label>
 
     <div class="field-row">
@@ -29,37 +32,50 @@ $startMonth = old($old, 'start_month', date('Y-m'));
             </div>
         </label>
         <label class="field">
-            <span>Dia de vencimento</span>
+            <span>Dia de vencimento ou cobrança</span>
             <input type="number" name="due_day" value="<?= e($v('due_day')) ?>" required min="1" max="31" inputmode="numeric">
         </label>
     </div>
 
     <label class="field">
-        <span>Categoria (onde é paga)</span>
-        <select name="category_id" required>
-            <option value="">Selecione…</option>
-            <?php foreach ($categories as $c): ?>
-                <option value="<?= (int) $c['id'] ?>" <?= (string) $v('category_id') === (string) $c['id'] ? 'selected' : '' ?>>
-                    <?= e($c['name']) ?><?= $c['active'] ? '' : ' (inativa)' ?> · <?= $c['type'] === Category::TYPE_CARD ? 'cartão' : 'conta' ?>
-                </option>
+        <span>Em qual cartão ou conta é cobrada?</span>
+        <?php View::partial('partials/origin_select', ['categories' => $categories, 'selected' => $v('category_id')]); ?>
+        <small class="muted small">Ex.: o YT Premium cobrado no CC Nubank M. Para cadastrar outro cartão, use a aba <a href="<?= e(url('/categorias')) ?>">Contas e cartões</a>.</small>
+    </label>
+
+    <label class="field">
+        <span>Categoria do gasto <small class="muted">(opcional)</small></span>
+        <select name="expense_category_id">
+            <option value="">Sem categoria</option>
+            <?php foreach ($expenseCategories as $ec): ?>
+                <option value="<?= (int) $ec['id'] ?>" <?= (string) $v('expense_category_id') === (string) $ec['id'] ? 'selected' : '' ?>><?= e($ec['name']) ?></option>
             <?php endforeach; ?>
         </select>
     </label>
 
     <?php if ($bill === null): ?>
-        <label class="field">
-            <span>Lançar a partir de</span>
-            <select name="start_month">
-                <?php $first = (new DateTimeImmutable('first day of this month'))->modify('-12 months'); ?>
-                <?php for ($i = 0; $i <= 24; $i++): $m = $first->modify("+{$i} month"); ?>
-                    <option value="<?= e(month_param($m)) ?>" <?= $startMonth === month_param($m) ? 'selected' : '' ?>><?= e(month_label($m)) ?></option>
-                <?php endfor; ?>
-            </select>
-            <small class="muted small">Todo mês a conta aparece como pendente até você marcar como paga.</small>
-        </label>
-    <?php else: ?>
-        <p class="muted small">Alterações valem para os lançamentos pendentes a partir deste mês. Contas já pagas não mudam.</p>
+        <?php View::partial('partials/month_fields', [
+            'prefix' => 'start', 'label' => 'Primeiro mês',
+            'month' => $old['start_month'] ?? $now->format('n'), 'year' => $old['start_year'] ?? $now->format('Y'),
+        ]); ?>
     <?php endif; ?>
+
+    <label class="checkbox">
+        <input type="checkbox" name="has_end" value="1" <?= $hasEnd ? 'checked' : '' ?> data-toggle-target="end-fields">
+        Tem data para acabar
+    </label>
+    <div id="end-fields" class="sub-box" <?= $hasEnd ? '' : 'hidden' ?>>
+        <?php View::partial('partials/month_fields', [
+            'prefix' => 'end', 'label' => 'Último mês',
+            'month' => $old['end_month'] ?? $end->format('n'), 'year' => $old['end_year'] ?? $end->format('Y'),
+        ]); ?>
+    </div>
+
+    <p class="muted small">
+        <?= $bill === null
+            ? 'Todo mês a conta aparece como pendente até você marcar como paga. Sem data para acabar, ela continua sendo lançada até você desativar.'
+            : 'Alterações valem para os lançamentos pendentes a partir deste mês. Contas já pagas não mudam.' ?>
+    </p>
 
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Salvar</button>

@@ -9,7 +9,7 @@ $levelLabels = ['ok' => 'Dentro do limite', 'warning' => 'Acima de 80%', 'over' 
     <?php View::partial('partials/month_picker', ['month' => $month, 'path' => '/orcamentos']); ?>
 </div>
 
-<p class="muted">Defina um limite mensal por categoria. O limite é o mesmo todo mês; o gasto mostrado é de <?= e(month_label($month)) ?> (efetivados + pendentes). Deixe em branco para não ter limite.</p>
+<p class="muted">Defina um limite mensal por conta ou cartão. O limite é o mesmo todo mês; o gasto mostrado é de <?= e(month_label($month)) ?> (efetivados + pendentes). Deixe em branco para não ter limite.</p>
 
 <form method="post" action="<?= e(url('/orcamentos/salvar')) ?>" class="card card-flush">
     <?= csrf_field() ?>

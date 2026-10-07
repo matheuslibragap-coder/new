@@ -20,12 +20,23 @@ $pageUrl = static fn (int $p) => url('/historico', $activeParams + ($p > 1 ? ['p
         </select>
     </label>
     <label class="field">
-        <span>Categoria</span>
+        <span>Conta/cartão</span>
         <select name="categoria">
             <option value="">Todas</option>
             <?php foreach ($categories as $c): ?>
                 <option value="<?= (int) $c['id'] ?>" <?= (string) $params['categoria'] === (string) $c['id'] ? 'selected' : '' ?>>
                     <?= e($c['name']) ?><?= $c['active'] ? '' : ' (inativa)' ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </label>
+    <label class="field">
+        <span>Categoria de gasto</span>
+        <select name="gasto">
+            <option value="">Todas</option>
+            <?php foreach ($expenseCategories as $ec): ?>
+                <option value="<?= (int) $ec['id'] ?>" <?= (string) $params['gasto'] === (string) $ec['id'] ? 'selected' : '' ?>>
+                    <?= e($ec['name']) ?><?= $ec['active'] ? '' : ' (inativa)' ?>
                 </option>
             <?php endforeach; ?>
         </select>
