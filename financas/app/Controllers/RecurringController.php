@@ -18,7 +18,7 @@ final class RecurringController extends Controller
 {
     private const PAGES = [
         RecurringBill::KIND_MANDATORY => ['path' => '/contas/obrigatorias', 'title' => 'Contas obrigatórias'],
-        RecurringBill::KIND_OPTIONAL  => ['path' => '/contas/opcionais',    'title' => 'Contas opcionais'],
+        RecurringBill::KIND_OPTIONAL  => ['path' => '/dividas',             'title' => 'Dívidas postergáveis'],
     ];
 
     public function mandatory(): void
@@ -29,6 +29,12 @@ final class RecurringController extends Controller
     public function optional(): void
     {
         $this->index(RecurringBill::KIND_OPTIONAL);
+    }
+
+    /** Endereço antigo da aba (antes "Contas opcionais"). */
+    public function legacyOptional(): void
+    {
+        redirect('/dividas', array_filter(['mes' => Request::query('mes')]));
     }
 
     private function index(string $kind): void
@@ -58,6 +64,7 @@ final class RecurringController extends Controller
             'bills'        => $bills->allOfKind($kind),
             'monthlyTotal' => $bills->monthlyTotal($kind),
             'returnTo'     => self::PAGES[$kind]['path'] . '?mes=' . month_param($month),
+            'postponable'  => $kind === RecurringBill::KIND_OPTIONAL ? (new Transaction())->postponableForMonth($month) : [],
         ]);
     }
 
@@ -65,7 +72,7 @@ final class RecurringController extends Controller
     {
         $kind = $this->kindFromInput();
         $this->view('recurring/form', [
-            'title'      => 'Nova conta ' . ($kind === RecurringBill::KIND_MANDATORY ? 'obrigatória' : 'opcional'),
+            'title'      => $kind === RecurringBill::KIND_MANDATORY ? 'Nova conta obrigatória' : 'Nova dívida postergável recorrente',
             'kind'       => $kind,
             'bill'       => null,
             'categories' => (new Category())->active(),

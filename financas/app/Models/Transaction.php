@@ -169,6 +169,37 @@ final class Transaction extends Model
         );
     }
 
+    // ---------- Dívidas postergáveis ----------
+
+    /** Marca/desmarca como postergável: o grupo inteiro (parcelado/recorrente) ou só o lançamento. */
+    public function setPostponable(array $transaction, bool $on): int
+    {
+        if ($transaction['installment_group_id'] !== null) {
+            return $this->execute(
+                'UPDATE transactions SET postponable = ? WHERE installment_group_id = ? AND user_id = ?',
+                [(int) $on, (int) $transaction['installment_group_id'], $this->uid()]
+            );
+        }
+        return $this->execute('UPDATE transactions SET postponable = ? WHERE id = ? AND user_id = ?', [(int) $on, (int) $transaction['id'], $this->uid()]);
+    }
+
+    public function postponableForMonth(DateTimeImmutable $month): array
+    {
+        return $this->fetchAll(
+            self::SELECT . " WHERE t.user_id = ? AND t.postponable = 1 AND t.competence_month = ?
+                             ORDER BY t.status DESC, t.transaction_date, t.id",
+            [$this->uid(), $month->format('Y-m-d')]
+        );
+    }
+
+    public function moveTo(int $id, string $competenceMonth, string $date): void
+    {
+        $this->execute(
+            'UPDATE transactions SET competence_month = ?, transaction_date = ?, competence_manual = 1 WHERE id = ? AND user_id = ?',
+            [$competenceMonth, $date, $id, $this->uid()]
+        );
+    }
+
     // ---------- Consultas ----------
 
     public function forMonth(DateTimeImmutable $month): array

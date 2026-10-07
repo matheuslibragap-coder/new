@@ -382,6 +382,44 @@ final class TransactionService
         return count($items);
     }
 
+    /**
+     * Adia um mês. Em parcelados/recorrentes, adia este e os seguintes do grupo,
+     * para continuar um lançamento por mês.
+     *
+     * @return int quantidade de lançamentos adiados
+     */
+    public function postpone(array $current): int
+    {
+        $items = $current['installment_group_id'] === null
+            ? [$current]
+            : $this->itemsInScope((int) $current['installment_group_id'], (int) $current['installment_number'], self::SCOPE_NEXT, (int) $current['id']);
+
+        $last = last_allowed_month();
+        foreach ($items as $item) {
+            if ((new DateTimeImmutable($item['competence_month']))->modify('+1 month') > $last) {
+                throw new \DomainException(sprintf('Não dá para adiar além de dezembro de %d.', APP_MAX_YEAR));
+            }
+        }
+
+        $db = Database::connection();
+        $db->beginTransaction();
+        try {
+            foreach ($items as $item) {
+                $date = new DateTimeImmutable($item['transaction_date']);
+                $this->transactions->moveTo(
+                    (int) $item['id'],
+                    (new DateTimeImmutable($item['competence_month']))->modify('+1 month')->format('Y-m-d'),
+                    self::itemDate($date, $date->modify('first day of next month'))->format('Y-m-d')
+                );
+            }
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+        return count($items);
+    }
+
     private function itemsInScope(int $groupId, int $number, string $scope, int $currentId): array
     {
         return array_values(array_filter($this->transactions->groupParcels($groupId), static fn (array $p) => match ($scope) {

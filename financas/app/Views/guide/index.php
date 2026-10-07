@@ -23,11 +23,11 @@ $steps = [
         'text'  => 'Despesas fixas essenciais: aluguel, luz, água, internet, condomínio. Elas aparecem todo mês como <strong>pendentes</strong> até você marcar como pagas. Deixe sem data para acabar e elas seguem mês a mês (até ' . APP_MAX_YEAR . ').',
     ],
     [
-        'title' => 'Cadastre assinaturas e contas opcionais',
-        'where' => ['/contas/opcionais', 'Contas opcionais'],
+        'title' => 'Cadastre assinaturas e dívidas postergáveis',
+        'where' => ['/dividas', 'Dívidas postergáveis'],
         'ok'    => $counts['optional'] > 0,
         'count' => $counts['optional'] . ' cadastrada(s)',
-        'text'  => 'Assinaturas e gastos que dá para cortar: YT Premium, Netflix, academia. Em cada uma, escolha <strong>em qual cartão ou conta</strong> ela é cobrada. A aba mostra quanto você economizaria por ano cortando todas.',
+        'text'  => 'Assinaturas e gastos que dá para cortar (YT Premium, Netflix, academia): cadastre como recorrentes e escolha <strong>em qual cartão ou conta</strong> cada uma é cobrada. Na aba Lançamentos, o botão <strong>"Postergável"</strong> também transforma qualquer pagamento em dívida postergável, que pode ser adiada para o mês seguinte.',
     ],
     [
         'title' => 'Lance suas entradas',
@@ -73,7 +73,7 @@ $completed = count(array_filter($steps, static fn ($s) => $s['ok']));
         <form method="post" action="<?= e(url('/guia/zerar')) ?>" class="form">
             <?= csrf_field() ?>
             <p>Apaga <strong>todos os lançamentos</strong> (entradas, saídas, parcelas, gastos diários e o histórico de contas pagas). Contas e cartões e categorias de gasto continuam. <strong>Não dá para desfazer.</strong></p>
-            <label class="checkbox"><input type="checkbox" name="apagar_contas" value="1"> Apagar também as contas obrigatórias e opcionais cadastradas</label>
+            <label class="checkbox"><input type="checkbox" name="apagar_contas" value="1"> Apagar também as contas obrigatórias e as assinaturas de Dívidas postergáveis cadastradas</label>
             <label class="checkbox"><input type="checkbox" name="apagar_orcamentos" value="1"> Apagar também os orçamentos</label>
             <label class="field">
                 <span>Para confirmar, digite APAGAR</span>

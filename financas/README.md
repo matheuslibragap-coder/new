@@ -133,7 +133,7 @@ Na primeira vez que você entra, o sistema abre o **Guia inicial**, com os passo
 1. Conferir **Contas e cartões** (as origens do dinheiro).
 2. Conferir as **categorias de gasto**.
 3. Cadastrar as **contas obrigatórias** (aluguel, luz…).
-4. Cadastrar **assinaturas e contas opcionais**, escolhendo em qual cartão cada uma é cobrada.
+4. Cadastrar **assinaturas e dívidas postergáveis**, escolhendo em qual cartão cada uma é cobrada.
 5. Lançar as **entradas** (salário como recorrente).
 6. Lançar as **compras parceladas** que ainda estão correndo.
 7. Definir **orçamentos** (opcional).
@@ -178,6 +178,12 @@ Os seletores de mês vão de 2020 até **dezembro de 2040**.
 - Na lista de Lançamentos e no Histórico, a coluna **"Pago"** tem uma caixinha em cada linha. Ao marcar, o valor passa a contar no saldo atual. Ao desmarcar, volta para "a pagar". Nas contas obrigatórias e opcionais, marcar registra a data de hoje como data do pagamento.
 - O que passa da data sem estar pago aparece em **vermelho**, com a etiqueta **"Vencido"**, e entra no alerta do Painel.
 - O resumo de Lançamentos mostra as entradas recebidas, as saídas pagas, o total a pagar (destacando o que está vencido), o saldo atual (só o que foi pago e recebido) e o saldo previsto.
+
+### Dívidas postergáveis
+- Na lista de Lançamentos, toda saída tem o botão **"Postergável"**, que a transforma em **dívida postergável**. Em parcelados e recorrentes, o botão vale para o grupo inteiro (todas as parcelas do empréstimo, por exemplo). Clicar de novo desfaz.
+- A aba **Dívidas postergáveis** (antiga "Contas opcionais") mostra essas dívidas mês a mês, com o total, quanto falta pagar e a caixinha "Pago".
+- O botão **"Adiar 1 mês"** empurra a dívida para o mês seguinte, mudando tanto o mês em que ela conta no saldo quanto o vencimento. Numa parcela, ela e as seguintes andam juntas, para continuar uma parcela por mês.
+- A mesma aba continua com as **assinaturas e contas recorrentes** que dá para cortar (YT Premium, streaming), mostrando quanto você economizaria por ano.
 
 ### Controle diário
 Aba para os gastos do dia a dia, como um energético de R$ 12. Você informa valor, o que foi, a **categoria do gasto**, de qual conta ou cartão saiu e como pagou. A aba mostra o total do mês, o total de hoje, a média por dia, os gastos por categoria e a lista agrupada por dia.

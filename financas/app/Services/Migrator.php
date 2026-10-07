@@ -15,7 +15,7 @@ use PDOException;
  */
 final class Migrator
 {
-    public const LATEST = 3;
+    public const LATEST = 4;
 
     /** Tabelas cujos registros pertencem a um usuário (a partir da versão 3). */
     private const USER_TABLES = ['categories', 'expense_categories', 'recurring_bills', 'installment_groups', 'transactions', 'settings'];
@@ -156,6 +156,18 @@ final class Migrator
         )->fetchColumn();
         if ($pk !== 'user_id,name') {
             $this->db->exec('ALTER TABLE settings DROP PRIMARY KEY, ADD PRIMARY KEY (user_id, name)');
+        }
+    }
+
+    /** Dívidas postergáveis: qualquer saída pode ser marcada como postergável. */
+    private function migrate4(): void
+    {
+        if (!$this->columnExists('transactions', 'postponable')) {
+            $this->db->exec(
+                'ALTER TABLE transactions
+                    ADD COLUMN postponable TINYINT(1) NOT NULL DEFAULT 0 AFTER is_daily,
+                    ADD KEY idx_tx_postponable (user_id, postponable, competence_month)'
+            );
         }
     }
 

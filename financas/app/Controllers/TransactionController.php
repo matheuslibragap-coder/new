@@ -147,6 +147,42 @@ final class TransactionController extends Controller
         redirect($returnTo);
     }
 
+    /** Botão "Postergável" da lista: transforma (ou deixa de ser) dívida postergável. */
+    public function togglePostponable(): void
+    {
+        $transaction = $this->findOrFail((int) Request::input('id', 0));
+        $returnTo = safe_return_path(Request::input('voltar'), $this->defaultReturn($transaction));
+        if ($transaction['type'] !== Transaction::TYPE_OUT) {
+            Session::flash('error', 'Só saídas podem virar dívidas postergáveis.');
+            redirect($returnTo);
+        }
+        $on = !$transaction['postponable'];
+        $count = (new Transaction())->setPostponable($transaction, $on);
+        $what = $transaction['installment_group_id'] !== null ? sprintf('"%s" (%d lançamentos)', $transaction['group_description'], $count) : sprintf('"%s"', $transaction['description']);
+        Session::flash('success', $on
+            ? sprintf('%s agora é dívida postergável. Veja na aba Dívidas postergáveis.', $what)
+            : sprintf('%s deixou de ser dívida postergável.', $what));
+        redirect($returnTo);
+    }
+
+    /** Adia uma dívida postergável para o mês seguinte. */
+    public function postpone(): void
+    {
+        $transaction = $this->findOrFail((int) Request::input('id', 0));
+        $returnTo = safe_return_path(Request::input('voltar'), '/dividas');
+        try {
+            $count = (new TransactionService())->postpone($transaction);
+        } catch (\DomainException $e) {
+            Session::flash('error', $e->getMessage());
+            redirect($returnTo);
+        }
+        $next = (new DateTimeImmutable($transaction['competence_month']))->modify('+1 month');
+        Session::flash('success', $count > 1
+            ? sprintf('"%s" adiada para %s; as %d parcelas seguintes também andaram um mês.', $transaction['description'], month_label($next), $count - 1)
+            : sprintf('"%s" adiada para %s.', $transaction['description'], month_label($next)));
+        redirect($returnTo);
+    }
+
     /** @param DateTimeImmutable[] $months */
     private function warnIfOverBudget(array $category, array $months): void
     {

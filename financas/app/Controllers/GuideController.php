@@ -39,7 +39,7 @@ final class GuideController extends Controller
         (new Overview())->reset($bills, $budgets, RecurringService::currentMonth()->format('Y-m-d'));
 
         Session::flash('success', 'Lançamentos apagados.'
-            . ($bills ? ' As contas obrigatórias e opcionais também foram apagadas.' : ' As contas obrigatórias e opcionais continuam cadastradas e voltam a aparecer a partir deste mês.')
+            . ($bills ? ' As contas obrigatórias e as assinaturas também foram apagadas.' : ' As contas obrigatórias e as assinaturas continuam cadastradas e voltam a aparecer a partir deste mês.')
             . ($budgets ? ' Os orçamentos foram apagados.' : ''));
         redirect('/guia');
     }

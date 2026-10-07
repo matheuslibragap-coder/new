@@ -74,12 +74,15 @@ $router->post('/lancamentos/atualizar', [TransactionController::class, 'update']
 $router->get('/lancamentos/excluir', [TransactionController::class, 'confirmDelete']);
 $router->post('/lancamentos/excluir', [TransactionController::class, 'delete']);
 $router->post('/lancamentos/pago', [TransactionController::class, 'togglePaid']);
+$router->post('/lancamentos/postergavel', [TransactionController::class, 'togglePostponable']);
+$router->post('/dividas/adiar', [TransactionController::class, 'postpone']);
 
 $router->get('/historico', [HistoryController::class, 'index']);
 $router->get('/historico/exportar', [HistoryController::class, 'export']);
 
 $router->get('/contas/obrigatorias', [RecurringController::class, 'mandatory']);
-$router->get('/contas/opcionais', [RecurringController::class, 'optional']);
+$router->get('/dividas', [RecurringController::class, 'optional']);
+$router->get('/contas/opcionais', [RecurringController::class, 'legacyOptional']);
 $router->get('/contas/nova', [RecurringController::class, 'create']);
 $router->get('/contas/editar', [RecurringController::class, 'edit']);
 $router->post('/contas/salvar', [RecurringController::class, 'save']);

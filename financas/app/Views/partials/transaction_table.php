@@ -38,6 +38,7 @@ $today = date('Y-m-d');
                     <?php if (!empty($t['expense_name'])): ?><span class="tag tag-small" style="--tag-color: <?= e($t['expense_color']) ?>"><?= e($t['expense_name']) ?></span><?php endif; ?>
                     <?php if (($t['group_kind'] ?? '') === 'recorrente'): ?><span class="badge">Recorrente <?= (int) $t['installment_number'] ?>/<?= (int) $t['installment_count'] ?></span><?php endif; ?>
                     <?php if (!empty($t['is_daily'])): ?><span class="badge">Diário</span><?php endif; ?>
+                    <?php if (!empty($t['postponable'])): ?><span class="badge badge-postpone">Postergável</span><?php endif; ?>
                     <?php if (!empty($t['payment_method'])): ?><span class="badge"><?= e(\App\Models\Transaction::PAYMENT_LABELS[$t['payment_method']] ?? '') ?></span><?php endif; ?>
                 </td>
                 <td data-label="Data"><?= e(date_br($t['transaction_date'])) ?></td>
@@ -61,6 +62,16 @@ $today = date('Y-m-d');
                 <td data-label="Valor" class="num <?= $isIn ? 'amount-in' : 'amount-out' ?>"><?= $isIn ? '+' : '−' ?> <?= e(money($t['amount'])) ?></td>
                 <td class="col-actions">
                     <div class="actions">
+                        <?php if (!$isIn): ?>
+                            <form method="post" action="<?= e(url('/lancamentos/postergavel')) ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="id" value="<?= (int) $t['id'] ?>">
+                                <input type="hidden" name="voltar" value="<?= e($returnTo) ?>">
+                                <button type="submit" class="btn btn-small btn-toggle<?= !empty($t['postponable']) ? ' is-on' : '' ?>"
+                                        aria-pressed="<?= !empty($t['postponable']) ? 'true' : 'false' ?>"
+                                        title="<?= !empty($t['postponable']) ? 'Deixar de ser dívida postergável' : 'Transformar em dívida postergável' ?><?= $isParcel ? ' (vale para todas as parcelas)' : '' ?>">Postergável</button>
+                            </form>
+                        <?php endif; ?>
                         <a class="btn btn-small" href="<?= e(url('/lancamentos/editar', $query)) ?>">Editar</a>
                         <?php if ($isParcel): ?>
                             <a class="btn btn-small btn-danger" href="<?= e(url('/lancamentos/excluir', $query)) ?>">Excluir</a>

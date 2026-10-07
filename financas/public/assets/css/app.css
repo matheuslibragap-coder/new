@@ -252,7 +252,7 @@ input:focus, select:focus, textarea:focus, .btn:focus-visible, .nav-link:focus-v
 
 .split { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
 .split-side { max-width: 720px; margin-bottom: 0; }
-@media (min-width: 1440px) {
+@media (min-width: 1600px) {
     .split { grid-template-columns: minmax(300px, 360px) 1fr; }
     .split-side { max-width: none; }
 }
@@ -486,6 +486,12 @@ section + section { margin-top: 40px; }
 .summary-item small { font-size: 12px; }
 .choice-group.choice-2 { grid-template-columns: repeat(2, 1fr); }
 .paid-question[hidden] { display: none; }
+
+/* ---------- Dívidas postergáveis ---------- */
+
+.badge-postpone { background: #f4f0ff; border-color: #d9ccff; color: #5b3cc4; }
+.btn-toggle.is-on { background: #f4f0ff; border-color: #b9a3f5; color: #5b3cc4; font-weight: bold; }
+.btn-toggle.is-on::before { content: "✓ "; }
 
 /* ---------- Usuários ---------- */
 
