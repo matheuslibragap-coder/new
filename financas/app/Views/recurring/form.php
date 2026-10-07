@@ -12,6 +12,9 @@ $isOptional = $kind === 'opcional';
     <h1><?= e($title) ?></h1>
 </div>
 
+<?php if (!$categories): ?>
+    <div class="alert alert-warning">Antes de lançar, cadastre pelo menos uma conta ou cartão em <a href="<?= e(url('/categorias/nova')) ?>">Contas e cartões</a>.</div>
+<?php endif; ?>
 <form method="post" action="<?= e(url('/contas/salvar')) ?>" class="card form form-narrow">
     <?= csrf_field() ?>
     <input type="hidden" name="id" value="<?= (int) ($bill['id'] ?? 0) ?>">

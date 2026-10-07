@@ -5,6 +5,7 @@ namespace App\Models;
 
 use App\Core\Model;
 
+/** Contas e cartões (origens do dinheiro) do usuário logado. */
 final class Category extends Model
 {
     public const TYPE_CARD = 'cartao';
@@ -15,7 +16,7 @@ final class Category extends Model
         self::TYPE_ACCOUNT => 'Conta/carteira',
     ];
 
-    /** Todas as categorias com a quantidade de registros que as usam. */
+    /** Todas, com a quantidade de registros que as usam. */
     public function allWithUsage(): array
     {
         return $this->fetchAll(
@@ -24,29 +25,31 @@ final class Category extends Model
                   + (SELECT COUNT(*) FROM recurring_bills r    WHERE r.category_id = c.id)
                   + (SELECT COUNT(*) FROM installment_groups g WHERE g.category_id = c.id) AS usage_count
                FROM categories c
-              ORDER BY c.active DESC, c.name'
+              WHERE c.user_id = ?
+              ORDER BY c.active DESC, c.name',
+            [$this->uid()]
         );
     }
 
-    /** Categorias ativas para os formulários; $type filtra cartão ou conta. */
+    /** Ativas, para os formulários; $type filtra cartão ou conta. */
     public function active(?string $type = null): array
     {
         if ($type === null) {
-            return $this->fetchAll('SELECT * FROM categories WHERE active = 1 ORDER BY name');
+            return $this->fetchAll('SELECT * FROM categories WHERE user_id = ? AND active = 1 ORDER BY name', [$this->uid()]);
         }
-        return $this->fetchAll('SELECT * FROM categories WHERE active = 1 AND type = ? ORDER BY name', [$type]);
+        return $this->fetchAll('SELECT * FROM categories WHERE user_id = ? AND active = 1 AND type = ? ORDER BY name', [$this->uid(), $type]);
     }
 
     public function find(int $id): ?array
     {
-        return $this->fetchOne('SELECT * FROM categories WHERE id = ?', [$id]);
+        return $this->fetchOne('SELECT * FROM categories WHERE id = ? AND user_id = ?', [$id, $this->uid()]);
     }
 
     public function nameExists(string $name, ?int $ignoreId = null): bool
     {
         return (bool) $this->fetchValue(
-            'SELECT 1 FROM categories WHERE name = ? AND id <> ?',
-            [$name, $ignoreId ?? 0]
+            'SELECT 1 FROM categories WHERE user_id = ? AND name = ? AND id <> ?',
+            [$this->uid(), $name, $ignoreId ?? 0]
         );
     }
 
@@ -54,8 +57,8 @@ final class Category extends Model
     public function create(array $data): int
     {
         $this->execute(
-            'INSERT INTO categories (name, color, type, closing_day, due_day) VALUES (?, ?, ?, ?, ?)',
-            [$data['name'], $data['color'], $data['type'], $data['closing_day'], $data['due_day']]
+            'INSERT INTO categories (user_id, name, color, type, closing_day, due_day) VALUES (?, ?, ?, ?, ?, ?)',
+            [$this->uid(), $data['name'], $data['color'], $data['type'], $data['closing_day'], $data['due_day']]
         );
         return (int) $this->db->lastInsertId();
     }
@@ -63,14 +66,14 @@ final class Category extends Model
     public function update(int $id, array $data): void
     {
         $this->execute(
-            'UPDATE categories SET name = ?, color = ?, type = ?, closing_day = ?, due_day = ? WHERE id = ?',
-            [$data['name'], $data['color'], $data['type'], $data['closing_day'], $data['due_day'], $id]
+            'UPDATE categories SET name = ?, color = ?, type = ?, closing_day = ?, due_day = ? WHERE id = ? AND user_id = ?',
+            [$data['name'], $data['color'], $data['type'], $data['closing_day'], $data['due_day'], $id, $this->uid()]
         );
     }
 
     public function setActive(int $id, bool $active): void
     {
-        $this->execute('UPDATE categories SET active = ? WHERE id = ?', [$active ? 1 : 0, $id]);
+        $this->execute('UPDATE categories SET active = ? WHERE id = ? AND user_id = ?', [$active ? 1 : 0, $id, $this->uid()]);
     }
 
     public function isInUse(int $id): bool
@@ -85,6 +88,6 @@ final class Category extends Model
 
     public function delete(int $id): void
     {
-        $this->execute('DELETE FROM categories WHERE id = ?', [$id]);
+        $this->execute('DELETE FROM categories WHERE id = ? AND user_id = ?', [$id, $this->uid()]);
     }
 }

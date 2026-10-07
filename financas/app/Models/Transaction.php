@@ -33,19 +33,19 @@ final class Transaction extends Model
 
     public function find(int $id): ?array
     {
-        return $this->fetchOne(self::SELECT . ' WHERE t.id = ?', [$id]);
+        return $this->fetchOne(self::SELECT . ' WHERE t.id = ? AND t.user_id = ?', [$id, $this->uid()]);
     }
 
     public function create(array $d): int
     {
         $this->execute(
             'INSERT INTO transactions
-                (type, status, amount, category_id, expense_category_id, payment_method, is_daily, description,
+                (user_id, type, status, amount, category_id, expense_category_id, payment_method, is_daily, description,
                  transaction_date, competence_month, competence_manual, installment_group_id, installment_number,
                  recurring_bill_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
-                $d['type'], $d['status'] ?? self::STATUS_DONE, $d['amount'], $d['category_id'],
+                $this->uid(), $d['type'], $d['status'] ?? self::STATUS_DONE, $d['amount'], $d['category_id'],
                 $d['expense_category_id'] ?? null, $d['payment_method'] ?? null, (int) ($d['is_daily'] ?? 0),
                 $d['description'], $d['transaction_date'], $d['competence_month'], (int) ($d['competence_manual'] ?? 0),
                 $d['installment_group_id'] ?? null, $d['installment_number'] ?? null, $d['recurring_bill_id'] ?? null,
@@ -60,17 +60,17 @@ final class Transaction extends Model
             'UPDATE transactions
                 SET type = ?, amount = ?, category_id = ?, expense_category_id = ?, payment_method = ?,
                     description = ?, transaction_date = ?, competence_month = ?, competence_manual = ?
-              WHERE id = ?',
+              WHERE id = ? AND user_id = ?',
             [
                 $d['type'], $d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['payment_method'] ?? null,
-                $d['description'], $d['transaction_date'], $d['competence_month'], (int) $d['competence_manual'], $id,
+                $d['description'], $d['transaction_date'], $d['competence_month'], (int) $d['competence_manual'], $id, $this->uid(),
             ]
         );
     }
 
     public function delete(int $id): void
     {
-        $this->execute('DELETE FROM transactions WHERE id = ?', [$id]);
+        $this->execute('DELETE FROM transactions WHERE id = ? AND user_id = ?', [$id, $this->uid()]);
     }
 
     // ---------- Parcelamento ----------
@@ -78,9 +78,9 @@ final class Transaction extends Model
     public function createGroup(string $kind, string $description, string $total, int $count, int $categoryId, string $purchaseDate): int
     {
         $this->execute(
-            'INSERT INTO installment_groups (kind, description, total_amount, installment_count, category_id, purchase_date)
-             VALUES (?, ?, ?, ?, ?, ?)',
-            [$kind, $description, $total, $count, $categoryId, $purchaseDate]
+            'INSERT INTO installment_groups (user_id, kind, description, total_amount, installment_count, category_id, purchase_date)
+             VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [$this->uid(), $kind, $description, $total, $count, $categoryId, $purchaseDate]
         );
         return (int) $this->db->lastInsertId();
     }
@@ -88,28 +88,28 @@ final class Transaction extends Model
     public function groupParcels(int $groupId): array
     {
         return $this->fetchAll(
-            'SELECT * FROM transactions WHERE installment_group_id = ? ORDER BY installment_number',
-            [$groupId]
+            'SELECT * FROM transactions WHERE installment_group_id = ? AND user_id = ? ORDER BY installment_number',
+            [$groupId, $this->uid()]
         );
     }
 
     public function updateGroup(int $groupId, string $description, int $categoryId, string $purchaseDate): void
     {
         $this->execute(
-            'UPDATE installment_groups SET description = ?, category_id = ?, purchase_date = ? WHERE id = ?',
-            [$description, $categoryId, $purchaseDate, $groupId]
+            'UPDATE installment_groups SET description = ?, category_id = ?, purchase_date = ? WHERE id = ? AND user_id = ?',
+            [$description, $categoryId, $purchaseDate, $groupId, $this->uid()]
         );
     }
 
     /** Recalcula o total do grupo pelas parcelas restantes; remove o grupo se ficou vazio. */
     public function syncGroup(int $groupId): void
     {
-        $total = $this->fetchValue('SELECT SUM(amount) FROM transactions WHERE installment_group_id = ?', [$groupId]);
+        $total = $this->fetchValue('SELECT SUM(amount) FROM transactions WHERE installment_group_id = ? AND user_id = ?', [$groupId, $this->uid()]);
         if ($total === null) {
-            $this->execute('DELETE FROM installment_groups WHERE id = ?', [$groupId]);
+            $this->execute('DELETE FROM installment_groups WHERE id = ? AND user_id = ?', [$groupId, $this->uid()]);
             return;
         }
-        $this->execute('UPDATE installment_groups SET total_amount = ? WHERE id = ?', [$total, $groupId]);
+        $this->execute('UPDATE installment_groups SET total_amount = ? WHERE id = ? AND user_id = ?', [$total, $groupId, $this->uid()]);
     }
 
     // ---------- Contas recorrentes ----------
@@ -117,8 +117,8 @@ final class Transaction extends Model
     public function pendingOfBillFrom(int $billId, DateTimeImmutable $from): array
     {
         return $this->fetchAll(
-            "SELECT * FROM transactions WHERE recurring_bill_id = ? AND status = 'pendente' AND competence_month >= ?",
-            [$billId, $from->format('Y-m-d')]
+            "SELECT * FROM transactions WHERE recurring_bill_id = ? AND user_id = ? AND status = 'pendente' AND competence_month >= ?",
+            [$billId, $this->uid(), $from->format('Y-m-d')]
         );
     }
 
@@ -126,32 +126,32 @@ final class Transaction extends Model
     {
         $this->execute(
             "UPDATE transactions SET amount = ?, category_id = ?, expense_category_id = ?, description = ?, transaction_date = ?
-              WHERE id = ? AND status = 'pendente'",
-            [$d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['description'], $d['transaction_date'], $id]
+              WHERE id = ? AND user_id = ? AND status = 'pendente'",
+            [$d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['description'], $d['transaction_date'], $id, $this->uid()]
         );
     }
 
     public function deletePendingOfBillFrom(int $billId, DateTimeImmutable $from): void
     {
         $this->execute(
-            "DELETE FROM transactions WHERE recurring_bill_id = ? AND status = 'pendente' AND competence_month >= ?",
-            [$billId, $from->format('Y-m-d')]
+            "DELETE FROM transactions WHERE recurring_bill_id = ? AND user_id = ? AND status = 'pendente' AND competence_month >= ?",
+            [$billId, $this->uid(), $from->format('Y-m-d')]
         );
     }
 
     public function markPaid(int $id, string $amount, string $date): void
     {
         $this->execute(
-            "UPDATE transactions SET status = 'efetivado', amount = ?, transaction_date = ? WHERE id = ?",
-            [$amount, $date, $id]
+            "UPDATE transactions SET status = 'efetivado', amount = ?, transaction_date = ? WHERE id = ? AND user_id = ?",
+            [$amount, $date, $id, $this->uid()]
         );
     }
 
     public function markPending(int $id, string $dueDate): void
     {
         $this->execute(
-            "UPDATE transactions SET status = 'pendente', transaction_date = ? WHERE id = ?",
-            [$dueDate, $id]
+            "UPDATE transactions SET status = 'pendente', transaction_date = ? WHERE id = ? AND user_id = ?",
+            [$dueDate, $id, $this->uid()]
         );
     }
 
@@ -163,9 +163,9 @@ final class Transaction extends Model
                FROM transactions t
                JOIN recurring_bills b ON b.id = t.recurring_bill_id
                JOIN categories c ON c.id = t.category_id
-              WHERE b.kind = ? AND t.competence_month = ?
+              WHERE t.user_id = ? AND b.kind = ? AND t.competence_month = ?
               ORDER BY t.status DESC, t.transaction_date, t.id',
-            [$kind, $month->format('Y-m-d')]
+            [$this->uid(), $kind, $month->format('Y-m-d')]
         );
     }
 
@@ -174,8 +174,8 @@ final class Transaction extends Model
     public function forMonth(DateTimeImmutable $month): array
     {
         return $this->fetchAll(
-            self::SELECT . ' WHERE t.competence_month = ? ORDER BY t.transaction_date DESC, t.id DESC',
-            [$month->format('Y-m-d')]
+            self::SELECT . ' WHERE t.user_id = ? AND t.competence_month = ? ORDER BY t.transaction_date DESC, t.id DESC',
+            [$this->uid(), $month->format('Y-m-d')]
         );
     }
 
@@ -217,7 +217,7 @@ final class Transaction extends Model
     public function months(): array
     {
         return array_column(
-            $this->fetchAll('SELECT DISTINCT competence_month FROM transactions ORDER BY competence_month DESC'),
+            $this->fetchAll('SELECT DISTINCT competence_month FROM transactions WHERE user_id = ? ORDER BY competence_month DESC', [$this->uid()]),
             'competence_month'
         );
     }
@@ -226,9 +226,9 @@ final class Transaction extends Model
     public function dailyForMonth(DateTimeImmutable $month): array
     {
         return $this->fetchAll(
-            self::SELECT . ' WHERE t.is_daily = 1 AND t.transaction_date >= ? AND t.transaction_date < ?
+            self::SELECT . ' WHERE t.user_id = ? AND t.is_daily = 1 AND t.transaction_date >= ? AND t.transaction_date < ?
                               ORDER BY t.transaction_date DESC, t.id DESC',
-            [$month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
+            [$this->uid(), $month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
         );
     }
 
@@ -243,17 +243,17 @@ final class Transaction extends Model
                     SUM(t.amount) AS total, COUNT(*) AS items
                FROM transactions t
           LEFT JOIN expense_categories ec ON ec.id = t.expense_category_id
-              WHERE t.type = 'saida' AND {$range}" . ($dailyOnly ? ' AND t.is_daily = 1' : '') . "
+              WHERE t.user_id = ? AND t.type = 'saida' AND {$range}" . ($dailyOnly ? ' AND t.is_daily = 1' : '') . "
            GROUP BY ec.id, ec.name, ec.color
            ORDER BY total DESC",
-            [$month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
+            [$this->uid(), $month->format('Y-m-d'), $month->modify('+1 month')->format('Y-m-d')]
         );
     }
 
     /** Último gasto do Controle diário (para pré-selecionar origem e forma de pagamento). */
     public function lastDaily(): ?array
     {
-        return $this->fetchOne('SELECT category_id, payment_method FROM transactions WHERE is_daily = 1 ORDER BY id DESC LIMIT 1');
+        return $this->fetchOne('SELECT category_id, payment_method FROM transactions WHERE user_id = ? AND is_daily = 1 ORDER BY id DESC LIMIT 1', [$this->uid()]);
     }
 
     /** Descrições mais usadas, para sugerir no campo de descrição. */
@@ -263,16 +263,18 @@ final class Transaction extends Model
             'SELECT COALESCE(g.description, t.description) AS description, COUNT(*) AS uses
                FROM transactions t
           LEFT JOIN installment_groups g ON g.id = t.installment_group_id
+              WHERE t.user_id = ?
            GROUP BY COALESCE(g.description, t.description)
            ORDER BY uses DESC, MAX(t.id) DESC
-              LIMIT ' . $limit
+              LIMIT ' . $limit,
+            [$this->uid()]
         ), 'description');
     }
 
     private function where(array $f): array
     {
-        $clauses = [];
-        $params = [];
+        $clauses = ['t.user_id = ?'];
+        $params = [$this->uid()];
         if (!empty($f['month'])) {
             $clauses[] = 't.competence_month = ?';
             $params[] = $f['month']->format('Y-m-d');
@@ -296,6 +298,6 @@ final class Transaction extends Model
             $clauses[] = "t.description LIKE ? ESCAPE '!'";
             $params[] = '%' . strtr($f['q'], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
         }
-        return [$clauses ? ' WHERE ' . implode(' AND ', $clauses) : '', $params];
+        return [' WHERE ' . implode(' AND ', $clauses), $params];
     }
 }

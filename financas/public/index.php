@@ -11,6 +11,7 @@ if (PHP_SAPI === 'cli-server') {
 
 require dirname(__DIR__) . '/app/bootstrap.php';
 
+use App\Controllers\AccountController;
 use App\Controllers\AuthController;
 use App\Controllers\BudgetController;
 use App\Controllers\CategoryController;
@@ -22,6 +23,7 @@ use App\Controllers\HistoryController;
 use App\Controllers\InstallController;
 use App\Controllers\RecurringController;
 use App\Controllers\TransactionController;
+use App\Controllers\UserController;
 use App\Core\Request;
 use App\Core\Router;
 use App\Services\Migrator;
@@ -45,6 +47,13 @@ $router->post('/redefinir-senha', [AuthController::class, 'reset'], true);
 $router->post('/logout', [AuthController::class, 'logout']);
 
 $router->get('/', [DashboardController::class, 'index']);
+
+$router->get('/minha-conta', [AccountController::class, 'show']);
+$router->post('/minha-conta', [AccountController::class, 'update']);
+$router->get('/usuarios', [UserController::class, 'index']);
+$router->post('/usuarios/salvar', [UserController::class, 'store']);
+$router->post('/usuarios/senha', [UserController::class, 'resetPassword']);
+$router->post('/usuarios/excluir', [UserController::class, 'delete']);
 
 $router->get('/guia', [GuideController::class, 'index']);
 $router->post('/guia/concluir', [GuideController::class, 'finish']);

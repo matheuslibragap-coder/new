@@ -14,6 +14,11 @@ abstract class Model
         $this->db = Database::connection();
     }
 
+    protected function uid(): int
+    {
+        return Auth::id();
+    }
+
     protected function fetchAll(string $sql, array $params = []): array
     {
         $stmt = $this->db->prepare($sql);

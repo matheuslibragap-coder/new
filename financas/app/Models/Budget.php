@@ -35,10 +35,10 @@ final class Budget extends Model
                FROM categories c
           LEFT JOIN budgets b ON b.category_id = c.id
           LEFT JOIN transactions t ON t.category_id = c.id AND t.type = 'saida' AND t.competence_month = ?
-              WHERE c.active = 1 OR b.category_id IS NOT NULL
+              WHERE c.user_id = ? AND (c.active = 1 OR b.category_id IS NOT NULL)
            GROUP BY c.id, c.name, c.color, c.type, c.active, b.limit_amount
            ORDER BY c.name",
-            [$month->format('Y-m-d')]
+            [$month->format('Y-m-d'), $this->uid()]
         );
     }
 
@@ -62,11 +62,14 @@ final class Budget extends Model
     /** @return array{limit: ?float, spent: float} gasto da categoria no mês, sem um lançamento opcional */
     public function usage(int $categoryId, DateTimeImmutable $month, ?int $excludeTransactionId = null): array
     {
-        $limit = $this->fetchValue('SELECT limit_amount FROM budgets WHERE category_id = ?', [$categoryId]);
+        $limit = $this->fetchValue(
+            'SELECT b.limit_amount FROM budgets b JOIN categories c ON c.id = b.category_id WHERE b.category_id = ? AND c.user_id = ?',
+            [$categoryId, $this->uid()]
+        );
         $spent = $this->fetchValue(
             "SELECT COALESCE(SUM(amount), 0) FROM transactions
-              WHERE category_id = ? AND type = 'saida' AND competence_month = ? AND id <> ?",
-            [$categoryId, $month->format('Y-m-d'), $excludeTransactionId ?? 0]
+              WHERE user_id = ? AND category_id = ? AND type = 'saida' AND competence_month = ? AND id <> ?",
+            [$this->uid(), $categoryId, $month->format('Y-m-d'), $excludeTransactionId ?? 0]
         );
         return ['limit' => $limit === null ? null : (float) $limit, 'spent' => (float) $spent];
     }

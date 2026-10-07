@@ -17,8 +17,8 @@ final class Report extends Model
                     COALESCE(SUM(CASE WHEN type = 'entrada' AND status = 'pendente'  THEN amount END), 0) AS income_pending,
                     COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'efetivado' THEN amount END), 0) AS expense_done,
                     COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'pendente'  THEN amount END), 0) AS expense_pending
-               FROM transactions WHERE competence_month = ?",
-            [$month->format('Y-m-d')]
+               FROM transactions WHERE user_id = ? AND competence_month = ?",
+            [$this->uid(), $month->format('Y-m-d')]
         );
         return array_map('floatval', $row);
     }
@@ -29,10 +29,10 @@ final class Report extends Model
         return $this->fetchAll(
             "SELECT c.id, c.name, c.color, SUM(t.amount) AS total
                FROM transactions t JOIN categories c ON c.id = t.category_id
-              WHERE t.type = 'saida' AND t.competence_month = ?
+              WHERE t.user_id = ? AND t.type = 'saida' AND t.competence_month = ?
            GROUP BY c.id, c.name, c.color
            ORDER BY total DESC",
-            [$month->format('Y-m-d')]
+            [$this->uid(), $month->format('Y-m-d')]
         );
     }
 
@@ -45,9 +45,9 @@ final class Report extends Model
                     COALESCE(SUM(CASE WHEN type = 'entrada' THEN amount END), 0) AS income,
                     COALESCE(SUM(CASE WHEN type = 'saida'   THEN amount END), 0) AS expense
                FROM transactions
-              WHERE competence_month BETWEEN ? AND ?
+              WHERE user_id = ? AND competence_month BETWEEN ? AND ?
            GROUP BY competence_month",
-            [$first->format('Y-m-d'), $last->format('Y-m-d')]
+            [$this->uid(), $first->format('Y-m-d'), $last->format('Y-m-d')]
         );
         $byMonth = array_column($rows, null, 'competence_month');
 
@@ -66,9 +66,9 @@ final class Report extends Model
         return $this->fetchAll(
             "SELECT t.id, t.description, t.amount, t.transaction_date, t.competence_month, c.name AS category_name, c.color AS category_color
                FROM transactions t JOIN categories c ON c.id = t.category_id
-              WHERE t.status = 'pendente' AND t.transaction_date < ?
+              WHERE t.user_id = ? AND t.status = 'pendente' AND t.transaction_date < ?
            ORDER BY t.transaction_date",
-            [$today->format('Y-m-d')]
+            [$this->uid(), $today->format('Y-m-d')]
         );
     }
 
@@ -78,10 +78,10 @@ final class Report extends Model
         return $this->fetchAll(
             "SELECT t.id, t.description, t.amount, t.transaction_date, c.name AS category_name, c.color AS category_color
                FROM transactions t JOIN categories c ON c.id = t.category_id
-              WHERE t.status = 'pendente' AND t.competence_month = ? AND t.transaction_date >= ?
+              WHERE t.user_id = ? AND t.status = 'pendente' AND t.competence_month = ? AND t.transaction_date >= ?
            ORDER BY t.transaction_date
               LIMIT 8",
-            [$month->format('Y-m-d'), $today->format('Y-m-d')]
+            [$this->uid(), $month->format('Y-m-d'), $today->format('Y-m-d')]
         );
     }
 }

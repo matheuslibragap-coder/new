@@ -461,6 +461,14 @@ section + section { margin-top: 40px; }
 .reset-box summary { cursor: pointer; }
 .reset-box form { margin-top: 16px; max-width: 560px; }
 
+/* ---------- Usuários ---------- */
+
+.user-actions { display: inline-block; text-align: left; }
+.user-actions summary { list-style: none; }
+.user-actions summary::-webkit-details-marker { display: none; }
+.user-actions-body { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; min-width: 280px; }
+a.user-name { color: var(--text-muted); }
+
 /* ---------- Login / instalação ---------- */
 
 .auth-body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 16px; }

@@ -2,18 +2,18 @@
 /** Guia inicial. Variáveis: $counts, $done */
 $steps = [
     [
-        'title' => 'Confira suas contas e cartões',
+        'title' => $counts['origins'] > 0 ? 'Confira suas contas e cartões' : 'Cadastre suas contas e cartões',
         'where' => ['/categorias', 'Contas e cartões'],
         'ok'    => $counts['origins'] > 0,
         'count' => $counts['origins'] . ' ativo(s)',
-        'text'  => 'São as <strong>origens do dinheiro</strong>: contas bancárias, carteiras (Pix, 99 Pay) e cartões de crédito. Em todo lançamento o sistema pergunta de qual delas o dinheiro saiu. Já vêm alguns cadastrados: edite, desative os que não usa e crie os que faltam. Nos cartões, os dias de fechamento e vencimento são opcionais (servem só para sugerir o mês da fatura).',
+        'text'  => 'São as <strong>origens do dinheiro</strong>: contas bancárias, carteiras (Pix, 99 Pay) e cartões de crédito. Em todo lançamento o sistema pergunta de qual delas o dinheiro saiu. ' . ($counts['origins'] > 0 ? 'Edite os que já existem, desative os que não usa e crie os que faltam.' : 'Sua conta começa vazia: cadastre cada conta, carteira e cartão que você usa.') . ' Nos cartões, os dias de fechamento e vencimento são opcionais (servem só para sugerir o mês da fatura).',
     ],
     [
-        'title' => 'Confira as categorias de gasto',
+        'title' => $counts['expense_categories'] > 0 ? 'Confira as categorias de gasto' : 'Crie suas categorias de gasto',
         'where' => ['/diario/categorias', 'Controle diário → Gerenciar categorias'],
         'ok'    => $counts['expense_categories'] > 0,
         'count' => $counts['expense_categories'] . ' ativa(s)',
-        'text'  => 'Dizem <strong>com o que</strong> você gastou: Alimentação, Lazer, Esportes, Transporte… Crie as que fizerem sentido para você (Saúde, Pets, Educação).',
+        'text'  => 'Dizem <strong>com o que</strong> você gastou: Alimentação, Lazer, Transporte, Saúde… ' . ($counts['expense_categories'] > 0 ? 'Revise as que existem e crie as que fizerem sentido para você.' : 'Crie as que fizerem sentido para você. Sem pelo menos uma, o Controle diário não funciona.'),
     ],
     [
         'title' => 'Cadastre as contas obrigatórias',

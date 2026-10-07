@@ -24,6 +24,23 @@ final class Auth
         Session::destroy();
     }
 
+    /** ID do usuário logado. Todas as consultas de dados são filtradas por ele. */
+    public static function id(): int
+    {
+        $id = Session::get('user_id');
+        if (!is_int($id)) {
+            throw new \RuntimeException('Nenhum usuário logado.');
+        }
+        return $id;
+    }
+
+    /** O dono é o primeiro usuário cadastrado: só ele gerencia os demais usuários. */
+    public static function isOwner(): bool
+    {
+        $user = self::user();
+        return $user !== null && (int) $user['id'] === (new User())->ownerId();
+    }
+
     public static function check(): bool
     {
         return self::user() !== null;

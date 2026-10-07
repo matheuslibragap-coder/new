@@ -59,10 +59,10 @@ final class InstallController extends Controller
         if (!$installer->isInstalled()) {
             $installer->install();
         }
-        (new Migrator())->migrate();
-
         $users = new User();
         $id = $users->create($name, $email, $password);
+        // Depois de criar o usuário: a migração 3 passa para ele as categorias iniciais.
+        (new Migrator())->migrate();
         Auth::login($users->find($id));
         Session::flash('success', 'Instalação concluída. Bem-vindo!');
         redirect('/');

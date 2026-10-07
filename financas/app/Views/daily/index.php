@@ -17,6 +17,9 @@ $categoryTotal = array_sum(array_map(static fn ($c) => (float) $c['total'], $byC
             <h2>Novo gasto</h2>
             <a href="<?= e(url('/diario/categorias')) ?>" class="small">Gerenciar categorias</a>
         </div>
+<?php if (!$categories): ?>
+    <div class="alert alert-warning">Antes de lançar, cadastre pelo menos uma conta ou cartão em <a href="<?= e(url('/categorias/nova')) ?>">Contas e cartões</a>.</div>
+<?php endif; ?>
         <form method="post" action="<?= e(url('/lancamentos/salvar')) ?>" class="form" data-tx-form data-budget-url="<?= e(url('/orcamentos/consulta')) ?>">
             <?= csrf_field() ?>
             <input type="hidden" name="type" value="saida">

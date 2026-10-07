@@ -44,6 +44,54 @@ final class User extends Model
         );
     }
 
+    /** O primeiro usuário cadastrado é o dono do sistema. */
+    public function ownerId(): ?int
+    {
+        $id = $this->fetchValue('SELECT MIN(id) FROM users');
+        return $id === null ? null : (int) $id;
+    }
+
+    public function all(): array
+    {
+        return $this->fetchAll(
+            'SELECT u.id, u.name, u.email, u.created_at,
+                    (SELECT COUNT(*) FROM transactions t WHERE t.user_id = u.id) AS transactions
+               FROM users u
+              ORDER BY u.id'
+        );
+    }
+
+    public function emailExists(string $email, ?int $ignoreId = null): bool
+    {
+        return (bool) $this->fetchValue('SELECT 1 FROM users WHERE email = ? AND id <> ?', [$email, $ignoreId ?? 0]);
+    }
+
+    public function updateProfile(int $id, string $name, string $email): void
+    {
+        $this->execute('UPDATE users SET name = ?, email = ? WHERE id = ?', [$name, $email, $id]);
+    }
+
+    /** Exclui o usuário e todos os dados dele, na ordem que as chaves estrangeiras exigem. */
+    public function deleteWithData(int $id): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $this->execute('DELETE FROM transactions WHERE user_id = ?', [$id]);
+            $this->execute('DELETE FROM installment_groups WHERE user_id = ?', [$id]);
+            $this->execute('DELETE g FROM recurring_generations g JOIN recurring_bills r ON r.id = g.recurring_bill_id WHERE r.user_id = ?', [$id]);
+            $this->execute('DELETE FROM recurring_bills WHERE user_id = ?', [$id]);
+            $this->execute('DELETE b FROM budgets b JOIN categories c ON c.id = b.category_id WHERE c.user_id = ?', [$id]);
+            $this->execute('DELETE FROM categories WHERE user_id = ?', [$id]);
+            $this->execute('DELETE FROM expense_categories WHERE user_id = ?', [$id]);
+            $this->execute('DELETE FROM settings WHERE user_id = ?', [$id]);
+            $this->execute('DELETE FROM users WHERE id = ?', [$id]);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     /** Atualiza o hash quando o PHP passar a usar um algoritmo/custo mais forte. */
     public function rehashIfNeeded(array $user, string $password): void
     {

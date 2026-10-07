@@ -19,20 +19,20 @@ final class RecurringBill extends Model
 
     public function allOfKind(string $kind): array
     {
-        return $this->fetchAll(self::SELECT . ' WHERE b.kind = ? ORDER BY b.active DESC, b.due_day, b.name', [$kind]);
+        return $this->fetchAll(self::SELECT . ' WHERE b.user_id = ? AND b.kind = ? ORDER BY b.active DESC, b.due_day, b.name', [$this->uid(), $kind]);
     }
 
     public function find(int $id): ?array
     {
-        return $this->fetchOne(self::SELECT . ' WHERE b.id = ?', [$id]);
+        return $this->fetchOne(self::SELECT . ' WHERE b.id = ? AND b.user_id = ?', [$id, $this->uid()]);
     }
 
     /** Total mensal das contas ativas de um tipo. */
     public function monthlyTotal(string $kind): float
     {
         return (float) $this->fetchValue(
-            'SELECT COALESCE(SUM(amount), 0) FROM recurring_bills WHERE kind = ? AND active = 1',
-            [$kind]
+            'SELECT COALESCE(SUM(amount), 0) FROM recurring_bills WHERE user_id = ? AND kind = ? AND active = 1',
+            [$this->uid(), $kind]
         );
     }
 
@@ -43,17 +43,18 @@ final class RecurringBill extends Model
             'SELECT b.*, MAX(g.competence_month) AS last_generated
                FROM recurring_bills b
           LEFT JOIN recurring_generations g ON g.recurring_bill_id = b.id
-              WHERE b.active = 1
-           GROUP BY b.id'
+              WHERE b.user_id = ? AND b.active = 1
+           GROUP BY b.id',
+            [$this->uid()]
         );
     }
 
     public function create(array $d): int
     {
         $this->execute(
-            'INSERT INTO recurring_bills (kind, name, amount, due_day, category_id, expense_category_id, start_month, end_month)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [$d['kind'], $d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null,
+            'INSERT INTO recurring_bills (user_id, kind, name, amount, due_day, category_id, expense_category_id, start_month, end_month)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [$this->uid(), $d['kind'], $d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null,
              $d['start_month'], $d['end_month'] ?? null]
         );
         return (int) $this->db->lastInsertId();
@@ -62,23 +63,23 @@ final class RecurringBill extends Model
     public function update(int $id, array $d): void
     {
         $this->execute(
-            'UPDATE recurring_bills SET name = ?, amount = ?, due_day = ?, category_id = ?, expense_category_id = ?, end_month = ? WHERE id = ?',
-            [$d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null, $d['end_month'] ?? null, $id]
+            'UPDATE recurring_bills SET name = ?, amount = ?, due_day = ?, category_id = ?, expense_category_id = ?, end_month = ? WHERE id = ? AND user_id = ?',
+            [$d['name'], $d['amount'], $d['due_day'], $d['category_id'], $d['expense_category_id'] ?? null, $d['end_month'] ?? null, $id, $this->uid()]
         );
     }
 
     public function setActive(int $id, bool $active, ?DateTimeImmutable $startMonth = null): void
     {
         if ($startMonth !== null) {
-            $this->execute('UPDATE recurring_bills SET active = ?, start_month = ? WHERE id = ?', [(int) $active, $startMonth->format('Y-m-d'), $id]);
+            $this->execute('UPDATE recurring_bills SET active = ?, start_month = ? WHERE id = ? AND user_id = ?', [(int) $active, $startMonth->format('Y-m-d'), $id, $this->uid()]);
             return;
         }
-        $this->execute('UPDATE recurring_bills SET active = ? WHERE id = ?', [(int) $active, $id]);
+        $this->execute('UPDATE recurring_bills SET active = ? WHERE id = ? AND user_id = ?', [(int) $active, $id, $this->uid()]);
     }
 
     public function delete(int $id): void
     {
-        $this->execute('DELETE FROM recurring_bills WHERE id = ?', [$id]);
+        $this->execute('DELETE FROM recurring_bills WHERE id = ? AND user_id = ?', [$id, $this->uid()]);
     }
 
     /** Registra a geração do mês. Retorna false se já tinha sido gerada (proteção contra corrida). */

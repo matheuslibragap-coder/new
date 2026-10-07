@@ -15,7 +15,10 @@ use PDOException;
  */
 final class Migrator
 {
-    public const LATEST = 2;
+    public const LATEST = 3;
+
+    /** Tabelas cujos registros pertencem a um usuário (a partir da versão 3). */
+    private const USER_TABLES = ['categories', 'expense_categories', 'recurring_bills', 'installment_groups', 'transactions', 'settings'];
 
     private PDO $db;
 
@@ -36,6 +39,11 @@ final class Migrator
         $current = max(1, (int) $this->db->query('SELECT MAX(version) FROM schema_migrations')->fetchColumn());
 
         for ($version = $current + 1; $version <= self::LATEST; $version++) {
+            // A versão 3 dá dono aos dados existentes; sem nenhum usuário ainda (instalação
+            // em andamento), espera o primeiro usuário ser criado.
+            if ($version === 3 && $this->ownerId() === null) {
+                return;
+            }
             $this->{'migrate' . $version}();
             $this->db->prepare('INSERT IGNORE INTO schema_migrations (version) VALUES (?)')->execute([$version]);
         }
@@ -107,6 +115,73 @@ final class Migrator
 
         // Dias de fechamento/vencimento viram opcionais (servem só para sugerir o mês da fatura).
         $this->dropCheck('categories', 'chk_categories_card_days');
+    }
+
+    /**
+     * Multiusuário: cada registro passa a ter dono (user_id). Os dados que já
+     * existem ficam com o primeiro usuário cadastrado.
+     */
+    private function migrate3(): void
+    {
+        $owner = (int) $this->ownerId();
+
+        foreach (self::USER_TABLES as $table) {
+            if (!$this->columnExists($table, 'user_id')) {
+                $position = $table === 'settings' ? 'FIRST' : 'AFTER id';
+                $this->db->exec("ALTER TABLE {$table} ADD COLUMN user_id INT UNSIGNED NULL {$position}");
+            }
+            $this->db->prepare("UPDATE {$table} SET user_id = ? WHERE user_id IS NULL")->execute([$owner]);
+            $this->db->exec("ALTER TABLE {$table} MODIFY user_id INT UNSIGNED NOT NULL");
+            if (!$this->constraintExists($table, "fk_{$table}_user")) {
+                $this->db->exec(
+                    "ALTER TABLE {$table} ADD CONSTRAINT fk_{$table}_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE"
+                );
+            }
+        }
+
+        // Nomes passam a ser únicos por usuário (cada um pode ter o seu "Alimentação").
+        foreach (['categories' => 'uq_categories_name', 'expense_categories' => 'uq_expense_categories_name'] as $table => $oldIndex) {
+            if ($this->indexExists($table, $oldIndex)) {
+                $this->db->exec("ALTER TABLE {$table} DROP INDEX {$oldIndex}");
+            }
+            if (!$this->indexExists($table, "uq_{$table}_user_name")) {
+                $this->db->exec("ALTER TABLE {$table} ADD UNIQUE KEY uq_{$table}_user_name (user_id, name)");
+            }
+        }
+
+        // Preferências passam a ser por usuário.
+        $pk = $this->db->query(
+            "SELECT GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION) FROM information_schema.KEY_COLUMN_USAGE
+              WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'settings' AND CONSTRAINT_NAME = 'PRIMARY'"
+        )->fetchColumn();
+        if ($pk !== 'user_id,name') {
+            $this->db->exec('ALTER TABLE settings DROP PRIMARY KEY, ADD PRIMARY KEY (user_id, name)');
+        }
+    }
+
+    private function ownerId(): ?int
+    {
+        $id = $this->db->query('SELECT MIN(id) FROM users')->fetchColumn();
+        return $id === null || $id === false ? null : (int) $id;
+    }
+
+    private function constraintExists(string $table, string $name): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
+              WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = ?'
+        );
+        $stmt->execute([$table, $name]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    private function indexExists(string $table, string $name): bool
+    {
+        $stmt = $this->db->prepare(
+            'SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND INDEX_NAME = ?'
+        );
+        $stmt->execute([$table, $name]);
+        return (int) $stmt->fetchColumn() > 0;
     }
 
     private function columnExists(string $table, string $column): bool

@@ -13,6 +13,9 @@ $menu = [
     ['/categorias',         'Contas e cartões',    'M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7zM2 10h20M6 15h4'],
     ['/guia',               'Guia inicial',        'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01'],
 ];
+if (Auth::isOwner()) {
+    $menu[] = ['/usuarios', 'Usuários', 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'];
+}
 $isActive = static fn (string $href): bool =>
     $href === '/' ? $currentPath === '/' : ($currentPath === $href || str_starts_with($currentPath, $href . '/'));
 $user = Auth::user();
@@ -53,7 +56,7 @@ $appName = (string) Config::get('app.name', 'Finanças');
             <?php endforeach; ?>
         </nav>
         <div class="sidebar-footer">
-            <span class="user-name"><?= e($user['name'] ?? '') ?></span>
+            <a href="<?= e(url('/minha-conta')) ?>" class="user-name" title="Minha conta"><?= e($user['name'] ?? '') ?></a>
             <form method="post" action="<?= e(url('/logout')) ?>">
                 <?= csrf_field() ?>
                 <button type="submit" class="link-button">Sair</button>

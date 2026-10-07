@@ -145,6 +145,16 @@ O guia também tem a opção **"Começar do zero"**, que apaga todos os lançame
 
 ---
 
+### Mais de um usuário (cada um com seus dados)
+O sistema aceita várias pessoas, e cada uma tem **dados totalmente separados**: lançamentos, contas e cartões, categorias de gasto, contas fixas, orçamentos e guia. Uma pessoa não vê nada da outra, nem trocando o número de um lançamento no endereço.
+
+- O **primeiro usuário cadastrado é o dono**. Só ele vê a aba **Usuários**, onde pode criar contas para outras pessoas, definir uma nova senha para elas ou excluí-las. Excluir um usuário apaga também todos os dados dele.
+- **Uma conta nova começa vazia**, sem contas, cartões ou categorias. A pessoa cadastra tudo do jeito dela, seguindo o guia inicial.
+- Cada pessoa troca o próprio nome, e-mail e senha em **Minha conta** (clicando no nome, no rodapé do menu).
+- A redefinição de senha pelo `reset_token` vale só para o dono. As senhas dos outros usuários o dono redefine na aba Usuários.
+
+---
+
 ## 5. Como o sistema calcula as coisas
 
 ### Como lançar
@@ -245,7 +255,7 @@ financas/
 │   │   ├── InstallmentSplitter.php   # divisão em parcelas
 │   │   ├── TransactionService.php    # criar/editar/excluir lançamentos e parcelas
 │   │   ├── RecurringService.php      # geração mensal e pagamento das contas
-│   │   ├── Migrator.php              # atualiza o banco automaticamente entre versões
+│   │   ├── Migrator.php              # atualiza o banco automaticamente entre versões (v3: multiusuário)
 │   │   └── SchemaInstaller.php       # cria as tabelas na instalação
 │   ├── Helpers/format.php   # R$ 1.234,56, dd/mm/aaaa, meses em português
 │   └── Views/               # telas (layout + uma pasta por aba)
@@ -269,6 +279,7 @@ financas/
 - **Telas e arquivos:**
   - todo texto exibido passa por escape, o que evita XSS;
   - o CSV exportado é protegido contra textos que o Excel interpretaria como fórmula.
+- **Separação entre usuários:** toda consulta ao banco filtra pelo usuário logado, inclusive buscas por número de registro.
 - **Acesso aos arquivos:** só `public/` é servida. `app/`, `database/` e `config.php` ficam bloqueados por `.htaccess`.
 - **Navegador:**
   - cabeçalhos `X-Frame-Options`, `X-Content-Type-Options` e `Referrer-Policy`;
