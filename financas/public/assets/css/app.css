@@ -489,6 +489,7 @@ section + section { margin-top: 40px; }
 
 /* ---------- Dívidas postergáveis ---------- */
 
+.summary-postpone strong, .stat-note-postpone { color: #5b3cc4; }
 .badge-postpone { background: #f4f0ff; border-color: #d9ccff; color: #5b3cc4; }
 .btn-toggle.is-on { background: #f4f0ff; border-color: #b9a3f5; color: #5b3cc4; font-weight: bold; }
 .btn-toggle.is-on::before { content: "✓ "; }

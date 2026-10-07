@@ -21,7 +21,11 @@ $returnTo = '/lancamentos?mes=' . month_param($month);
     </section>
 
     <section class="split-main">
-        <?php $balance = $totals['income_done'] - $totals['expense_done']; ?>
+        <?php
+        $balance = $totals['income_done'] - $totals['expense_done'];
+        // Dívidas postergáveis ficam fora do "A pagar" e do saldo previsto.
+        $forecast = $balance + $totals['income_pending'] - $totals['pending'];
+        ?>
         <div class="summary">
             <div class="summary-item">
                 <span>Entradas recebidas</span><strong class="amount-in"><?= e(money($totals['income_done'])) ?></strong>
@@ -32,9 +36,13 @@ $returnTo = '/lancamentos?mes=' . month_param($month);
                 <span>A pagar</span><strong><?= e(money($totals['pending'])) ?></strong>
                 <?php if ($totals['overdue'] > 0): ?><small class="amount-out"><?= e(money($totals['overdue'])) ?> vencido</small><?php endif; ?>
             </div>
+            <div class="summary-item summary-postpone">
+                <span>Dívidas postergáveis</span><strong><?= e(money($totals['postponable'])) ?></strong>
+                <small class="muted">fora do "A pagar"</small>
+            </div>
             <div class="summary-item">
                 <span>Saldo atual</span><strong class="<?= $balance < 0 ? 'amount-out' : '' ?>"><?= e(money($balance)) ?></strong>
-                <small class="muted">Previsto: <?= e(money($totals['income'] - $totals['expense'])) ?></small>
+                <small class="muted">Previsto: <?= e(money($forecast)) ?></small>
             </div>
         </div>
         <div class="card card-flush">

@@ -40,7 +40,8 @@ $overdueTotal = array_sum(array_map(static fn ($r) => (float) $r['amount'], $ove
     <div class="stat">
         <span class="stat-label">Saídas efetivadas</span>
         <strong class="stat-value"><?= e(money($summary['expense_done'])) ?></strong>
-        <span class="stat-note"><?= $summary['expense_pending'] > 0 ? '+ ' . e(money($summary['expense_pending'])) . ' pendentes' : 'Nenhuma conta pendente' ?></span>
+        <span class="stat-note"><?= $summary['expense_pending'] > 0 ? '+ ' . e(money($summary['expense_pending'])) . ' a pagar' : 'Nada a pagar' ?></span>
+        <?php if ($summary['postponable_pending'] > 0): ?><span class="stat-note stat-note-postpone"><?= e(money($summary['postponable_pending'])) ?> em dívidas postergáveis</span><?php endif; ?>
     </div>
     <div class="stat stat-strong">
         <span class="stat-label">Saldo atual</span>
@@ -50,7 +51,7 @@ $overdueTotal = array_sum(array_map(static fn ($r) => (float) $r['amount'], $ove
     <div class="stat stat-strong">
         <span class="stat-label">Saldo previsto</span>
         <strong class="stat-value <?= $forecast < 0 ? 'amount-out' : '' ?>"><?= e(money($forecast)) ?></strong>
-        <span class="stat-note">Depois de pagar as pendentes</span>
+        <span class="stat-note">Depois de pagar o "a pagar" (sem as postergáveis)</span>
     </div>
 </div>
 

@@ -182,6 +182,7 @@ Os seletores de mês vão de 2020 até **dezembro de 2040**.
 ### Dívidas postergáveis
 - Na lista de Lançamentos, toda saída tem o botão **"Postergável"**, que a transforma em **dívida postergável**. Em parcelados e recorrentes, o botão vale para o grupo inteiro (todas as parcelas do empréstimo, por exemplo). Clicar de novo desfaz.
 - A aba **Dívidas postergáveis** (antiga "Contas opcionais") mostra essas dívidas mês a mês, com o total, quanto falta pagar e a caixinha "Pago".
+- As dívidas postergáveis **não entram no "A pagar"**, nem no aviso de vencidas, nem no saldo previsto. Elas têm um quadro próprio em Lançamentos e aparecem separadas no Painel. Quando são pagas (caixinha marcada), entram normalmente em "Saídas pagas" e no saldo atual.
 - O botão **"Adiar 1 mês"** empurra a dívida para o mês seguinte, mudando tanto o mês em que ela conta no saldo quanto o vencimento. Numa parcela, ela e as seguintes andam juntas, para continuar uma parcela por mês.
 - A mesma aba continua com as **assinaturas e contas recorrentes** que dá para cortar (YT Premium, streaming), mostrando quanto você economizaria por ano.
 

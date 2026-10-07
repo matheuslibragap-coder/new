@@ -9,14 +9,19 @@ use DateTimeImmutable;
 /** Consultas agregadas do Painel. Tudo por mês de competência. */
 final class Report extends Model
 {
-    /** @return array{income_done: float, income_pending: float, expense_done: float, expense_pending: float} */
+    /**
+     * expense_pending não inclui dívidas postergáveis: elas ficam em postponable_pending.
+     *
+     * @return array{income_done: float, income_pending: float, expense_done: float, expense_pending: float, postponable_pending: float}
+     */
     public function monthSummary(DateTimeImmutable $month): array
     {
         $row = $this->fetchOne(
             "SELECT COALESCE(SUM(CASE WHEN type = 'entrada' AND status = 'efetivado' THEN amount END), 0) AS income_done,
                     COALESCE(SUM(CASE WHEN type = 'entrada' AND status = 'pendente'  THEN amount END), 0) AS income_pending,
                     COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'efetivado' THEN amount END), 0) AS expense_done,
-                    COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'pendente'  THEN amount END), 0) AS expense_pending
+                    COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'pendente' AND postponable = 0 THEN amount END), 0) AS expense_pending,
+                    COALESCE(SUM(CASE WHEN type = 'saida'   AND status = 'pendente' AND postponable = 1 THEN amount END), 0) AS postponable_pending
                FROM transactions WHERE user_id = ? AND competence_month = ?",
             [$this->uid(), $month->format('Y-m-d')]
         );
@@ -60,25 +65,26 @@ final class Report extends Model
         return $series;
     }
 
-    /** Contas pendentes com vencimento já passado, de qualquer mês. */
+    /** Contas pendentes com vencimento já passado, de qualquer mês (sem as dívidas postergáveis). */
     public function overdue(DateTimeImmutable $today): array
     {
         return $this->fetchAll(
             "SELECT t.id, t.description, t.amount, t.transaction_date, t.competence_month, c.name AS category_name, c.color AS category_color
                FROM transactions t JOIN categories c ON c.id = t.category_id
-              WHERE t.user_id = ? AND t.status = 'pendente' AND t.transaction_date < ?
+              WHERE t.user_id = ? AND t.type = 'saida' AND t.status = 'pendente' AND t.postponable = 0 AND t.transaction_date < ?
            ORDER BY t.transaction_date",
             [$this->uid(), $today->format('Y-m-d')]
         );
     }
 
-    /** Pendentes do mês ainda dentro do prazo. */
+    /** Pendentes do mês ainda dentro do prazo (sem as dívidas postergáveis). */
     public function upcoming(DateTimeImmutable $month, DateTimeImmutable $today): array
     {
         return $this->fetchAll(
             "SELECT t.id, t.description, t.amount, t.transaction_date, c.name AS category_name, c.color AS category_color
                FROM transactions t JOIN categories c ON c.id = t.category_id
-              WHERE t.user_id = ? AND t.status = 'pendente' AND t.competence_month = ? AND t.transaction_date >= ?
+              WHERE t.user_id = ? AND t.type = 'saida' AND t.status = 'pendente' AND t.postponable = 0
+                AND t.competence_month = ? AND t.transaction_date >= ?
            ORDER BY t.transaction_date
               LIMIT 8",
             [$this->uid(), $month->format('Y-m-d'), $today->format('Y-m-d')]

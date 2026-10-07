@@ -65,8 +65,8 @@ $pageUrl = static fn (int $p) => url('/historico', $activeParams + ($p > 1 ? ['p
     <div class="summary-item"><span>Saídas</span><strong class="amount-out"><?= e(money($totals['expense'])) ?></strong></div>
     <div class="summary-item"><span>Saldo</span><strong><?= e(money($totals['income'] - $totals['expense'])) ?></strong></div>
 </div>
-<?php if ($totals['pending'] > 0): ?>
-    <p class="muted small">As saídas incluem <?= e(money($totals['pending'])) ?> em contas pendentes.</p>
+<?php if ($totals['pending'] > 0 || $totals['postponable'] > 0): ?>
+    <p class="muted small">As saídas incluem <?= e(money($totals['pending'])) ?> a pagar<?= $totals['postponable'] > 0 ? ' e ' . e(money($totals['postponable'])) . ' em dívidas postergáveis' : '' ?>.</p>
 <?php endif; ?>
 
 <div class="card card-flush">

@@ -234,9 +234,10 @@ final class Transaction extends Model
                     COALESCE(SUM(CASE WHEN t.type = 'saida'   THEN t.amount END), 0) AS expense,
                     COALESCE(SUM(CASE WHEN t.type = 'entrada' AND t.status = 'efetivado' THEN t.amount END), 0) AS income_done,
                     COALESCE(SUM(CASE WHEN t.type = 'saida'   AND t.status = 'efetivado' THEN t.amount END), 0) AS expense_done,
-                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' THEN t.amount END), 0) AS pending,
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' AND t.postponable = 0 THEN t.amount END), 0) AS pending,
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' AND t.postponable = 1 THEN t.amount END), 0) AS postponable,
                     COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'entrada' THEN t.amount END), 0) AS income_pending,
-                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' AND t.transaction_date < CURDATE() THEN t.amount END), 0) AS overdue
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' AND t.postponable = 0 AND t.transaction_date < CURDATE() THEN t.amount END), 0) AS overdue
                FROM transactions t" . $where,
             $params
         );
