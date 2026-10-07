@@ -10,6 +10,7 @@ use App\Models\Budget;
 use App\Models\Category;
 use App\Models\ExpenseCategory;
 use App\Models\Transaction;
+use App\Services\RecurringService;
 use App\Services\TransactionService;
 use DateTimeImmutable;
 
@@ -118,6 +119,34 @@ final class TransactionController extends Controller
         redirect($returnTo);
     }
 
+    /** Caixinha "Pago" da lista: marca ou desmarca o pagamento/recebimento. */
+    public function togglePaid(): void
+    {
+        $transaction = $this->findOrFail((int) Request::input('id', 0));
+        $returnTo = safe_return_path(Request::input('voltar'), $this->defaultReturn($transaction));
+        $paid = (string) Request::input('pago', '') === '1';
+        $isIn = $transaction['type'] === Transaction::TYPE_IN;
+
+        if ($paid === ($transaction['status'] === Transaction::STATUS_DONE)) {
+            redirect($returnTo);
+        }
+        $model = new Transaction();
+        if ($transaction['recurring_bill_id'] !== null) {
+            // Contas obrigatórias/opcionais: registra a data do pagamento e, ao desfazer, volta ao vencimento.
+            $service = new RecurringService();
+            $paid ? $service->pay($transaction, $transaction['amount'], new DateTimeImmutable('today')) : $service->unpay($transaction);
+        } elseif ($paid) {
+            $model->markPaid((int) $transaction['id'], $transaction['amount'], $transaction['transaction_date']);
+        } else {
+            $model->markPending((int) $transaction['id'], $transaction['transaction_date']);
+        }
+
+        Session::flash('success', sprintf('"%s" %s.', $transaction['description'], $paid
+            ? ($isIn ? 'marcado como recebido' : 'marcado como pago')
+            : ($isIn ? 'voltou para a receber' : 'voltou para a pagar')));
+        redirect($returnTo);
+    }
+
     /** @param DateTimeImmutable[] $months */
     private function warnIfOverBudget(array $category, array $months): void
     {
@@ -195,6 +224,7 @@ final class TransactionController extends Controller
             'months'              => 12,
             'until_end'           => '',
             'installments'        => 2,
+            'paid'                => '',
         ];
         return $old ? $old + ['until_end' => ''] + $defaults : $defaults;
     }
@@ -213,6 +243,7 @@ final class TransactionController extends Controller
             'expense_category_id' => $transaction['expense_category_id'] ?? '',
             'transaction_date'    => $transaction['transaction_date'],
             'payment_method'      => $transaction['payment_method'] ?? '',
+            'paid'                => $transaction['status'] === Transaction::STATUS_DONE ? '1' : '0',
             'competence_month'    => $competence->format('n'),
             'competence_year'     => $competence->format('Y'),
         ];

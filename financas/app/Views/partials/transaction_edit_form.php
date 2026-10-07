@@ -83,6 +83,8 @@ $scopeLabel = $isRecurring ? 'lançamento' : 'parcela';
         </fieldset>
     <?php endif; ?>
 
+    <?php View::partial('partials/paid_question', ['selected' => $form['paid'] ?? '', 'always' => true]); ?>
+
     <div class="sub-box">
         <?php View::partial('partials/month_fields', [
             'prefix' => 'competence', 'label' => 'Mês em que conta no saldo',

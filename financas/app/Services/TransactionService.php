@@ -115,12 +115,28 @@ final class TransactionService
             $errors[] = sprintf('O último mês ficaria depois de dezembro de %d. Diminua a quantidade de meses.', APP_MAX_YEAR);
         }
 
+        // Se algum lançamento cai depois de hoje, é obrigatório dizer se já está pago/recebido.
+        $paid = true;
+        if ($data['date'] !== null && $firstMonth !== null && $count >= 1) {
+            $lastDate = $mode === self::MODE_SINGLE
+                ? $data['date']
+                : self::itemDate($data['date'], $firstMonth->modify('+' . ($count - 1) . ' month'));
+            if ($lastDate > new DateTimeImmutable('today')) {
+                $answer = (string) ($input['paid'] ?? '');
+                if (!in_array($answer, ['1', '0'], true)) {
+                    $errors[] = $data['type'] === Transaction::TYPE_IN ? 'Informe se você já recebeu.' : 'Informe se já está pago.';
+                }
+                $paid = $answer !== '0';
+            }
+        }
+
         return [$errors, $data + [
             'mode'           => $mode,
             'count'          => (int) $count,
             'first_month'    => $firstMonth,
             'payment_method' => $payment,
             'is_daily'       => !empty($input['is_daily']),
+            'paid'           => $paid,
         ]];
     }
 
@@ -144,7 +160,14 @@ final class TransactionService
             $payment = isset(Transaction::PAYMENT_LABELS[$payment]) ? $payment : null;
         }
 
-        return [$errors, $data + ['competence' => $competence, 'payment_method' => $payment]];
+        $answer = (string) ($input['paid'] ?? '');
+        $status = match ($answer) {
+            '1'     => Transaction::STATUS_DONE,
+            '0'     => Transaction::STATUS_PENDING,
+            default => $current['status'],
+        };
+
+        return [$errors, $data + ['competence' => $competence, 'payment_method' => $payment, 'status' => $status]];
     }
 
     /** Campos comuns a criar e editar. */
@@ -233,6 +256,7 @@ final class TransactionService
     private function createSingle(array $data): array
     {
         $this->transactions->create($this->row($data, $data['amount'], $data['description'], $data['first_month']) + [
+            'status'            => $data['paid'] ? Transaction::STATUS_DONE : Transaction::STATUS_PENDING,
             'payment_method'    => $data['payment_method'],
             'is_daily'          => $data['is_daily'],
             'competence_manual' => $data['payment_method'] === 'credito',
@@ -254,12 +278,17 @@ final class TransactionService
             $data['description'], $total, $count, (int) $data['category']['id'], $data['date']->format('Y-m-d')
         );
 
+        // Cada mês vence no mesmo dia da data informada. Se o usuário disse que ainda
+        // não pagou, só os meses de hoje em diante ficam pendentes.
+        $today = new DateTimeImmutable('today');
         $months = [];
         foreach ($amounts as $i => $value) {
             $month = $data['first_month']->modify("+{$i} month");
             $months[] = $month;
+            $date = self::itemDate($data['date'], $month);
             $description = $isInstallments ? self::parcelDescription($data['description'], $i + 1, $count) : $data['description'];
-            $this->transactions->create($this->row($data, $value, $description, $month) + [
+            $this->transactions->create($this->row($data, $value, $description, $month, $date) + [
+                'status'               => $data['paid'] || $date < $today ? Transaction::STATUS_DONE : Transaction::STATUS_PENDING,
                 'competence_manual'    => true,
                 'installment_group_id' => $groupId,
                 'installment_number'   => $i + 1,
@@ -281,6 +310,7 @@ final class TransactionService
         try {
             if ($current['installment_group_id'] === null) {
                 $this->transactions->update((int) $current['id'], $this->row($data, $data['amount'], $data['description'], $data['competence']) + [
+                    'status'            => $data['status'],
                     'payment_method'    => $data['payment_method'],
                     'competence_manual' => true,
                 ]);
@@ -306,12 +336,20 @@ final class TransactionService
             $description = $isInstallments
                 ? self::parcelDescription($data['description'], (int) $item['installment_number'], $count)
                 : $data['description'];
+            $competence = $data['competence']->modify(($offset >= 0 ? '+' : '') . $offset . ' month');
+            // O item editado recebe a data e a situação informadas; os outros do escopo
+            // vencem no mesmo dia, no mês deles, e mantêm a situação que já tinham.
             $this->transactions->update((int) $item['id'], $this->row(
                 $data,
                 $data['amount'],
                 $description,
-                $data['competence']->modify(($offset >= 0 ? '+' : '') . $offset . ' month')
-            ) + ['payment_method' => $item['payment_method'], 'competence_manual' => true]);
+                $competence,
+                $offset === 0 ? $data['date'] : self::itemDate($data['date'], $competence)
+            ) + [
+                'status'            => $offset === 0 ? $data['status'] : $item['status'],
+                'payment_method'    => $item['payment_method'],
+                'competence_manual' => true,
+            ]);
         }
 
         if ($scope === self::SCOPE_ALL) {
@@ -353,7 +391,7 @@ final class TransactionService
         }));
     }
 
-    private function row(array $data, string $amount, string $description, DateTimeImmutable $competence): array
+    private function row(array $data, string $amount, string $description, DateTimeImmutable $competence, ?DateTimeImmutable $date = null): array
     {
         return [
             'type'                => $data['type'],
@@ -361,9 +399,16 @@ final class TransactionService
             'category_id'         => (int) $data['category']['id'],
             'expense_category_id' => $data['expense_category'] !== null ? (int) $data['expense_category']['id'] : null,
             'description'         => $description,
-            'transaction_date'    => $data['date']->format('Y-m-d'),
+            'transaction_date'    => ($date ?? $data['date'])->format('Y-m-d'),
             'competence_month'    => $competence->format('Y-m-d'),
         ];
+    }
+
+    /** O dia de $date dentro de $month (dias 29–31 inexistentes viram o último dia do mês). */
+    public static function itemDate(DateTimeImmutable $date, DateTimeImmutable $month): DateTimeImmutable
+    {
+        $day = min((int) $date->format('j'), (int) $month->format('t'));
+        return $month->setDate((int) $month->format('Y'), (int) $month->format('n'), $day)->setTime(0, 0);
     }
 
     public static function monthsBetween(DateTimeImmutable $from, DateTimeImmutable $to): int

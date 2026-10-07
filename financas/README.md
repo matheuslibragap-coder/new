@@ -172,6 +172,13 @@ Ao editar ou excluir um lançamento recorrente ou uma parcela, você escolhe: **
 
 Os seletores de mês vão de 2020 até **dezembro de 2040**.
 
+### Pago ou a pagar
+- Quando a data de um lançamento é **posterior a hoje** (ou, nos recorrentes e parcelados, quando há meses futuros), o formulário pergunta **"Já está pago?"** (nas entradas, **"Já recebeu?"**). A resposta é obrigatória.
+- **Recorrentes e parcelados:** cada mês vence no **mesmo dia** da data informada (por exemplo, 25/10, 25/11, 25/12…). Se a resposta for "Não", os meses com data anterior a hoje entram como pagos e os demais ficam a pagar.
+- Na lista de Lançamentos e no Histórico, a coluna **"Pago"** tem uma caixinha em cada linha. Ao marcar, o valor passa a contar no saldo atual. Ao desmarcar, volta para "a pagar". Nas contas obrigatórias e opcionais, marcar registra a data de hoje como data do pagamento.
+- O que passa da data sem estar pago aparece em **vermelho**, com a etiqueta **"Vencido"**, e entra no alerta do Painel.
+- O resumo de Lançamentos mostra as entradas recebidas, as saídas pagas, o total a pagar (destacando o que está vencido), o saldo atual (só o que foi pago e recebido) e o saldo previsto.
+
 ### Controle diário
 Aba para os gastos do dia a dia, como um energético de R$ 12. Você informa valor, o que foi, a **categoria do gasto**, de qual conta ou cartão saiu e como pagou. A aba mostra o total do mês, o total de hoje, a média por dia, os gastos por categoria e a lista agrupada por dia.
 

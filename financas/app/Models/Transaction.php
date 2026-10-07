@@ -58,11 +58,11 @@ final class Transaction extends Model
     {
         $this->execute(
             'UPDATE transactions
-                SET type = ?, amount = ?, category_id = ?, expense_category_id = ?, payment_method = ?,
+                SET type = ?, status = COALESCE(?, status), amount = ?, category_id = ?, expense_category_id = ?, payment_method = ?,
                     description = ?, transaction_date = ?, competence_month = ?, competence_manual = ?
               WHERE id = ? AND user_id = ?',
             [
-                $d['type'], $d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['payment_method'] ?? null,
+                $d['type'], $d['status'] ?? null, $d['amount'], $d['category_id'], $d['expense_category_id'] ?? null, $d['payment_method'] ?? null,
                 $d['description'], $d['transaction_date'], $d['competence_month'], (int) $d['competence_manual'], $id, $this->uid(),
             ]
         );
@@ -201,16 +201,15 @@ final class Transaction extends Model
             "SELECT COUNT(*) AS count,
                     COALESCE(SUM(CASE WHEN t.type = 'entrada' THEN t.amount END), 0) AS income,
                     COALESCE(SUM(CASE WHEN t.type = 'saida'   THEN t.amount END), 0) AS expense,
-                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' THEN t.amount END), 0) AS pending
+                    COALESCE(SUM(CASE WHEN t.type = 'entrada' AND t.status = 'efetivado' THEN t.amount END), 0) AS income_done,
+                    COALESCE(SUM(CASE WHEN t.type = 'saida'   AND t.status = 'efetivado' THEN t.amount END), 0) AS expense_done,
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' THEN t.amount END), 0) AS pending,
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'entrada' THEN t.amount END), 0) AS income_pending,
+                    COALESCE(SUM(CASE WHEN t.status = 'pendente' AND t.type = 'saida' AND t.transaction_date < CURDATE() THEN t.amount END), 0) AS overdue
                FROM transactions t" . $where,
             $params
         );
-        return [
-            'count'   => (int) $row['count'],
-            'income'  => (float) $row['income'],
-            'expense' => (float) $row['expense'],
-            'pending' => (float) $row['pending'],
-        ];
+        return ['count' => (int) $row['count']] + array_map('floatval', array_diff_key($row, ['count' => 1]));
     }
 
     /** Meses de competência que têm lançamentos, do mais recente ao mais antigo. */

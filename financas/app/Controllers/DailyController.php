@@ -43,6 +43,7 @@ final class DailyController extends Controller
             'transaction_date'    => $today->format('Y-m-d'),
             'invoice_month'       => $nextMonth->format('n'),
             'invoice_year'        => $nextMonth->format('Y'),
+            'paid'                => '',
         ];
         // Após um erro, mantém o que foi digitado; campos não enviados (ex.: categoria sem escolha) voltam ao padrão.
         $form = $old ? array_merge($defaults, array_intersect_key($old, $defaults)) : $defaults;

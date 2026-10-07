@@ -93,7 +93,8 @@ $mode = $form['mode'] ?? 'unico';
 
     <label class="field">
         <span>
-            <span data-show="type=saida">Data da compra</span>
+            <span data-show="type=saida;mode=unico">Data da compra ou do vencimento</span>
+            <span data-show="type=saida;mode=recorrente|parcelado">Data (dia do vencimento de cada mês)</span>
             <span data-show="type=entrada">Data</span>
         </span>
         <input type="date" name="transaction_date" value="<?= e($form['transaction_date'] ?? '') ?>" required
@@ -142,6 +143,8 @@ $mode = $form['mode'] ?? 'unico';
         ]); ?>
         <small class="muted small" data-suggest-hint></small>
     </div>
+
+    <?php View::partial('partials/paid_question', ['selected' => $form['paid'] ?? '', 'groupHint' => true]); ?>
 
     <div class="tx-summary" data-tx-summary hidden></div>
     <div class="alert alert-warning budget-warning" data-budget-warning role="status" hidden></div>

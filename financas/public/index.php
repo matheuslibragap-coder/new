@@ -73,6 +73,7 @@ $router->get('/lancamentos/editar', [TransactionController::class, 'edit']);
 $router->post('/lancamentos/atualizar', [TransactionController::class, 'update']);
 $router->get('/lancamentos/excluir', [TransactionController::class, 'confirmDelete']);
 $router->post('/lancamentos/excluir', [TransactionController::class, 'delete']);
+$router->post('/lancamentos/pago', [TransactionController::class, 'togglePaid']);
 
 $router->get('/historico', [HistoryController::class, 'index']);
 $router->get('/historico/exportar', [HistoryController::class, 'export']);

@@ -285,10 +285,27 @@
             }, 300);
         }
 
+        // "Já está pago?" só aparece quando algum lançamento cai depois de hoje.
+        var paidQuestion = form.querySelector('[data-paid-question]');
+        function syncPaidQuestion(p) {
+            if (!paidQuestion) return;
+            var date = purchaseDate();
+            var last = date;
+            if (date && p.first && (p.mode === 'recorrente' || p.mode === 'parcelado') && p.count > 0) {
+                var m = addMonths(p.first, p.count - 1);
+                last = new Date(m.getFullYear(), m.getMonth(), Math.min(date.getDate(), daysInMonth(m.getFullYear(), m.getMonth())));
+            }
+            var today = new Date(); today.setHours(0, 0, 0, 0);
+            var future = !!last && last > today;
+            paidQuestion.hidden = !future;
+            paidQuestion.querySelectorAll('input').forEach(function (r) { r.disabled = !future; r.required = future; });
+        }
+
         function update() {
             applyVisibility();
             if (fixHiddenChoices()) applyVisibility();
             var p = plan();
+            syncPaidQuestion(p);
             renderSummary(p);
             scheduleBudgetCheck(p);
         }
@@ -305,6 +322,16 @@
         update();
     }
     document.querySelectorAll('form[data-tx-form]').forEach(setupTxForm);
+
+    // Caixinha "Pago" da lista: envia assim que é marcada ou desmarcada
+    document.querySelectorAll('form[data-paid-toggle]').forEach(function (form) {
+        var box = form.querySelector('input[type="checkbox"]');
+        box.addEventListener('change', function () {
+            form.querySelector('[name="pago"]').value = box.checked ? '1' : '0';
+            box.disabled = true;
+            form.submit();
+        });
+    });
 
     // Mostra/esconde um bloco ligado a um checkbox (ex.: "Tem data para acabar")
     document.querySelectorAll('[data-toggle-target]').forEach(function (box) {

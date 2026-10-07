@@ -401,15 +401,16 @@ section + section { margin-top: 40px; }
 .choice-group.choice-3 { grid-template-columns: repeat(3, 1fr); }
 .choice { position: relative; cursor: pointer; }
 .choice input { position: absolute; opacity: 0; pointer-events: none; }
-.choice span {
+.choice > span {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
     min-height: 44px; padding: 8px 6px; text-align: center; font-size: 14px; font-weight: bold;
     border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text-muted);
 }
-.choice span small { font-weight: normal; font-size: 12px; }
+.choice > span small { font-weight: normal; font-size: 12px; }
 .choice input:checked + span { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
 .choice input:focus-visible + span { outline: 2px solid var(--primary); outline-offset: 1px; }
 .choice[hidden] { display: none; }
+.choice > span > span[hidden] { display: none; }
 
 .sub-box { background: var(--bg); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
 .month-fields { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; }
@@ -460,6 +461,31 @@ section + section { margin-top: 40px; }
 .reset-box { padding: 16px 20px; }
 .reset-box summary { cursor: pointer; }
 .reset-box form { margin-top: 16px; max-width: 560px; }
+
+/* ---------- Coluna Pago e vencidos ---------- */
+
+.col-paid { text-align: center !important; width: 1%; white-space: nowrap; }
+.col-paid form { margin: 0; display: inline-flex; }
+.paid-check { display: inline-flex; cursor: pointer; padding: 4px; }
+.paid-check input {
+    appearance: none; -webkit-appearance: none; margin: 0; cursor: pointer;
+    width: 24px; height: 24px; border: 2px solid var(--border-strong); border-radius: 6px; background: var(--surface);
+    display: grid; place-content: center;
+}
+.paid-check input::before {
+    content: ""; width: 12px; height: 7px; margin-top: -3px;
+    border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: rotate(-45deg) scale(0);
+}
+.paid-check input:checked { background: var(--success); border-color: var(--success); }
+.paid-check input:checked::before { transform: rotate(-45deg) scale(1); }
+.paid-check input:hover { border-color: var(--success); }
+.paid-check input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.paid-check input:disabled { opacity: .5; }
+.table .is-overdue td { background: var(--danger-soft); color: var(--danger); }
+.table .is-overdue .paid-check input { border-color: var(--danger); }
+.summary-item small { font-size: 12px; }
+.choice-group.choice-2 { grid-template-columns: repeat(2, 1fr); }
+.paid-question[hidden] { display: none; }
 
 /* ---------- Usuários ---------- */
 
@@ -546,6 +572,9 @@ a.user-name { color: var(--text-muted); }
     .cell-main { max-width: none; flex-wrap: wrap; }
     .table-responsive td.cell-main { display: block; font-weight: bold; }
     .table .is-pending td { background: transparent; }
+    .table-responsive td.col-paid { justify-content: space-between; text-align: left !important; }
+    .table-responsive tr.is-overdue { background: var(--danger-soft); }
+    .choice-group.choice-2 { grid-template-columns: repeat(2, 1fr); }
 
     /* Tabelas viram cartões empilhados */
     .table-responsive thead { display: none; }

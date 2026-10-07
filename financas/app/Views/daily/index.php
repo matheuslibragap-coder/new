@@ -87,6 +87,8 @@ $categoryTotal = array_sum(array_map(static fn ($c) => (float) $c['total'], $byC
                 <small class="muted small" data-suggest-hint></small>
             </div>
 
+            <?php View::partial('partials/paid_question', ['selected' => $form['paid'] ?? '']); ?>
+
             <div class="alert alert-warning budget-warning" data-budget-warning role="status" hidden></div>
 
             <div class="form-actions">
@@ -136,7 +138,11 @@ $categoryTotal = array_sum(array_map(static fn ($c) => (float) $c['total'], $byC
                     <?php foreach ($dayItems as $t): ?>
                         <li>
                             <div class="daily-main">
-                                <span class="daily-desc"><?= e($t['description']) ?></span>
+                                <span class="daily-desc"><?= e($t['description']) ?>
+                                    <?php if ($t['status'] === 'pendente'): ?>
+                                        <span class="badge <?= $t['transaction_date'] < date('Y-m-d') ? 'badge-danger">Vencido' : 'badge-warning">A pagar' ?></span>
+                                    <?php endif; ?>
+                                </span>
                                 <span class="daily-meta">
                                     <?php if ($t['expense_name']): ?><span class="tag tag-small" style="--tag-color: <?= e($t['expense_color']) ?>"><?= e($t['expense_name']) ?></span><?php endif; ?>
                                     <span class="muted small"><?= e($t['category_name']) ?> · <?= e(Transaction::PAYMENT_LABELS[$t['payment_method']] ?? '') ?><?= $t['payment_method'] === 'credito' ? ' (fatura de ' . e(month_label($t['competence_month'])) . ')' : '' ?></span>
