@@ -1,0 +1,16 @@
+export const AREAS_ATUACAO = [
+  "Cível",
+  "Consumidor",
+  "Família e Sucessões",
+  "Trabalhista",
+  "Previdenciário",
+  "Penal",
+  "Tributário",
+  "Empresarial",
+  "Imobiliário",
+  "Bancário",
+  "Digital e proteção de dados",
+  "Saúde",
+  "Administrativo",
+  "Ambiental",
+];

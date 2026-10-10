@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-marca: #1e293b;
+  --color-marca-claro: #334155;
+  --color-fundo: #f7f7f5;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-fundo);
+  color: #1c1917;
+  font-family: var(--font-sans);
+}
+
+@utility cartao {
+  @apply rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6;
+}
+@utility rotulo {
+  @apply mb-1 block text-sm font-medium text-stone-700;
+}
+@utility campo {
+  @apply w-full rounded-xl border border-stone-300 bg-white px-3 py-3 text-base text-stone-900 outline-none placeholder:text-stone-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200;
+}
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-base font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primario {
+  @apply btn bg-marca text-white hover:bg-marca-claro;
+}
+@utility btn-secundario {
+  @apply btn border border-stone-300 bg-white text-stone-800 hover:bg-stone-50;
+}
+@utility btn-perigo {
+  @apply btn bg-red-700 text-white hover:bg-red-800;
+}
+@utility link {
+  @apply font-medium text-slate-700 underline underline-offset-2 hover:text-slate-900;
+}
+@utility erro {
+  @apply rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800;
+}
+@utility sucesso {
+  @apply rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800;
+}
