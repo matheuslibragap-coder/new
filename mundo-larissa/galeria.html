@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galeria de Sprites — O Mundo da Larissa</title>
+  <style>
+    body { font-family: "Trebuchet MS", sans-serif; background: #fdf3f8; color: #4a3657; margin: 16px; }
+    h2 { margin: 24px 0 8px; }
+    .grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .cell { background: #fff; border-radius: 12px; padding: 6px; text-align: center; font-size: 11px; box-shadow: 0 2px 6px #0001; }
+    .cell canvas, .cell img { display: block; margin: 0 auto 4px; background: #f4eefa; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Galeria de Sprites</h1>
+  <p>Cada sprite mostra a chave usada em <code>src/art/overrides.ts</code> para trocar o desenho por um PNG.</p>
+  <div id="root"></div>
+  <script type="module" src="/src/galeria.ts"></script>
+</body>
+</html>
