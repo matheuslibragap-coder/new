@@ -25,6 +25,7 @@ export interface HouseState {
 
 export interface MissionProgress {
   status: 'active' | 'done';
+  base?: number;
 }
 
 export interface SaveData {
@@ -51,6 +52,7 @@ export interface SaveData {
   lastOutdoorMap: string;
   found: Record<string, boolean>;
   flags: Record<string, boolean>;
+  stats: Record<string, number>;
 }
 
 export const DEFAULT_OUTFIT: Outfit = {
@@ -93,7 +95,16 @@ export function defaultSave(): SaveData {
     lastOutdoorMap: 'praca',
     found: {},
     flags: {},
+    stats: {},
   };
+}
+
+export function stat(name: string) {
+  return S.stats[name] ?? 0;
+}
+
+export function bumpStat(name: string, n = 1) {
+  S.stats[name] = (S.stats[name] ?? 0) + n;
 }
 
 /** Estado atual do jogo (fonte única da verdade). */

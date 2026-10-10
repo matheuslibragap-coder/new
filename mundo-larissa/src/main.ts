@@ -4,6 +4,7 @@ import './art/index';
 import { loadOverrides } from './art/registry';
 import { sfx } from './core/audio';
 import { checkUnlocks } from './core/progress';
+import { bus } from './core/events';
 import { loadGame, S } from './core/state';
 import { WorldScene } from './scenes/WorldScene';
 import { setHooks } from './ui/dom';
@@ -31,6 +32,7 @@ async function start() {
   Object.assign(window, {
     __game: game,
     __S: () => S,
+    __bus: bus,
     __tileScreen: (x: number, y: number) => {
       const sc = game.scene.getScene('world') as WorldScene;
       const cam = sc.cameras.main;
