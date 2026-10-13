@@ -31,6 +31,8 @@ src/app/api           jobs agendados, webhooks, PDFs, .ics, exportação LGPD
 ## Como rodar
 
 1. `npm install`
+Passo a passo completo de publicação: `DEPLOY.md`.
+
 2. Crie um projeto no Supabase e aplique as migrations (`npx supabase link` e `npx supabase db push`, ou cole os arquivos de `supabase/migrations` em ordem no SQL Editor).
 3. Em Authentication, habilite e-mail e Google e cadastre `{URL}/auth/callback` nas URLs de redirecionamento.
 4. Copie `.env.example` para `.env.local` e preencha.
@@ -40,17 +42,9 @@ src/app/api           jobs agendados, webhooks, PDFs, .ics, exportação LGPD
 
 ### Jobs agendados
 
-`vercel.json` define os crons. Todos exigem `Authorization: Bearer CRON_SECRET`.
-
-| Rota | Quando | O que faz |
-| --- | --- | --- |
-| `/api/cron/datajud?enfileirar=1` | 06h (Brasília) | Enfileira processos ativos e monitorados |
-| `/api/cron/datajud` | a cada 10 min | Processa a fila com intervalo entre chamadas e backoff exponencial (429 e 5xx) |
-| `/api/cron/alertas` | de hora em hora | Prazos D-5, D-2, D-0 e lembretes de audiência (e-mail, push e aviso interno) |
-| `/api/cron/alertas?diario=1` | 08h | Recebimentos vencidos |
-| `/api/cron/intimacoes` | 07h30 | Captura de intimações por OAB |
-
-No plano Hobby da Vercel só há execução diária. Alternativa: `pg_cron` + `pg_net` no Supabase chamando as mesmas URLs com o cabeçalho.
+Diários pela Vercel (`vercel.json`, compatível com o plano Hobby): enfileirar DataJud (06h), intimações (07h30) e alertas diários (08h).
+Frequentes pelo Supabase (`pg_cron` + `pg_net`, ver `DEPLOY.md`): processamento da fila do DataJud a cada 10 min e alertas de hora em hora.
+Todas as rotas exigem `Authorization: Bearer CRON_SECRET`.
 
 ### Webhooks
 
