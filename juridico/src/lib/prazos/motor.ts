@@ -298,3 +298,8 @@ export function diferencaDias(a: string, b: string): number {
 export function hojeBrasilia(agora = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(agora);
 }
+
+/** Instante ISO deslocado em dias a partir de agora (consultas de janelas de tempo). */
+export function instanteEmDias(dias: number): string {
+  return new Date(Date.now() + dias * 86400000).toISOString();
+}

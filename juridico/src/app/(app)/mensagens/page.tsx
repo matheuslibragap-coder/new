@@ -4,6 +4,7 @@ import { Enviar } from "@/components/cliente";
 import { obterContexto } from "@/lib/contexto";
 import { formatarCnj } from "@/lib/cnj";
 import { criarMensagem } from "./acoes";
+import { instanteEmDias } from "@/lib/prazos/motor";
 
 export const metadata = { title: "Mensagens ao cliente" };
 
@@ -11,7 +12,7 @@ const COR = { rascunho: "amarelo", aprovada: "azul", enviada: "verde", descartad
 
 export default async function MensagensPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const ctx = await obterContexto();
-  const desde = new Date(Date.now() - 30 * 86400000).toISOString();
+  const desde = instanteEmDias(-30);
   const [{ data: andamentos }, { data: msgs }] = await Promise.all([
     ctx.supabase
       .from("andamentos")

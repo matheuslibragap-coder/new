@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Plataforma de gestão jurídica
 
-## Getting Started
+Plataforma web mobile-first para advogados autônomos e pequenos escritórios (1 a 5 advogados).
+Next.js 16 (App Router), TypeScript, Tailwind 4, Supabase (Postgres, Auth, Storage, RLS), Vercel.
 
-First, run the development server:
+O nome do produto é configurável em `NEXT_PUBLIC_NOME_PRODUTO`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Princípios implementados
+
+| Princípio | Onde |
+| --- | --- |
+| Multi-inquilino com RLS | Toda tabela tem `escritorio_id` e políticas criadas por `rls_inquilino` (`supabase/migrations/0001_base.sql`). Teste: `supabase/tests/rls_test.sql`. |
+| Nenhuma regra jurídica fixa no código | Feriados, regras de prazo, índices, modelos e leis de referência ficam em tabelas editáveis em `/admin`. |
+| A plataforma auxilia; não decide | Componente `AvisoResponsabilidade` em todo prazo, cálculo e texto gerado; os PDFs de cálculo trazem o aviso. |
+| Nada é enviado sem aprovação | Trigger `exigir_aprovacao_envio` impede marcar mensagem como enviada sem aprovação registrada; a assinatura eletrônica não dispara e-mail do provedor. |
+| Atribuição do DataJud | "Fonte: CNJ / DataJud" na capa, nos andamentos, nas mensagens e no verificador. |
+| Sem travessão na interface | Conferido por busca no código; o caractere é removido dos textos da IA. |
+
+## Estrutura
+
+```
+supabase/migrations   schema, RLS, cotas, funções dos jobs e cargas iniciais
+supabase/tests        stub do Supabase + teste de isolamento e cotas (Postgres puro)
+scripts/              gerador da carga de feriados (TJRS e TRT4)
+src/lib               lógica pura (CNJ, prazos, calculadoras, verificador) e integrações
+src/app/(publico)     landing, login, cadastro, termos e privacidade (placeholders)
+src/app/(app)         área logada (todos os módulos)
+src/app/api           jobs agendados, webhooks, PDFs, .ics, exportação LGPD
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Como rodar
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. `npm install`
+2. Crie um projeto no Supabase e aplique as migrations (`npx supabase link` e `npx supabase db push`, ou cole os arquivos de `supabase/migrations` em ordem no SQL Editor).
+3. Em Authentication, habilite e-mail e Google e cadastre `{URL}/auth/callback` nas URLs de redirecionamento.
+4. Copie `.env.example` para `.env.local` e preencha.
+5. `npm run dev`
+6. Para acessar o painel admin: `insert into admins_plataforma (user_id) values ('<uuid do seu usuário>');`
+7. No admin, importe os índices por CSV e confira os feriados marcados [CONFERIR].
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Jobs agendados
 
-## Learn More
+`vercel.json` define os crons. Todos exigem `Authorization: Bearer CRON_SECRET`.
 
-To learn more about Next.js, take a look at the following resources:
+| Rota | Quando | O que faz |
+| --- | --- | --- |
+| `/api/cron/datajud?enfileirar=1` | 06h (Brasília) | Enfileira processos ativos e monitorados |
+| `/api/cron/datajud` | a cada 10 min | Processa a fila com intervalo entre chamadas e backoff exponencial (429 e 5xx) |
+| `/api/cron/alertas` | de hora em hora | Prazos D-5, D-2, D-0 e lembretes de audiência (e-mail, push e aviso interno) |
+| `/api/cron/alertas?diario=1` | 08h | Recebimentos vencidos |
+| `/api/cron/intimacoes` | 07h30 | Captura de intimações por OAB |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+No plano Hobby da Vercel só há execução diária. Alternativa: `pg_cron` + `pg_net` no Supabase chamando as mesmas URLs com o cabeçalho.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Webhooks
 
-## Deploy on Vercel
+- Asaas: `{URL}/api/webhooks/asaas`, token em `ASAAS_WEBHOOK_TOKEN` (cabeçalho `asaas-access-token`).
+- ZapSign: `{URL}/api/webhooks/zapsign?token={ZAPSIGN_WEBHOOK_TOKEN}`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Testes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+npm test            # CNJ, motor de prazos, calculadoras, verificador, PDF, utilitários
+npm run typecheck
+npm run lint
+PGHOST=/tmp PGPORT=5432 PGUSER=postgres ./supabase/tests/rodar.sh   # RLS e cotas num Postgres 16 com pgvector
+```
+
+## Fases
+
+1. Autenticação (e-mail e Google), onboarding do escritório, convites com papéis e permissões, M1 com validação do dígito CNJ, identificação do tribunal por J.TR, importação de capa e movimentos do DataJud, cadastro manual de andamentos, job diário com fila e backoff.
+2. M2: motor de prazos (dias úteis e corridos, DJe, ciência ficta no portal, suspensão anual, dobra, feriados por tribunal, UF e comarca, expediente reduzido) com memória dia a dia; prazo vira tarefa com alertas D-5, D-2 e D-0; painel admin. M3: agenda dia, semana e lista, anexos, alertas configuráveis, exportação e assinatura .ics.
+3. M4: mensagem ao cliente gerada por IA, revisão, aprovação obrigatória, envio por wa.me ou pela API oficial (Pro).
+4. Planos, assinatura recorrente (Asaas: cartão, Pix ou boleto), cotas no banco (processos, usuários, assinaturas, módulos), exportação e exclusão de dados (LGPD), registro de acessos.
+5. M5: atualização monetária (incluindo a regra da Lei 14.905/2024), rescisão, pensão e cumprimento de sentença, com PDF.
+6. M6: lançamentos com parcelamento, situação atrasada, resumo mensal em CSV, alerta de vencidos.
+7. M7: modelos com variáveis, geração, PDF, assinatura eletrônica pela ZapSign com aviso de validade e cota.
+8. M8: upload PDF/DOCX, anonimização, indexação isolada por escritório (pgvector com Voyage ou busca textual), rascunhos marcados como RASCUNHO.
+9. M9: verificação de números CNJ no DataJud (existência, tribunal e classe), jurisprudência sem fonte marcada como NÃO VERIFICADO com link de busca, artigos inválidos, datas impossíveis, nomes divergentes, formatação.
+10. M10: interface `ProvedorIntimacoes` com implementação DJEN (Comunica PJe); o prazo sugerido pelo M2 só vira tarefa após confirmação.

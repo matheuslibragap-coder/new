@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Cabecalho, Campo, Cartao, Mensagens } from "@/components/ui";
 import { Enviar } from "@/components/cliente";
 import { obterContexto } from "@/lib/contexto";
@@ -27,7 +28,7 @@ export default async function NovoProcesso({ searchParams }: { searchParams: Pro
           />
           <CamposProcesso clientes={op.clientes} ritos={op.ritos} processo={{ cliente_id: busca.cliente }} />
           <p className="text-xs text-slate-500">
-            Não encontrou o cliente? <a href="/clientes/novo?voltar=/processos/novo" className="underline">Cadastre antes</a>.
+            Não encontrou o cliente? <Link href="/clientes/novo?voltar=/processos/novo" className="underline">Cadastre antes</Link>.
           </p>
           <Enviar>Cadastrar e importar</Enviar>
         </form>

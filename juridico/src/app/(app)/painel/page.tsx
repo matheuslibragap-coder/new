@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Cabecalho, Cartao, Etiqueta, LinkBotao, Mensagens, Vazio } from "@/components/ui";
 import { obterContexto } from "@/lib/contexto";
 import { formatarCnj } from "@/lib/cnj";
-import { diferencaDias, formatarDataBr, hojeBrasilia, somarDias } from "@/lib/prazos/motor";
+import { diferencaDias, formatarDataBr, hojeBrasilia, instanteEmDias, somarDias } from "@/lib/prazos/motor";
 import { centavosParaReais, moeda } from "@/lib/documento";
 
 export const metadata = { title: "Painel" };
@@ -11,10 +11,11 @@ export default async function Painel({ searchParams }: { searchParams: Promise<R
   const ctx = await obterContexto();
   const e = ctx.escritorio.id;
   const hoje = hojeBrasilia();
-  const fimSemana = new Date(Date.now() + 7 * 86400000).toISOString();
+  const fimSemana = instanteEmDias(7);
+  const agora = instanteEmDias(0);
   const [prazos, compromissos, andamentos, mensagens, intimacoes, vencidos, monitorados] = await Promise.all([
     ctx.supabase.from("tarefas").select("id, titulo, data_vencimento, processos(numero_cnj)").eq("escritorio_id", e).eq("status", "aberta").lte("data_vencimento", somarDias(hoje, 7)).order("data_vencimento").limit(15),
-    ctx.supabase.from("compromissos").select("id, titulo, inicio, modalidade").eq("escritorio_id", e).gte("inicio", new Date().toISOString()).lte("inicio", fimSemana).order("inicio").limit(10),
+    ctx.supabase.from("compromissos").select("id, titulo, inicio, modalidade").eq("escritorio_id", e).gte("inicio", agora).lte("inicio", fimSemana).order("inicio").limit(10),
     ctx.supabase.from("andamentos").select("id, nome, data_hora, processo_id, processos(numero_cnj)").eq("escritorio_id", e).is("visto_em", null).eq("importacao_inicial", false).order("criado_em", { ascending: false }).limit(10),
     ctx.supabase.from("mensagens_cliente").select("id", { count: "exact", head: true }).eq("escritorio_id", e).in("status", ["rascunho", "aprovada"]),
     ctx.planoInclui("M10") ? ctx.supabase.from("intimacoes").select("id", { count: "exact", head: true }).eq("escritorio_id", e).eq("status", "nova") : Promise.resolve({ count: 0 }),

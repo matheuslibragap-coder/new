@@ -35,7 +35,6 @@ export async function GET(req: Request) {
     const falta = diferencaDias(hoje, t.data_vencimento);
     const marco = MARCOS.find((m) => falta <= m && !(t.alertas_enviados ?? []).includes(`D-${m}`) && !MARCOS.filter((x) => x < m).some((x) => falta <= x));
     if (marco === undefined) continue;
-    const rotulo = `D-${marco}`;
     const proc = t.processos as unknown as { numero_cnj: string } | null;
     await avisar(admin, {
       escritorioId: t.escritorio_id,

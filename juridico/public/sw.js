@@ -3,7 +3,9 @@ self.addEventListener("push", (event) => {
   let dados = { titulo: "Aviso", corpo: "", link: "/painel" };
   try {
     dados = event.data ? event.data.json() : dados;
-  } catch (e) {}
+  } catch {
+    // payload inválido: usa o padrão
+  }
   event.waitUntil(self.registration.showNotification(dados.titulo, { body: dados.corpo, icon: "/icone.svg", data: { link: dados.link } }));
 });
 
