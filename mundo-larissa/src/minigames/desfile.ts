@@ -16,8 +16,8 @@ const PAD_COLORS = [0xf7a8c8, 0x9fd3f7, 0x9fe3c9, 0xffe08a];
 const NOTES = [523.25, 659.25, 783.99, 1046.5];
 
 export class DesfileGame extends MiniGameBase {
-  readonly gameId = 'desfile';
-  readonly title = 'Desfile da Memória';
+  readonly gameId: string = 'desfile';
+  readonly title: string = 'Desfile da Memória';
   bgColors: [number, number] = [0xf3e6ff, 0xfde8f3];
   protected seq: number[] = [];
   protected pos = 0;

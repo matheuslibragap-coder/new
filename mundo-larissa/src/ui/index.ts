@@ -4,7 +4,7 @@ import type { NpcDef } from '../maps/types';
 import { initMissions } from '../missions/missions';
 import { registerMiniGames } from '../minigames/registry';
 import { initCelebrations } from './celebrate';
-import { closeAllModals, toast } from './dom';
+import { closeAllModals } from './dom';
 import { buildHud } from './hud';
 import { initMinigameUI } from './minigameUI';
 import { openMissions } from './missionsPanel';
@@ -14,6 +14,8 @@ import { talkTo } from './talk';
 import { initDecorPanel } from './decorPanel';
 import { initHomeShop } from './homeShop';
 import { openHouses } from './housesPanel';
+import { openCityMap } from './cityMap';
+import { initFinale } from './finale';
 import { openWardrobe } from './wardrobe';
 
 /** Liga a interface HTML aos eventos do jogo. */
@@ -32,5 +34,6 @@ export function initUI(game: Phaser.Game) {
   bus.on('ui:settings', openSettings);
   bus.on('ui:house', openHouses);
   bus.on('world:travel', () => closeAllModals());
-  bus.on('ui:citymap', () => toast('Em breve!'));
+  bus.on('ui:citymap', openCityMap);
+  initFinale();
 }

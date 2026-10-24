@@ -264,6 +264,12 @@ export class WorldScene extends Phaser.Scene {
         fontFamily: FONT, fontSize: '13px', color: '#4a3657', backgroundColor: locked ? '#e6e0ee' : '#ffffff',
         padding: { x: 7, y: 3 }, resolution: 2, fontStyle: 'bold',
       }).setOrigin(0.5, 1).setDepth(90000);
+      if (target) {
+        const name = p.label ?? target.name;
+        this.offs.push(bus.on('map:unlocked', (id: string) => {
+          if (id === target.id && label.active) label.setText(name).setBackgroundColor('#ffffff');
+        }));
+      }
       const arrow = artImage(this, w.x, w.y - 16, 'ui:arrow').setDepth(90000);
       this.tweens.add({ targets: arrow, y: w.y - 24, yoyo: true, repeat: -1, duration: 600, ease: 'Sine.easeInOut' });
       this.targets.push({ kind: 'portal', x: p.x, y: p.y, w: 1, d: 1, obj: label as never, walkOnto: true, act: () => this.travel(p.to) });
