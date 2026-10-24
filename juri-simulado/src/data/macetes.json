@@ -7,80 +7,606 @@
     "pelaOrdemOuAparte": "“Pela ordem” é dirigido ao juiz, para questão processual (nulidade, vedação, indeferimento). O aparte é dirigido ao orador, para corrigir um fato durante a fala dele (art. 497, XII). Protesto processual feito como aparte pode não ir para a ata."
   },
   "fases": [
-    { "id": "preparacao", "ordem": 1, "titulo": "Antes da sessão", "descricao": "Fase de preparação do processo para julgamento (art. 422). O que não for requerido aqui dificilmente entra depois." },
-    { "id": "abertura", "ordem": 2, "titulo": "Abertura da sessão", "descricao": "Pregão, nulidades, algemas, sorteio e recusas. Os requerimentos devem ser feitos antes de os jurados verem o réu." },
-    { "id": "instrucao", "ordem": 3, "titulo": "Instrução em plenário", "descricao": "Testemunhas, leitura de peças e interrogatório. Extraia de cada testemunha só o que precisa e pare." },
-    { "id": "debates", "ordem": 4, "titulo": "Debates", "descricao": "Acusação, defesa, réplica e tréplica. Todas as teses na primeira fala." },
-    { "id": "quesitacao", "ordem": 5, "titulo": "Quesitação e encerramento", "descricao": "Leitura dos quesitos, votação na sala especial e ata. Depois da leitura, a falha nos quesitos preclui." },
-    { "id": "pos-veredito", "ordem": 6, "titulo": "Depois do veredito", "descricao": "Apelação e execução da pena." }
+    {
+      "id": "preparacao",
+      "ordem": 1,
+      "titulo": "Antes da sessão",
+      "descricao": "Fase de preparação do processo para julgamento (art. 422). O que não for requerido aqui dificilmente entra depois."
+    },
+    {
+      "id": "abertura",
+      "ordem": 2,
+      "titulo": "Abertura da sessão",
+      "descricao": "Pregão, nulidades, algemas, sorteio e recusas. Os requerimentos devem ser feitos antes de os jurados verem o réu."
+    },
+    {
+      "id": "instrucao",
+      "ordem": 3,
+      "titulo": "Instrução em plenário",
+      "descricao": "Testemunhas, leitura de peças e interrogatório. Extraia de cada testemunha só o que precisa e pare."
+    },
+    {
+      "id": "debates",
+      "ordem": 4,
+      "titulo": "Debates",
+      "descricao": "Acusação, defesa, réplica e tréplica. Todas as teses na primeira fala."
+    },
+    {
+      "id": "quesitacao",
+      "ordem": 5,
+      "titulo": "Quesitação e encerramento",
+      "descricao": "Leitura dos quesitos, votação na sala especial e ata. Depois da leitura, a falha nos quesitos preclui."
+    },
+    {
+      "id": "pos-veredito",
+      "ordem": 6,
+      "titulo": "Depois do veredito",
+      "descricao": "Apelação e execução da pena."
+    }
   ],
   "dispositivos": [
-    { "id": "cpp-186", "rotulo": "art. 186, CPP", "diploma": "CPP", "resumo": "Direito do acusado ao silêncio no interrogatório; o silêncio não importa confissão nem pode ser interpretado em prejuízo da defesa (parágrafo único).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-217", "rotulo": "art. 217, CPP", "diploma": "CPP", "resumo": "Se a presença do réu puder causar humilhação, temor ou sério constrangimento à testemunha, o juiz fará a inquirição por videoconferência e, somente na impossibilidade dessa forma, determinará a retirada do réu, com a presença do defensor. O fato e os motivos constarão do termo (parágrafo único).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-415-iv", "rotulo": "art. 415, IV, CPP", "diploma": "CPP", "resumo": "Absolvição sumária quando demonstrada causa de isenção de pena ou de exclusão do crime.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-422", "rotulo": "art. 422, CPP", "diploma": "CPP", "resumo": "Preparação para o plenário: intimação das partes para, em 5 dias, apresentarem rol de até 5 testemunhas, juntarem documentos e requererem diligências.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-426", "rotulo": "art. 426, CPP", "diploma": "CPP", "resumo": "Publicação da lista geral dos jurados.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-448", "rotulo": "art. 448, CPP", "diploma": "CPP", "resumo": "Impedimentos de servir no mesmo Conselho (parentesco e afins).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-449", "rotulo": "art. 449, CPP", "diploma": "CPP", "resumo": "Não pode servir o jurado que tiver funcionado em julgamento anterior do mesmo processo, integrado o Conselho que julgou outro acusado, ou manifestado prévia disposição para condenar ou absolver.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-461", "rotulo": "art. 461, CPP", "diploma": "CPP", "resumo": "O julgamento não é adiado pela falta de testemunha, salvo se a parte tiver requerido sua intimação por mandado na oportunidade do art. 422, declarando não prescindir do depoimento e indicando a localização.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-466-p1", "rotulo": "art. 466, §1º, CPP", "diploma": "CPP", "resumo": "Incomunicabilidade: sorteados, os jurados não podem comunicar-se entre si e com outrem, nem manifestar opinião sobre o processo, sob pena de exclusão do Conselho e multa.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-468", "rotulo": "art. 468, CPP", "diploma": "CPP", "resumo": "Recusas imotivadas: à medida que as cédulas são lidas, a defesa e, depois dela, o MP podem recusar até 3 jurados cada, sem motivar.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-470", "rotulo": "art. 470, CPP", "diploma": "CPP", "resumo": "Arguição de impedimento, suspeição ou incompatibilidade de jurado (recusa motivada), decidida de plano e registrada em ata.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-473", "rotulo": "art. 473, CPP", "diploma": "CPP", "resumo": "Instrução em plenário: juiz e partes tomam diretamente as declarações do ofendido e inquirem as testemunhas.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-473-p1", "rotulo": "art. 473, §1º, CPP", "diploma": "CPP", "resumo": "Para as testemunhas arroladas pela defesa, o defensor pergunta antes do MP.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-473-p2", "rotulo": "art. 473, §2º, CPP", "diploma": "CPP", "resumo": "Os jurados formulam perguntas por intermédio do juiz presidente.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-473-p3", "rotulo": "art. 473, §3º, CPP", "diploma": "CPP", "resumo": "Partes e jurados podem requerer acareações, reconhecimento, esclarecimento dos peritos e a leitura de peças que se refiram, exclusivamente, às provas colhidas por carta precatória e às provas cautelares, antecipadas ou não repetíveis.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-474", "rotulo": "art. 474, CPP", "diploma": "CPP", "resumo": "Interrogatório do acusado em plenário, na forma do capítulo do interrogatório.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-474-p1-p2", "rotulo": "art. 474, §§1º e 2º, CPP", "diploma": "CPP", "resumo": "No interrogatório, MP, assistente, querelante e defensor perguntam diretamente, nessa ordem (§1º); os jurados perguntam por intermédio do juiz (§2º).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-474-p3", "rotulo": "art. 474, §3º, CPP", "diploma": "CPP", "resumo": "Não se permite o uso de algemas no acusado durante o plenário, salvo se absolutamente necessário à ordem dos trabalhos, à segurança das testemunhas ou à integridade física dos presentes.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-477", "rotulo": "art. 477, CPP", "diploma": "CPP", "resumo": "Tempo dos debates: 1h30 para a acusação e 1h30 para a defesa; 1h para a réplica e 1h para a tréplica. Havendo mais de um acusado, +1h na fala principal e tempo dobrado na réplica e na tréplica (§2º).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-478-i", "rotulo": "art. 478, I, CPP", "diploma": "CPP", "resumo": "Nos debates, sob pena de nulidade, as partes não podem referir-se à decisão de pronúncia, às decisões posteriores que julgaram admissível a acusação ou à determinação do uso de algemas como argumento de autoridade que beneficie ou prejudique o acusado.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto bloqueado neste ambiente; busca na web (24/10/2026) indicou o Del3689Compilado do Planalto com redação do caput e do inciso I dada pela Lei 11.689/2008, mas sem acesso ao texto integral.", "observacao": "Vale para as duas partes: “beneficiem ou prejudiquem o acusado”." },
-    { "id": "cpp-478-ii", "rotulo": "art. 478, II, CPP", "diploma": "CPP", "resumo": "Nos debates, sob pena de nulidade, as partes não podem referir-se ao silêncio do acusado ou à ausência de interrogatório por falta de requerimento, em seu prejuízo.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "Diferente do inciso I, este só veda o uso “em seu prejuízo” (do acusado)." },
-    { "id": "cpp-479", "rotulo": "art. 479, CPP", "diploma": "CPP", "resumo": "No julgamento, não se permite a leitura de documento ou a exibição de objeto que não tiver sido juntado aos autos com antecedência mínima de 3 dias úteis, com ciência à outra parte. O parágrafo único inclui jornais, vídeos, gravações, fotografias, laudos, quadros, croquis e meios assemelhados.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-480", "rotulo": "art. 480, caput, CPP", "diploma": "CPP", "resumo": "A acusação, a defesa e os jurados podem, a qualquer momento e por intermédio do juiz, pedir ao orador que indique a folha dos autos onde está a peça lida ou citada; os jurados também podem pedir esclarecimento de fato alegado.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-480-p1-p2", "rotulo": "art. 480, §§1º e 2º, CPP", "diploma": "CPP", "resumo": "Concluídos os debates, o juiz pergunta aos jurados se estão habilitados a julgar ou se precisam de esclarecimentos (§1º); havendo dúvida sobre questão de fato, o juiz esclarece à vista dos autos (§2º).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-480-p3", "rotulo": "art. 480, §3º, CPP", "diploma": "CPP", "resumo": "Os jurados, nessa fase (após os debates), terão acesso aos autos e aos instrumentos do crime se solicitarem ao juiz presidente.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "O acesso é “nesta fase” e mediante solicitação dos jurados; por isso a defesa deve garantir antes (art. 422) que o instrumento esteja na sessão." },
-    { "id": "cpp-481", "rotulo": "art. 481, CPP", "diploma": "CPP", "resumo": "Se a verificação de fato reconhecido essencial não puder ser feita imediatamente, o juiz dissolve o Conselho e ordena as diligências. Se a diligência for perícia, o juiz nomeia perito e faculta às partes quesitos e assistente técnico, em 5 dias (parágrafo único).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-482-pu", "rotulo": "art. 482, parágrafo único, CPP", "diploma": "CPP", "resumo": "Os quesitos são redigidos em proposições afirmativas, simples e distintas, e o juiz leva em conta a pronúncia ou as decisões posteriores que julgaram admissível a acusação, o interrogatório e as alegações das partes.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-483", "rotulo": "art. 483, I a V, CPP", "diploma": "CPP", "resumo": "Ordem dos quesitos: I materialidade; II autoria ou participação; III se o acusado deve ser absolvido; IV causa de diminuição alegada pela defesa; V qualificadora ou causa de aumento.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-483-p1", "rotulo": "art. 483, §1º, CPP", "diploma": "CPP", "resumo": "Resposta negativa de mais de 3 jurados a qualquer dos quesitos I ou II encerra a votação e implica absolvição.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-483-p2", "rotulo": "art. 483, §2º, CPP", "diploma": "CPP", "resumo": "Respondidos afirmativamente por mais de 3 jurados os quesitos I e II, formula-se o quesito “O jurado absolve o acusado?”.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-483-p3", "rotulo": "art. 483, §3º, CPP", "diploma": "CPP", "resumo": "Decidindo os jurados pela condenação, prossegue o julgamento com quesitos sobre causa de diminuição alegada pela defesa e sobre qualificadora ou causa de aumento.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-483-p4", "rotulo": "art. 483, §4º, CPP", "diploma": "CPP", "resumo": "Sustentada a desclassificação para infração de competência do juiz singular, formula-se quesito a respeito, respondido após o 2º ou o 3º quesito, conforme o caso.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-484", "rotulo": "art. 484, CPP", "diploma": "CPP", "resumo": "O juiz lê os quesitos e pergunta às partes se têm requerimento ou reclamação; o requerimento, a reclamação e a decisão constam da ata.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-485", "rotulo": "art. 485, CPP", "diploma": "CPP", "resumo": "Votação em sala especial, com a presença do juiz, dos jurados, do MP, do assistente, do querelante, do defensor, do escrivão e do oficial de justiça.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-489", "rotulo": "art. 489, CPP", "diploma": "CPP", "resumo": "As decisões do Tribunal do Júri são tomadas por maioria de votos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-490", "rotulo": "art. 490, CPP", "diploma": "CPP", "resumo": "Se a resposta a um quesito estiver em contradição com outra já dada, o juiz explica aos jurados em que consiste a contradição e submete de novo à votação os quesitos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-492-p1", "rotulo": "art. 492, §1º, CPP", "diploma": "CPP", "resumo": "Desclassificada a infração para outra de competência do juiz singular, cabe ao juiz presidente proferir a sentença.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-495", "rotulo": "art. 495, CPP", "diploma": "CPP", "resumo": "Conteúdo da ata do julgamento, que deve descrever fielmente todas as ocorrências, inclusive os debates, as alegações das partes com os respectivos fundamentos e os incidentes.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "Conferir os incisos exatos sobre debates e incidentes (provavelmente XIV e XV)." },
-    { "id": "cpp-497", "rotulo": "art. 497, caput, CPP", "diploma": "CPP", "resumo": "Atribuições do juiz presidente do Tribunal do Júri (poder de direção da sessão).", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-497-iii", "rotulo": "art. 497, III, CPP", "diploma": "CPP", "resumo": "Cabe ao juiz presidente dirigir os debates, intervindo em caso de abuso, excesso de linguagem ou mediante requerimento de uma das partes.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-497-xii", "rotulo": "art. 497, XII, CPP", "diploma": "CPP", "resumo": "Cabe ao juiz regulamentar os apartes, podendo conceder até 3 minutos para cada aparte, acrescidos ao tempo de quem estava com a palavra.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-571-v", "rotulo": "art. 571, V, CPP", "diploma": "CPP", "resumo": "As nulidades posteriores à pronúncia devem ser arguidas logo depois de anunciado o julgamento e apregoadas as partes.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "O inciso remete a artigo renumerado pela Lei 11.689/2008; conferir a remissão." },
-    { "id": "cpp-571-viii", "rotulo": "art. 571, VIII, CPP", "diploma": "CPP", "resumo": "As nulidades do julgamento em plenário devem ser arguidas logo depois de ocorrerem.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpp-593-iii", "rotulo": "art. 593, III, CPP", "diploma": "CPP", "resumo": "Apelação em 5 dias das decisões do júri quando: a) houver nulidade posterior à pronúncia; b) a sentença do juiz for contrária à lei ou à decisão dos jurados; c) houver erro ou injustiça na pena; d) a decisão dos jurados for manifestamente contrária à prova dos autos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-23-ii", "rotulo": "art. 23, II, CP", "diploma": "CP", "resumo": "Não há crime quando o agente pratica o fato em legítima defesa.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-23-pu", "rotulo": "art. 23, parágrafo único, CP", "diploma": "CP", "resumo": "O agente, em qualquer das excludentes, responde pelo excesso doloso ou culposo.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-25", "rotulo": "art. 25, CP", "diploma": "CP", "resumo": "Entende-se em legítima defesa quem, usando moderadamente dos meios necessários, repele injusta agressão, atual ou iminente, a direito seu ou de outrem.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-65-iii-d", "rotulo": "art. 65, III, d, CP", "diploma": "CP", "resumo": "Atenuante da confissão espontânea da autoria perante a autoridade.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-121", "rotulo": "art. 121, caput, CP", "diploma": "CP", "resumo": "Homicídio simples: reclusão de 6 a 20 anos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-121-p1", "rotulo": "art. 121, §1º, CP", "diploma": "CP", "resumo": "Homicídio privilegiado: crime cometido por relevante valor social ou moral, ou sob o domínio de violenta emoção logo em seguida a injusta provocação da vítima; o juiz pode reduzir a pena de 1/6 a 1/3.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-121-p2-iii", "rotulo": "art. 121, §2º, III, CP", "diploma": "CP", "resumo": "Homicídio qualificado pelo emprego de veneno, fogo, explosivo, asfixia, tortura ou outro meio insidioso ou cruel, ou de que possa resultar perigo comum: reclusão de 12 a 30 anos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "Conferir se houve alteração recente nas penas do §2º (o art. 121 foi alterado em 2024 pela criação do art. 121-A)." },
-    { "id": "cp-121-p2-iv", "rotulo": "art. 121, §2º, IV, CP", "diploma": "CP", "resumo": "Homicídio qualificado à traição, de emboscada, mediante dissimulação ou outro recurso que dificulte ou torne impossível a defesa do ofendido.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cp-121-p3", "rotulo": "art. 121, §3º, CP", "diploma": "CP", "resumo": "Homicídio culposo: detenção de 1 a 3 anos.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "cpm-45-pu", "rotulo": "art. 45, parágrafo único, CPM", "diploma": "CPM", "resumo": "Não é punível o excesso quando resulta de escusável surpresa, ou perturbação de ânimo, em face da situação.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del1001.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial.", "observacao": "Usado por analogia; não se aplica diretamente ao crime comum." },
-    { "id": "cf-5-xxxviii", "rotulo": "art. 5º, XXXVIII, CF", "diploma": "CF", "resumo": "Reconhece a instituição do júri, assegurados a plenitude de defesa, o sigilo das votações, a soberania dos veredictos e a competência para os crimes dolosos contra a vida.", "fonteOficial": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm", "status": "verificar", "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial." },
-    { "id": "stf-sv-11", "rotulo": "Súmula Vinculante 11, STF", "diploma": "STF", "resumo": "Só é lícito o uso de algemas em casos de resistência e de fundado receio de fuga ou de perigo à integridade física própria ou alheia, por parte do preso ou de terceiros, justificada a excepcionalidade por escrito, sob pena de responsabilidade e de nulidade da prisão ou do ato processual.", "fonteOficial": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26", "status": "fonte_secundaria", "fonteConsultada": "Portal do STF inacessível neste ambiente (bloqueio de rede). Enunciado conferido em fontes secundárias (Juris Damásio; Empório do Direito) em 24/10/2026; aprovada em 13/08/2008." },
-    { "id": "stf-sum-713", "rotulo": "Súmula 713, STF", "diploma": "STF", "resumo": "O efeito devolutivo da apelação contra decisões do júri é adstrito aos fundamentos da sua interposição.", "fonteOficial": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30", "status": "verificar", "fonteConsultada": "Portal do STF inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio e docs/macetes-fonte.md." },
-    { "id": "stf-tema-1087", "rotulo": "Tema 1087, STF (ARE 1.225.185)", "diploma": "STF", "resumo": "Cabe apelação (art. 593, III, d, CPP) contra absolvição pelo quesito genérico considerada pela acusação manifestamente contrária à prova. O tribunal não determinará novo júri quando a tese de clemência tiver sido apresentada, constar em ata e for acolhida pelos jurados, desde que compatível com a Constituição, os precedentes vinculantes do STF e as circunstâncias fáticas dos autos.", "fonteOficial": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?incidente=5745131&numeroProcesso=1225185&classeProcesso=ARE&numeroTema=1087", "status": "fonte_secundaria", "fonteConsultada": "Portal do STF inacessível neste ambiente. Tese conferida em fontes secundárias em 24/10/2026: Teses & Súmulas (tesesesumulas.com.br/tese/stf/1087), MPDFT, Migalhas e Conjur. Julgamento concluído em outubro de 2024, com tese fixada.", "observacao": "Conferir no portal do STF a redação integral da segunda parte (clemência) e se houve embargos de declaração pendentes." },
-    { "id": "stf-tema-1068", "rotulo": "Tema 1068, STF (RE 1.235.340)", "diploma": "STF", "resumo": "A soberania dos veredictos autoriza a execução imediata da pena imposta pelo júri, independentemente do total da pena aplicada.", "fonteOficial": "https://portal.stf.jus.br/jurisprudenciaRepercussao/pesquisarProcesso.asp", "status": "fonte_secundaria", "fonteConsultada": "Portal do STF inacessível neste ambiente. Tese conferida em fontes secundárias em 24/10/2026 (Juris Damásio; Lex; Migalhas): julgado em setembro de 2024, declarando inconstitucional a limitação a penas de 15 anos ou mais do art. 492 do CPP." },
-    { "id": "stj-inovacao-treplica", "rotulo": "STJ: HC 61.615/MS e REsp 65.379", "diploma": "STJ", "resumo": "Inovação de tese na tréplica: a Sexta Turma já admitiu, pela plenitude de defesa (HC 61.615/MS, 2009); a Quinta Turma já vedou, por violação ao contraditório (REsp 65.379).", "fonteOficial": "https://processo.stj.jus.br/processo/pesquisa/", "status": "verificar", "fonteConsultada": "Conforme docs/macetes-fonte.md (que cita Tribuna PR). Não conferido no site do STJ.", "observacao": "Conferir número, turma e ano dos dois julgados." }
+    {
+      "id": "cpp-186",
+      "rotulo": "art. 186, CPP",
+      "diploma": "CPP",
+      "resumo": "Direito do acusado ao silêncio no interrogatório; o silêncio não importa confissão nem pode ser interpretado em prejuízo da defesa (parágrafo único).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-217",
+      "rotulo": "art. 217, CPP",
+      "diploma": "CPP",
+      "resumo": "Se a presença do réu puder causar humilhação, temor ou sério constrangimento à testemunha, o juiz fará a inquirição por videoconferência e, somente na impossibilidade dessa forma, determinará a retirada do réu, com a presença do defensor. O fato e os motivos constarão do termo (parágrafo único).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Petições Online, Modelo Inicial e Dizer o Direito (redação da Lei 11.690/2008)."
+    },
+    {
+      "id": "cpp-415-iv",
+      "rotulo": "art. 415, IV, CPP",
+      "diploma": "CPP",
+      "resumo": "Absolvição sumária quando demonstrada causa de isenção de pena ou de exclusão do crime.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-422",
+      "rotulo": "art. 422, CPP",
+      "diploma": "CPP",
+      "resumo": "Preparação para o plenário: intimação das partes para, em 5 dias, apresentarem rol de até 5 testemunhas, juntarem documentos e requererem diligências.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-426",
+      "rotulo": "art. 426, CPP",
+      "diploma": "CPP",
+      "resumo": "Publicação da lista geral dos jurados.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-448",
+      "rotulo": "art. 448, CPP",
+      "diploma": "CPP",
+      "resumo": "Impedimentos de servir no mesmo Conselho (parentesco e afins).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-449",
+      "rotulo": "art. 449, CPP",
+      "diploma": "CPP",
+      "resumo": "Não pode servir o jurado que tiver funcionado em julgamento anterior do mesmo processo, integrado o Conselho que julgou outro acusado, ou manifestado prévia disposição para condenar ou absolver.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-461",
+      "rotulo": "art. 461, CPP",
+      "diploma": "CPP",
+      "resumo": "O julgamento não é adiado pela falta de testemunha, salvo se a parte tiver requerido sua intimação por mandado na oportunidade do art. 422, declarando não prescindir do depoimento e indicando a localização.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Petições Online (redação da Lei 11.689/2008)."
+    },
+    {
+      "id": "cpp-466-p1",
+      "rotulo": "art. 466, §1º, CPP",
+      "diploma": "CPP",
+      "resumo": "Incomunicabilidade: sorteados, os jurados não podem comunicar-se entre si e com outrem, nem manifestar opinião sobre o processo, sob pena de exclusão do Conselho e multa.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-468",
+      "rotulo": "art. 468, CPP",
+      "diploma": "CPP",
+      "resumo": "Recusas imotivadas: à medida que as cédulas são lidas, a defesa e, depois dela, o MP podem recusar até 3 jurados cada, sem motivar.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Petições Online e Projuris."
+    },
+    {
+      "id": "cpp-470",
+      "rotulo": "art. 470, CPP",
+      "diploma": "CPP",
+      "resumo": "Arguição de impedimento, suspeição ou incompatibilidade de jurado (recusa motivada), decidida de plano e registrada em ata.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-473",
+      "rotulo": "art. 473, CPP",
+      "diploma": "CPP",
+      "resumo": "Instrução em plenário: juiz e partes tomam diretamente as declarações do ofendido e inquirem as testemunhas.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-473-p1",
+      "rotulo": "art. 473, §1º, CPP",
+      "diploma": "CPP",
+      "resumo": "Para as testemunhas arroladas pela defesa, o defensor pergunta antes do MP.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-473-p2",
+      "rotulo": "art. 473, §2º, CPP",
+      "diploma": "CPP",
+      "resumo": "Os jurados formulam perguntas por intermédio do juiz presidente.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-473-p3",
+      "rotulo": "art. 473, §3º, CPP",
+      "diploma": "CPP",
+      "resumo": "Partes e jurados podem requerer acareações, reconhecimento, esclarecimento dos peritos e a leitura de peças que se refiram, exclusivamente, às provas colhidas por carta precatória e às provas cautelares, antecipadas ou não repetíveis.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto bloqueado neste ambiente; a busca na web de 24/10/2026 não localizou a redação do §3º. Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-474",
+      "rotulo": "art. 474, CPP",
+      "diploma": "CPP",
+      "resumo": "Interrogatório do acusado em plenário, na forma do capítulo do interrogatório.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-474-p1-p2",
+      "rotulo": "art. 474, §§1º e 2º, CPP",
+      "diploma": "CPP",
+      "resumo": "No interrogatório, MP, assistente, querelante e defensor perguntam diretamente, nessa ordem (§1º); os jurados perguntam por intermédio do juiz (§2º).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-474-p3",
+      "rotulo": "art. 474, §3º, CPP",
+      "diploma": "CPP",
+      "resumo": "Não se permite o uso de algemas no acusado durante o plenário, salvo se absolutamente necessário à ordem dos trabalhos, à segurança das testemunhas ou à integridade física dos presentes.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Modelo Inicial, Legjur e Dizer o Direito (redação da Lei 11.689/2008)."
+    },
+    {
+      "id": "cpp-477",
+      "rotulo": "art. 477, CPP",
+      "diploma": "CPP",
+      "resumo": "Tempo dos debates: 1h30 para a acusação e 1h30 para a defesa; 1h para a réplica e 1h para a tréplica. Havendo mais de um acusado, +1h na fala principal e tempo dobrado na réplica e na tréplica (§2º).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Migalhas e roteiro do júri da Academia Judicial do TJSC (§2º)."
+    },
+    {
+      "id": "cpp-478-i",
+      "rotulo": "art. 478, I, CPP",
+      "diploma": "CPP",
+      "resumo": "Nos debates, sob pena de nulidade, as partes não podem referir-se à decisão de pronúncia, às decisões posteriores que julgaram admissível a acusação ou à determinação do uso de algemas como argumento de autoridade que beneficie ou prejudique o acusado.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: índice de busca do Planalto (Del3689Compilado) e Conjur (redação da Lei 11.689/2008).",
+      "observacao": "Vale para as duas partes: “beneficiem ou prejudiquem o acusado”."
+    },
+    {
+      "id": "cpp-478-ii",
+      "rotulo": "art. 478, II, CPP",
+      "diploma": "CPP",
+      "resumo": "Nos debates, sob pena de nulidade, as partes não podem referir-se ao silêncio do acusado ou à ausência de interrogatório por falta de requerimento, em seu prejuízo.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Conjur, Dizer o Direito e ementas do STJ (Legjur).",
+      "observacao": "Diferente do inciso I, este só veda o uso “em seu prejuízo” (do acusado)."
+    },
+    {
+      "id": "cpp-479",
+      "rotulo": "art. 479, CPP",
+      "diploma": "CPP",
+      "resumo": "No julgamento, não se permite a leitura de documento ou a exibição de objeto que não tiver sido juntado aos autos com antecedência mínima de 3 dias úteis, com ciência à outra parte. O parágrafo único inclui jornais, vídeos, gravações, fotografias, laudos, quadros, croquis e meios assemelhados.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Juruadocs, Jurídico AI (texto compilado do Planalto) e Editora JusPodivm.",
+      "observacao": "STJ, REsp 1.627.288 (6ª Turma): o prazo de 3 dias úteis vale também para a ciência da parte contrária (fonte secundária: Editora JusPodivm)."
+    },
+    {
+      "id": "cpp-480",
+      "rotulo": "art. 480, caput, CPP",
+      "diploma": "CPP",
+      "resumo": "A acusação, a defesa e os jurados podem, a qualquer momento e por intermédio do juiz, pedir ao orador que indique a folha dos autos onde está a peça lida ou citada; os jurados também podem pedir esclarecimento de fato alegado.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-480-p1-p2",
+      "rotulo": "art. 480, §§1º e 2º, CPP",
+      "diploma": "CPP",
+      "resumo": "Concluídos os debates, o juiz pergunta aos jurados se estão habilitados a julgar ou se precisam de esclarecimentos (§1º); havendo dúvida sobre questão de fato, o juiz esclarece à vista dos autos (§2º).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-480-p3",
+      "rotulo": "art. 480, §3º, CPP",
+      "diploma": "CPP",
+      "resumo": "Os jurados, nessa fase (após os debates), terão acesso aos autos e aos instrumentos do crime se solicitarem ao juiz presidente.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Juruadocs, Jurídico AI e Petições Online (incluído pela Lei 11.689/2008).",
+      "observacao": "O acesso é “nesta fase” e mediante solicitação dos jurados; por isso a defesa deve garantir antes (art. 422) que o instrumento esteja na sessão."
+    },
+    {
+      "id": "cpp-481",
+      "rotulo": "art. 481, CPP",
+      "diploma": "CPP",
+      "resumo": "Se a verificação de fato reconhecido essencial não puder ser feita imediatamente, o juiz dissolve o Conselho e ordena as diligências. Se a diligência for perícia, o juiz nomeia perito e faculta às partes quesitos e assistente técnico, em 5 dias (parágrafo único).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-482-pu",
+      "rotulo": "art. 482, parágrafo único, CPP",
+      "diploma": "CPP",
+      "resumo": "Os quesitos são redigidos em proposições afirmativas, simples e distintas, e o juiz leva em conta a pronúncia ou as decisões posteriores que julgaram admissível a acusação, o interrogatório e as alegações das partes.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-483",
+      "rotulo": "art. 483, I a V, CPP",
+      "diploma": "CPP",
+      "resumo": "Ordem dos quesitos: I materialidade; II autoria ou participação; III se o acusado deve ser absolvido; IV causa de diminuição alegada pela defesa; V qualificadora ou causa de aumento.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-483-p1",
+      "rotulo": "art. 483, §1º, CPP",
+      "diploma": "CPP",
+      "resumo": "Resposta negativa de mais de 3 jurados a qualquer dos quesitos I ou II encerra a votação e implica absolvição.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-483-p2",
+      "rotulo": "art. 483, §2º, CPP",
+      "diploma": "CPP",
+      "resumo": "Respondidos afirmativamente por mais de 3 jurados os quesitos I e II, formula-se o quesito “O jurado absolve o acusado?”.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-483-p3",
+      "rotulo": "art. 483, §3º, CPP",
+      "diploma": "CPP",
+      "resumo": "Decidindo os jurados pela condenação, prossegue o julgamento com quesitos sobre causa de diminuição alegada pela defesa e sobre qualificadora ou causa de aumento.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-483-p4",
+      "rotulo": "art. 483, §4º, CPP",
+      "diploma": "CPP",
+      "resumo": "Sustentada a desclassificação para infração de competência do juiz singular, formula-se quesito a respeito, respondido após o 2º ou o 3º quesito, conforme o caso.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Modelo Inicial, Projuris e Legjur."
+    },
+    {
+      "id": "cpp-484",
+      "rotulo": "art. 484, CPP",
+      "diploma": "CPP",
+      "resumo": "O juiz lê os quesitos e pergunta às partes se têm requerimento ou reclamação; o requerimento, a reclamação e a decisão constam da ata. O parágrafo único manda o juiz explicar aos jurados o significado de cada quesito.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Legjur."
+    },
+    {
+      "id": "cpp-485",
+      "rotulo": "art. 485, CPP",
+      "diploma": "CPP",
+      "resumo": "Votação em sala especial, com a presença do juiz, dos jurados, do MP, do assistente, do querelante, do defensor, do escrivão e do oficial de justiça.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-489",
+      "rotulo": "art. 489, CPP",
+      "diploma": "CPP",
+      "resumo": "As decisões do Tribunal do Júri são tomadas por maioria de votos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-490",
+      "rotulo": "art. 490, CPP",
+      "diploma": "CPP",
+      "resumo": "Se a resposta a um quesito estiver em contradição com outra já dada, o juiz explica aos jurados em que consiste a contradição e submete de novo à votação os quesitos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-492-p1",
+      "rotulo": "art. 492, §1º, CPP",
+      "diploma": "CPP",
+      "resumo": "Desclassificada a infração para outra de competência do juiz singular, cabe ao juiz presidente proferir a sentença.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-495",
+      "rotulo": "art. 495, XIV e XV, CPP",
+      "diploma": "CPP",
+      "resumo": "Conteúdo da ata do julgamento, que deve descrever fielmente todas as ocorrências, inclusive os debates, as alegações das partes com os respectivos fundamentos e os incidentes.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Legjur (incisos XIV e XV).",
+      "observacao": "Busca confirma: inciso XIV (debates e alegações das partes com os fundamentos) e XV (incidentes)."
+    },
+    {
+      "id": "cpp-497",
+      "rotulo": "art. 497, caput, CPP",
+      "diploma": "CPP",
+      "resumo": "Atribuições do juiz presidente do Tribunal do Júri (poder de direção da sessão).",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-497-iii",
+      "rotulo": "art. 497, III, CPP",
+      "diploma": "CPP",
+      "resumo": "Cabe ao juiz presidente dirigir os debates, intervindo em caso de abuso, excesso de linguagem ou mediante requerimento de uma das partes.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpp-497-xii",
+      "rotulo": "art. 497, XII, CPP",
+      "diploma": "CPP",
+      "resumo": "Cabe ao juiz regulamentar os apartes, podendo conceder até 3 minutos para cada aparte, acrescidos ao tempo de quem estava com a palavra.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Migalhas, Empório do Direito e Flávio Meirelles Medeiros (conteúdo; frase literal não localizada)."
+    },
+    {
+      "id": "cpp-571-v",
+      "rotulo": "art. 571, V, CPP",
+      "diploma": "CPP",
+      "resumo": "As nulidades posteriores à pronúncia devem ser arguidas logo depois de anunciado o julgamento e apregoadas as partes.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Projuris, Petições Online e Conjur.",
+      "observacao": "Nulidade absoluta não preclui, segundo o STJ; a regra de preclusão do inciso V atinge as relativas. Conferir a remissão a artigo renumerado pela Lei 11.689/2008."
+    },
+    {
+      "id": "cpp-571-viii",
+      "rotulo": "art. 571, VIII, CPP",
+      "diploma": "CPP",
+      "resumo": "As nulidades do julgamento em plenário devem ser arguidas logo depois de ocorrerem.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Projuris e Petições Online."
+    },
+    {
+      "id": "cpp-593-iii",
+      "rotulo": "art. 593, III, CPP",
+      "diploma": "CPP",
+      "resumo": "Apelação em 5 dias das decisões do júri quando: a) houver nulidade posterior à pronúncia; b) a sentença do juiz for contrária à lei ou à decisão dos jurados; c) houver erro ou injustiça na pena; d) a decisão dos jurados for manifestamente contrária à prova dos autos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-23-ii",
+      "rotulo": "art. 23, II, CP",
+      "diploma": "CP",
+      "resumo": "Não há crime quando o agente pratica o fato em legítima defesa.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-23-pu",
+      "rotulo": "art. 23, parágrafo único, CP",
+      "diploma": "CP",
+      "resumo": "O agente, em qualquer das excludentes, responde pelo excesso doloso ou culposo.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-25",
+      "rotulo": "art. 25, CP",
+      "diploma": "CP",
+      "resumo": "Entende-se em legítima defesa quem, usando moderadamente dos meios necessários, repele injusta agressão, atual ou iminente, a direito seu ou de outrem.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-65-iii-d",
+      "rotulo": "art. 65, III, d, CP",
+      "diploma": "CP",
+      "resumo": "Atenuante da confissão espontânea da autoria perante a autoridade.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-121",
+      "rotulo": "art. 121, caput, CP",
+      "diploma": "CP",
+      "resumo": "Homicídio simples: reclusão de 6 a 20 anos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-121-p1",
+      "rotulo": "art. 121, §1º, CP",
+      "diploma": "CP",
+      "resumo": "Homicídio privilegiado: crime cometido por relevante valor social ou moral, ou sob o domínio de violenta emoção logo em seguida a injusta provocação da vítima; o juiz pode reduzir a pena de 1/6 a 1/3.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-121-p2-iii",
+      "rotulo": "art. 121, §2º, III, CP",
+      "diploma": "CP",
+      "resumo": "Homicídio qualificado pelo emprego de veneno, fogo, explosivo, asfixia, tortura ou outro meio insidioso ou cruel, ou de que possa resultar perigo comum: reclusão de 12 a 30 anos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Juris Damásio e Trilhante (pena de 12 a 30 anos).",
+      "observacao": "O art. 121 foi alterado depois do fato (Leis 14.994/2024, 15.134/2025, 15.159/2025 e, segundo fonte secundária, 15.358/2026, que criou o §2º-D sobre organização criminosa). Fato de 08/11/2017: lei posterior mais gravosa não retroage (art. 5º, XL, CF; art. 2º, CP). O inciso III e a pena de 12 a 30 anos não mudaram."
+    },
+    {
+      "id": "cp-121-p2-iv",
+      "rotulo": "art. 121, §2º, IV, CP",
+      "diploma": "CP",
+      "resumo": "Homicídio qualificado à traição, de emboscada, mediante dissimulação ou outro recurso que dificulte ou torne impossível a defesa do ofendido.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cp-121-p3",
+      "rotulo": "art. 121, §3º, CP",
+      "diploma": "CP",
+      "resumo": "Homicídio culposo: detenção de 1 a 3 anos.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "cpm-45-pu",
+      "rotulo": "art. 45, parágrafo único, CPM",
+      "diploma": "CPM",
+      "resumo": "Não é punível o excesso quando resulta de escusável surpresa, ou perturbação de ânimo, em face da situação.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del1001.htm",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Planalto bloqueado neste ambiente. Redação cruzada por busca na web em 24/10/2026, sem divergência, com fontes secundárias: Legjur, Adm Direito e Conjur.",
+      "observacao": "Usado por analogia; não se aplica diretamente ao crime comum."
+    },
+    {
+      "id": "cf-5-xxxviii",
+      "rotulo": "art. 5º, XXXVIII, CF",
+      "diploma": "CF",
+      "resumo": "Reconhece a instituição do júri, assegurados a plenitude de defesa, o sigilo das votações, a soberania dos veredictos e a competência para os crimes dolosos contra a vida.",
+      "fonteOficial": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
+      "status": "verificar",
+      "fonteConsultada": "Planalto inacessível neste ambiente (bloqueio de rede em 24/10/2026). Redação conforme conhecimento prévio; conferir no link oficial."
+    },
+    {
+      "id": "stf-sv-11",
+      "rotulo": "Súmula Vinculante 11, STF",
+      "diploma": "STF",
+      "resumo": "Só é lícito o uso de algemas em casos de resistência e de fundado receio de fuga ou de perigo à integridade física própria ou alheia, por parte do preso ou de terceiros, justificada a excepcionalidade por escrito, sob pena de responsabilidade e de nulidade da prisão ou do ato processual.",
+      "fonteOficial": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Portal do STF inacessível neste ambiente (bloqueio de rede). Enunciado conferido em fontes secundárias (Juris Damásio; Empório do Direito) em 24/10/2026; aprovada em 13/08/2008."
+    },
+    {
+      "id": "stf-sum-713",
+      "rotulo": "Súmula 713, STF",
+      "diploma": "STF",
+      "resumo": "O efeito devolutivo da apelação contra decisões do júri é adstrito aos fundamentos da sua interposição.",
+      "fonteOficial": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Portal do STF bloqueado neste ambiente. Enunciado conferido em 24/10/2026 em fontes secundárias (Juris Damásio; Meu Vade Mécum; BDJur do STJ).",
+      "observacao": "Há precedentes da 6ª Turma do STJ que admitem extrair os fundamentos das razões; não dependa disso: indique as alíneas na interposição."
+    },
+    {
+      "id": "stf-tema-1087",
+      "rotulo": "Tema 1087, STF (ARE 1.225.185)",
+      "diploma": "STF",
+      "resumo": "Cabe apelação (art. 593, III, d, CPP) contra absolvição pelo quesito genérico considerada pela acusação manifestamente contrária à prova. O tribunal não determinará novo júri quando a tese de clemência tiver sido apresentada, constar em ata e for acolhida pelos jurados, desde que compatível com a Constituição, os precedentes vinculantes do STF e as circunstâncias fáticas dos autos.",
+      "fonteOficial": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?incidente=5745131&numeroProcesso=1225185&classeProcesso=ARE&numeroTema=1087",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Portal do STF inacessível neste ambiente. Tese conferida em fontes secundárias em 24/10/2026: Teses & Súmulas (tesesesumulas.com.br/tese/stf/1087), MPDFT, Migalhas e Conjur. Julgamento concluído em outubro de 2024, com tese fixada.",
+      "observacao": "Conferir no portal do STF a redação integral da segunda parte (clemência) e se houve embargos de declaração pendentes."
+    },
+    {
+      "id": "stf-tema-1068",
+      "rotulo": "Tema 1068, STF (RE 1.235.340)",
+      "diploma": "STF",
+      "resumo": "A soberania dos veredictos autoriza a execução imediata da pena imposta pelo júri, independentemente do total da pena aplicada.",
+      "fonteOficial": "https://portal.stf.jus.br/jurisprudenciaRepercussao/pesquisarProcesso.asp",
+      "status": "fonte_secundaria",
+      "fonteConsultada": "Portal do STF inacessível neste ambiente. Tese conferida em fontes secundárias em 24/10/2026 (Juris Damásio; Lex; Migalhas): julgado em setembro de 2024, declarando inconstitucional a limitação a penas de 15 anos ou mais do art. 492 do CPP."
+    },
+    {
+      "id": "stj-inovacao-treplica",
+      "rotulo": "STJ: HC 61.615/MS e REsp 65.379",
+      "diploma": "STJ",
+      "resumo": "Inovação de tese na tréplica: a Sexta Turma já admitiu, pela plenitude de defesa (HC 61.615/MS, 2009); a Quinta Turma já vedou, por violação ao contraditório (REsp 65.379).",
+      "fonteOficial": "https://processo.stj.jus.br/processo/pesquisa/",
+      "status": "verificar",
+      "fonteConsultada": "Conforme docs/macetes-fonte.md (que cita Tribuna PR). Não conferido no site do STJ.",
+      "observacao": "Conferir número, turma e ano dos dois julgados."
+    }
   ],
   "macetes": [
     {
-      "id": "rol-testemunhas", "fase": "preparacao", "ordem": 1,
+      "id": "rol-testemunhas",
+      "fase": "preparacao",
+      "ordem": 1,
       "titulo": "Rol de testemunhas com cláusula de imprescindibilidade",
-      "dispositivos": ["cpp-422", "cpp-461"],
+      "dispositivos": [
+        "cpp-422",
+        "cpp-461"
+      ],
       "momento": "No prazo de 5 dias da intimação do art. 422, depois de preclusa a pronúncia.",
       "pedido": "Arrolar até 5 testemunhas, requerer intimação por mandado, declarar que não prescinde dos depoimentos e indicar a localização de cada uma.",
       "formula": "A defesa apresenta o rol de testemunhas para o plenário, requer a intimação por mandado e declara, nos termos do art. 461 do CPP, que não prescinde dos depoimentos, indicando a localização de cada testemunha.",
@@ -88,9 +614,14 @@
       "requerimento": false
     },
     {
-      "id": "esclarecimento-perito", "fase": "preparacao", "ordem": 2,
+      "id": "esclarecimento-perito",
+      "fase": "preparacao",
+      "ordem": 2,
       "titulo": "Esclarecimento do perito em plenário (só com resposta conhecida)",
-      "dispositivos": ["cpp-422", "cpp-473-p3"],
+      "dispositivos": [
+        "cpp-422",
+        "cpp-473-p3"
+      ],
       "momento": "Requerimento na fase do art. 422; a oitiva ocorre na instrução em plenário.",
       "pedido": "Intimação do perito para esclarecer ponto específico do laudo, apenas se a resposta provável favorecer a defesa.",
       "formula": "A defesa requer a intimação do perito subscritor do laudo para prestar esclarecimentos em plenário, nos termos dos arts. 422 e 473, §3º, do CPP, sobre o seguinte ponto: [ponto].",
@@ -99,9 +630,14 @@
       "requerimento": false
     },
     {
-      "id": "instrumento-crime", "fase": "preparacao", "ordem": 3,
+      "id": "instrumento-crime",
+      "fase": "preparacao",
+      "ordem": 3,
       "titulo": "Instrumento do crime disponível em plenário",
-      "dispositivos": ["cpp-422", "cpp-480-p3"],
+      "dispositivos": [
+        "cpp-422",
+        "cpp-480-p3"
+      ],
       "momento": "Requerimento de diligência na fase do art. 422; reiterar na abertura da sessão.",
       "pedido": "Que o objeto apreendido e periciado seja requisitado e fique disponível na sessão.",
       "formula": "A defesa requer que o objeto apreendido e periciado [descrição] seja requisitado e permaneça disponível na sessão de julgamento, para acesso dos jurados nos termos do art. 480, §3º, do CPP.",
@@ -109,9 +645,13 @@
       "requerimento": false
     },
     {
-      "id": "juntada-3-dias", "fase": "preparacao", "ordem": 4,
+      "id": "juntada-3-dias",
+      "fase": "preparacao",
+      "ordem": 4,
       "titulo": "Juntada de material novo com 3 dias úteis de antecedência",
-      "dispositivos": ["cpp-479"],
+      "dispositivos": [
+        "cpp-479"
+      ],
       "momento": "Até 3 dias úteis antes da sessão, com ciência da outra parte.",
       "pedido": "Juntar aos autos todo documento, foto, vídeo, croqui ou objeto que pretenda ler ou exibir em plenário.",
       "formula": "A defesa requer a juntada dos documentos anexos [descrição], com ciência ao Ministério Público, para uso em plenário nos termos do art. 479 do CPP.",
@@ -119,9 +659,13 @@
       "requerimento": false
     },
     {
-      "id": "lista-jurados", "fase": "preparacao", "ordem": 5,
+      "id": "lista-jurados",
+      "fase": "preparacao",
+      "ordem": 5,
       "titulo": "Pesquisa da lista de jurados",
-      "dispositivos": ["cpp-426"],
+      "dispositivos": [
+        "cpp-426"
+      ],
       "momento": "Após a publicação da lista geral e do sorteio dos jurados da reunião.",
       "pedido": "Levantar o perfil público dos jurados convocados para orientar as recusas.",
       "formula": "(providência interna da defesa: não há requerimento ao juízo)",
@@ -129,9 +673,15 @@
       "requerimento": false
     },
     {
-      "id": "preparacao-reu", "fase": "preparacao", "ordem": 6,
+      "id": "preparacao-reu",
+      "fase": "preparacao",
+      "ordem": 6,
       "titulo": "Preparação do réu para o interrogatório",
-      "dispositivos": ["cpp-186", "cpp-474", "cpp-482-pu"],
+      "dispositivos": [
+        "cpp-186",
+        "cpp-474",
+        "cpp-482-pu"
+      ],
       "momento": "Entrevista reservada antes da sessão.",
       "pedido": "Explicar o rito, o direito ao silêncio e a importância de narrar a tese no interrogatório.",
       "formula": "Excelência, antes do interrogatório, a defesa requer o direito de entrevista reservada com o acusado.",
@@ -140,9 +690,13 @@
       "requerimento": false
     },
     {
-      "id": "nulidades-pregao", "fase": "abertura", "ordem": 1,
+      "id": "nulidades-pregao",
+      "fase": "abertura",
+      "ordem": 1,
       "titulo": "Arguir nulidades posteriores à pronúncia logo após o pregão",
-      "dispositivos": ["cpp-571-v"],
+      "dispositivos": [
+        "cpp-571-v"
+      ],
       "momento": "Logo depois de anunciado o julgamento e apregoadas as partes, antes da instalação.",
       "pedido": "Arguição de todo vício ocorrido entre a pronúncia e a sessão, com registro em ata.",
       "formula": "Excelência, pela ordem: antes da instalação, a defesa argui [vício], com fundamento no art. 571, V, do CPP, e requer que constem em ata a arguição, o fundamento e a decisão de Vossa Excelência.",
@@ -150,9 +704,15 @@
       "requerimento": true
     },
     {
-      "id": "algemas", "fase": "abertura", "ordem": 2,
+      "id": "algemas",
+      "fase": "abertura",
+      "ordem": 2,
       "titulo": "Réu sem algemas",
-      "dispositivos": ["cpp-474-p3", "stf-sv-11", "cpp-478-i"],
+      "dispositivos": [
+        "cpp-474-p3",
+        "stf-sv-11",
+        "cpp-478-i"
+      ],
       "momento": "Antes de os jurados entrarem na sala; reiterar se o réu entrar algemado.",
       "pedido": "Retirada das algemas e, se mantidas, fundamentação por escrito em ata.",
       "formula": "Excelência, pela ordem: requeiro que o acusado permaneça sem algemas, nos termos do art. 474, §3º, do CPP e da Súmula Vinculante 11, por inexistir notícia de risco concreto nesta sessão. Caso Vossa Excelência entenda pela manutenção, requeiro que a fundamentação conste em ata.",
@@ -160,9 +720,14 @@
       "requerimento": true
     },
     {
-      "id": "vestimenta-civil", "fase": "abertura", "ordem": 3,
+      "id": "vestimenta-civil",
+      "fase": "abertura",
+      "ordem": 3,
       "titulo": "Réu com roupa civil",
-      "dispositivos": ["cpp-497", "cf-5-xxxviii"],
+      "dispositivos": [
+        "cpp-497",
+        "cf-5-xxxviii"
+      ],
       "momento": "Antes da sessão ou na abertura, antes da entrada dos jurados.",
       "pedido": "Que o réu se apresente com roupa civil, e não com uniforme prisional.",
       "formula": "Excelência, pela ordem: com base na presunção de inocência e na plenitude de defesa, requeiro que o acusado se apresente aos jurados com vestimenta civil, e não com uniforme prisional, constando em ata o pedido e a decisão.",
@@ -171,9 +736,16 @@
       "requerimento": true
     },
     {
-      "id": "recusas", "fase": "abertura", "ordem": 4,
+      "id": "recusas",
+      "fase": "abertura",
+      "ordem": 4,
       "titulo": "Recusas imotivadas e motivadas",
-      "dispositivos": ["cpp-468", "cpp-448", "cpp-449", "cpp-470"],
+      "dispositivos": [
+        "cpp-468",
+        "cpp-448",
+        "cpp-449",
+        "cpp-470"
+      ],
       "momento": "Logo após a leitura de cada cédula sorteada; a defesa fala primeiro.",
       "pedido": "Recusar até 3 jurados sem motivo; arguir impedimento ou suspeição sem limite.",
       "formula": "A defesa recusa o(a) jurado(a). / Excelência, a defesa argui o impedimento (ou a suspeição) do(a) jurado(a) [nome], com fundamento no art. [448/449] do CPP, e requer que conste em ata.",
@@ -181,9 +753,14 @@
       "requerimento": true
     },
     {
-      "id": "incomunicabilidade", "fase": "abertura", "ordem": 5,
+      "id": "incomunicabilidade",
+      "fase": "abertura",
+      "ordem": 5,
       "titulo": "Incomunicabilidade dos jurados",
-      "dispositivos": ["cpp-466-p1", "cpp-571-viii"],
+      "dispositivos": [
+        "cpp-466-p1",
+        "cpp-571-viii"
+      ],
       "momento": "Durante toda a sessão, a partir do sorteio.",
       "pedido": "Exclusão do jurado que se comunicar ou opinar, com registro em ata.",
       "formula": "Excelência, pela ordem: a defesa registra que o(a) jurado(a) [identificação] [fato observado], em violação ao art. 466, §1º, do CPP, e requer a exclusão do Conselho e que conste em ata.",
@@ -191,9 +768,15 @@
       "requerimento": true
     },
     {
-      "id": "inquiricao-direta", "fase": "instrucao", "ordem": 1,
+      "id": "inquiricao-direta",
+      "fase": "instrucao",
+      "ordem": 1,
       "titulo": "Inquirição direta das testemunhas",
-      "dispositivos": ["cpp-473", "cpp-473-p1", "cpp-473-p2"],
+      "dispositivos": [
+        "cpp-473",
+        "cpp-473-p1",
+        "cpp-473-p2"
+      ],
       "momento": "Instrução em plenário.",
       "pedido": "Perguntar diretamente à testemunha; nas testemunhas da defesa, perguntar antes do MP.",
       "formula": "Excelência, nos termos do art. 473, §1º, do CPP, tratando-se de testemunha arrolada pela defesa, a defesa requer iniciar a inquirição.",
@@ -201,9 +784,14 @@
       "requerimento": false
     },
     {
-      "id": "pergunta-indeferida", "fase": "instrucao", "ordem": 2,
+      "id": "pergunta-indeferida",
+      "fase": "instrucao",
+      "ordem": 2,
       "titulo": "Pergunta indeferida vai para a ata",
-      "dispositivos": ["cpp-571-viii", "cpp-495"],
+      "dispositivos": [
+        "cpp-571-viii",
+        "cpp-495"
+      ],
       "momento": "Imediatamente após o indeferimento.",
       "pedido": "Registro em ata da pergunta e do fundamento do indeferimento.",
       "formula": "Excelência, requeiro que constem em ata a pergunta indeferida, nos seus exatos termos, e o fundamento do indeferimento.",
@@ -212,9 +800,13 @@
       "requerimento": true
     },
     {
-      "id": "leitura-pecas", "fase": "instrucao", "ordem": 3,
+      "id": "leitura-pecas",
+      "fase": "instrucao",
+      "ordem": 3,
       "titulo": "Leitura de peças só das provas cautelares, antecipadas ou não repetíveis",
-      "dispositivos": ["cpp-473-p3"],
+      "dispositivos": [
+        "cpp-473-p3"
+      ],
       "momento": "Instrução em plenário.",
       "pedido": "Leitura dos laudos (prova não repetível) e de prova colhida por precatória; oposição à leitura de outras peças.",
       "formula": "Excelência, a defesa requer a leitura do [laudo], prova não repetível, nos termos do art. 473, §3º, do CPP. / A defesa se opõe à leitura de [peça], que não se enquadra nas hipóteses do art. 473, §3º.",
@@ -223,9 +815,14 @@
       "requerimento": true
     },
     {
-      "id": "oitiva-sem-reu", "fase": "instrucao", "ordem": 4,
+      "id": "oitiva-sem-reu",
+      "fase": "instrucao",
+      "ordem": 4,
       "titulo": "Oitiva de testemunha sem o réu: discordar expressamente",
-      "dispositivos": ["cpp-217", "cpp-571-viii"],
+      "dispositivos": [
+        "cpp-217",
+        "cpp-571-viii"
+      ],
       "momento": "Assim que a acusação ou o juiz propuser a retirada do réu.",
       "pedido": "Que se tente primeiro a videoconferência; que o incidente seja decidido fora da presença dos jurados; que a discordância conste em ata.",
       "formula": "Excelência, a defesa não concorda com a retirada do acusado. A lei exige primeiro a tentativa de videoconferência (art. 217 do CPP). Requeiro que o incidente seja decidido fora da presença dos jurados e que conste em ata a irresignação da defesa.",
@@ -233,9 +830,13 @@
       "requerimento": true
     },
     {
-      "id": "contraexame-funil", "fase": "instrucao", "ordem": 5,
+      "id": "contraexame-funil",
+      "fase": "instrucao",
+      "ordem": 5,
       "titulo": "Contraexame em funil da testemunha-chave da acusação",
-      "dispositivos": ["cpp-473"],
+      "dispositivos": [
+        "cpp-473"
+      ],
       "momento": "Inquirição da testemunha arrolada pela acusação.",
       "pedido": "Perguntas fechadas em três etapas: (1) o que ajuda; (2) os limites da percepção; (3) a evolução do relato.",
       "formula": "O(a) senhor(a) confirma que [fato favorável]? / Naquele momento, o(a) senhor(a) conseguia ver [ponto]? / Na delegacia, o(a) senhor(a) falou em [ponto que surgiu depois]?",
@@ -244,9 +845,13 @@
       "requerimento": false
     },
     {
-      "id": "roteiro-testemunhas-defesa", "fase": "instrucao", "ordem": 6,
+      "id": "roteiro-testemunhas-defesa",
+      "fase": "instrucao",
+      "ordem": 6,
       "titulo": "Roteiro curto para as testemunhas da defesa",
-      "dispositivos": ["cpp-473-p1"],
+      "dispositivos": [
+        "cpp-473-p1"
+      ],
       "momento": "Inquirição das testemunhas arroladas pela defesa.",
       "pedido": "Extrair só os fatos que sustentam a tese e parar.",
       "formula": "O(a) senhor(a) pode descrever [fato que sustenta a tese]?",
@@ -254,9 +859,17 @@
       "requerimento": false
     },
     {
-      "id": "interrogatorio", "fase": "instrucao", "ordem": 7,
+      "id": "interrogatorio",
+      "fase": "instrucao",
+      "ordem": 7,
       "titulo": "Interrogatório: a tese precisa estar na boca do réu",
-      "dispositivos": ["cpp-474", "cpp-474-p1-p2", "cpp-482-pu", "cpp-478-ii", "cpp-186"],
+      "dispositivos": [
+        "cpp-474",
+        "cpp-474-p1-p2",
+        "cpp-482-pu",
+        "cpp-478-ii",
+        "cpp-186"
+      ],
       "momento": "Interrogatório em plenário; a defesa pergunta por último.",
       "pedido": "Perguntas finais que fechem a narrativa da tese; se o réu silenciar em parte, impedir que o MP use isso.",
       "formula": "(perguntas da defesa) / Excelência, pela ordem: o Ministério Público invocou o silêncio do acusado em seu prejuízo, em violação ao art. 478, II, do CPP. A defesa protesta e requer que conste em ata.",
@@ -264,9 +877,14 @@
       "requerimento": false
     },
     {
-      "id": "tempo-debates", "fase": "debates", "ordem": 1,
+      "id": "tempo-debates",
+      "fase": "debates",
+      "ordem": 1,
       "titulo": "Tempo dos debates",
-      "dispositivos": ["cpp-477", "cpp-497-xii"],
+      "dispositivos": [
+        "cpp-477",
+        "cpp-497-xii"
+      ],
       "momento": "Início dos debates.",
       "pedido": "Controle do tempo e reposição do tempo de apartes concedidos.",
       "formula": "Excelência, pela ordem: requeiro que seja acrescido ao tempo da defesa o período utilizado nos apartes concedidos, nos termos do art. 497, XII, do CPP.",
@@ -275,9 +893,15 @@
       "requerimento": true
     },
     {
-      "id": "vedacoes-478", "fase": "debates", "ordem": 2,
+      "id": "vedacoes-478",
+      "fase": "debates",
+      "ordem": 2,
       "titulo": "Protesto imediato contra as vedações do art. 478",
-      "dispositivos": ["cpp-478-i", "cpp-478-ii", "cpp-571-viii"],
+      "dispositivos": [
+        "cpp-478-i",
+        "cpp-478-ii",
+        "cpp-571-viii"
+      ],
       "momento": "Na hora em que o orador fizer a referência vedada.",
       "pedido": "Registro em ata da frase, do protesto e da decisão.",
       "formula": "Excelência, pela ordem: o Ministério Público acaba de invocar [a pronúncia / o acórdão / as algemas / o silêncio do acusado] como argumento de autoridade, em violação ao art. 478 do CPP. A defesa protesta e requer que constem em ata a frase, o protesto e a decisão.",
@@ -285,9 +909,13 @@
       "requerimento": true
     },
     {
-      "id": "478-contra-defesa", "fase": "debates", "ordem": 3,
+      "id": "478-contra-defesa",
+      "fase": "debates",
+      "ordem": 3,
       "titulo": "O art. 478 também vale contra a defesa",
-      "dispositivos": ["cpp-478-i"],
+      "dispositivos": [
+        "cpp-478-i"
+      ],
       "momento": "Na preparação da sustentação e durante a fala da defesa.",
       "pedido": "Não citar a pronúncia nem as decisões que admitiram a acusação como argumento de autoridade; apoiar o argumento na prova.",
       "formula": "(não citar a decisão) Diga o mesmo pela prova: “o laudo diz…”, “a testemunha disse…”.",
@@ -295,9 +923,14 @@
       "requerimento": false
     },
     {
-      "id": "documento-surpresa", "fase": "debates", "ordem": 4,
+      "id": "documento-surpresa",
+      "fase": "debates",
+      "ordem": 4,
       "titulo": "Impugnar documento ou objeto surpresa",
-      "dispositivos": ["cpp-479", "cpp-571-viii"],
+      "dispositivos": [
+        "cpp-479",
+        "cpp-571-viii"
+      ],
       "momento": "Assim que a outra parte anunciar a leitura ou exibição.",
       "pedido": "Proibição da leitura ou exibição e registro em ata.",
       "formula": "Excelência, pela ordem: o material que o Ministério Público pretende exibir não foi juntado com a antecedência mínima de 3 dias úteis, com ciência à defesa, como exige o art. 479 do CPP. A defesa se opõe e requer que constem em ata a oposição e a decisão.",
@@ -305,9 +938,13 @@
       "requerimento": true
     },
     {
-      "id": "indicacao-folha", "fase": "debates", "ordem": 5,
+      "id": "indicacao-folha",
+      "fase": "debates",
+      "ordem": 5,
       "titulo": "Pedir que o orador indique a folha",
-      "dispositivos": ["cpp-480"],
+      "dispositivos": [
+        "cpp-480"
+      ],
       "momento": "Quando o orador afirmar algo que não está nos autos ou ler peça sem indicar a folha.",
       "pedido": "Que o orador indique a folha dos autos da peça lida ou citada.",
       "formula": "Excelência, nos termos do art. 480 do CPP, peço que o ilustre promotor indique a folha dos autos em que consta essa afirmação.",
@@ -316,9 +953,13 @@
       "requerimento": true
     },
     {
-      "id": "apartes", "fase": "debates", "ordem": 6,
+      "id": "apartes",
+      "fase": "debates",
+      "ordem": 6,
       "titulo": "Apartes com parcimônia",
-      "dispositivos": ["cpp-497-xii"],
+      "dispositivos": [
+        "cpp-497-xii"
+      ],
       "momento": "Durante a fala da outra parte, só para corrigir fato distorcido.",
       "pedido": "Aparte de até 3 minutos, concedido pelo juiz e acrescido ao tempo de quem falava.",
       "formula": "Excelência, peço um aparte. / Doutor, [fato] não consta do depoimento de [testemunha]; está à folha [x].",
@@ -326,9 +967,13 @@
       "requerimento": true
     },
     {
-      "id": "excesso-linguagem", "fase": "debates", "ordem": 7,
+      "id": "excesso-linguagem",
+      "fase": "debates",
+      "ordem": 7,
       "titulo": "Excesso de linguagem",
-      "dispositivos": ["cpp-497-iii"],
+      "dispositivos": [
+        "cpp-497-iii"
+      ],
       "momento": "Quando a acusação passar do argumento ao ataque pessoal.",
       "pedido": "Intervenção do juiz e registro em ata.",
       "formula": "Excelência, pela ordem: requeiro a intervenção de Vossa Excelência, nos termos do art. 497, III, do CPP, diante do excesso de linguagem do Ministério Público ao [fato], constando em ata.",
@@ -336,9 +981,14 @@
       "requerimento": true
     },
     {
-      "id": "todas-teses", "fase": "debates", "ordem": 8,
+      "id": "todas-teses",
+      "fase": "debates",
+      "ordem": 8,
       "titulo": "Anunciar todas as teses na primeira fala",
-      "dispositivos": ["cpp-482-pu", "stj-inovacao-treplica"],
+      "dispositivos": [
+        "cpp-482-pu",
+        "stj-inovacao-treplica"
+      ],
       "momento": "Fala principal da defesa.",
       "pedido": "Dizer cada tese pelo nome, inclusive as subsidiárias e a clemência.",
       "formula": "Senhores jurados, a defesa sustenta, em primeiro lugar, [tese principal]; subsidiariamente, [teses subsidiárias]; e, por fim, pede clemência.",
@@ -347,9 +997,15 @@
       "requerimento": false
     },
     {
-      "id": "tema-1087", "fase": "debates", "ordem": 9,
+      "id": "tema-1087",
+      "fase": "debates",
+      "ordem": 9,
       "titulo": "Tema 1087 do STF: blindar a absolvição na ata",
-      "dispositivos": ["stf-tema-1087", "cpp-593-iii", "cpp-495"],
+      "dispositivos": [
+        "stf-tema-1087",
+        "cpp-593-iii",
+        "cpp-495"
+      ],
       "momento": "Ao fim da fala da defesa e, de novo, antes do encerramento da ata.",
       "pedido": "Registro em ata de todas as teses sustentadas, inclusive a de clemência.",
       "formula": "Excelência, a defesa requer que constem em ata todas as teses sustentadas em plenário: [lista], e, por fim, a tese de clemência.",
@@ -358,9 +1014,13 @@
       "requerimento": true
     },
     {
-      "id": "resposta-lutador", "fase": "debates", "ordem": 10,
+      "id": "resposta-lutador",
+      "fase": "debates",
+      "ordem": 10,
       "titulo": "Resposta pronta à réplica do “lutador experiente”",
-      "dispositivos": ["cp-25"],
+      "dispositivos": [
+        "cp-25"
+      ],
       "momento": "Fala principal (versão curta) e tréplica (versão completa).",
       "pedido": "Mostrar que a necessidade do meio é avaliada do ponto de vista de quem foi agredido, naquele instante.",
       "formula": "Esporte tem árbitro, tatame, luz e adversário desarmado. A legítima defesa se julga do lugar de quem estava sendo atacado, naquele segundo, e não com a calma de quem lê o laudo.",
@@ -368,9 +1028,14 @@
       "requerimento": false
     },
     {
-      "id": "habilitados", "fase": "quesitacao", "ordem": 1,
+      "id": "habilitados",
+      "fase": "quesitacao",
+      "ordem": 1,
       "titulo": "Jurados habilitados a julgar",
-      "dispositivos": ["cpp-480-p1-p2", "cpp-480-p3"],
+      "dispositivos": [
+        "cpp-480-p1-p2",
+        "cpp-480-p3"
+      ],
       "momento": "Logo após o fim dos debates.",
       "pedido": "Atenção ao pedido de esclarecimento dos jurados; se pedirem o instrumento do crime ou os autos, garantir o acesso.",
       "formula": "Excelência, havendo solicitação dos jurados, a defesa requer que lhes seja franqueado o acesso aos autos e ao instrumento do crime, nos termos do art. 480, §3º, do CPP.",
@@ -378,9 +1043,16 @@
       "requerimento": true
     },
     {
-      "id": "leitura-quesitos", "fase": "quesitacao", "ordem": 2,
+      "id": "leitura-quesitos",
+      "fase": "quesitacao",
+      "ordem": 2,
       "titulo": "Leitura dos quesitos: requerer e reclamar",
-      "dispositivos": ["cpp-484", "cpp-482-pu", "cpp-571-viii", "cpp-593-iii"],
+      "dispositivos": [
+        "cpp-484",
+        "cpp-482-pu",
+        "cpp-571-viii",
+        "cpp-593-iii"
+      ],
       "momento": "Quando o juiz ler os quesitos e perguntar se há requerimento ou reclamação.",
       "pedido": "Inclusão de quesito sobre tese sustentada; correção de quesito complexo ou indutivo; registro em ata.",
       "formula": "Excelência, a defesa requer a inclusão de quesito sobre [tese], sustentada nos debates. Em caso de indeferimento, requer que constem em ata o pedido, o fundamento e a decisão, para fins do art. 593, III, a, do CPP.",
@@ -388,9 +1060,17 @@
       "requerimento": true
     },
     {
-      "id": "quesito-excesso-culposo", "fase": "quesitacao", "ordem": 3,
+      "id": "quesito-excesso-culposo",
+      "fase": "quesitacao",
+      "ordem": 3,
       "titulo": "Quesito de excesso culposo (desclassificação)",
-      "dispositivos": ["cpp-483-p4", "cp-23-pu", "cp-121-p3", "cpp-484", "cpp-492-p1"],
+      "dispositivos": [
+        "cpp-483-p4",
+        "cp-23-pu",
+        "cp-121-p3",
+        "cpp-484",
+        "cpp-492-p1"
+      ],
       "momento": "Na leitura dos quesitos; a tese precisa ter sido sustentada nos debates.",
       "pedido": "Quesito de desclassificação, após o 2º ou o 3º quesito; se negado, protesto em ata.",
       "formula": "Excelência, a defesa sustentou o excesso culposo (art. 23, parágrafo único, do CP) e requer a formulação de quesito de desclassificação, nos termos do art. 483, §4º, do CPP. Em caso de indeferimento, requer que constem em ata o pedido, o fundamento e a decisão.",
@@ -399,9 +1079,13 @@
       "requerimento": true
     },
     {
-      "id": "contradicao-respostas", "fase": "quesitacao", "ordem": 4,
+      "id": "contradicao-respostas",
+      "fase": "quesitacao",
+      "ordem": 4,
       "titulo": "Contradição entre respostas",
-      "dispositivos": ["cpp-490"],
+      "dispositivos": [
+        "cpp-490"
+      ],
       "momento": "Durante a votação, na sala especial.",
       "pedido": "Aplicação do art. 490: explicação da contradição e nova votação.",
       "formula": "Excelência, a defesa aponta contradição entre a resposta ao quesito [x] e a resposta ao quesito [y] e requer a aplicação do art. 490 do CPP, constando em ata.",
@@ -409,9 +1093,13 @@
       "requerimento": true
     },
     {
-      "id": "sala-especial", "fase": "quesitacao", "ordem": 5,
+      "id": "sala-especial",
+      "fase": "quesitacao",
+      "ordem": 5,
       "titulo": "Presença da defesa na sala especial",
-      "dispositivos": ["cpp-485"],
+      "dispositivos": [
+        "cpp-485"
+      ],
       "momento": "Votação.",
       "pedido": "Acompanhar a votação.",
       "formula": "Excelência, a defesa acompanhará a votação na sala especial, nos termos do art. 485 do CPP.",
@@ -419,9 +1107,13 @@
       "requerimento": false
     },
     {
-      "id": "conferir-ata", "fase": "quesitacao", "ordem": 6,
+      "id": "conferir-ata",
+      "fase": "quesitacao",
+      "ordem": 6,
       "titulo": "Conferir a ata antes de assinar",
-      "dispositivos": ["cpp-495"],
+      "dispositivos": [
+        "cpp-495"
+      ],
       "momento": "Encerramento da sessão, antes da assinatura.",
       "pedido": "Leitura integral da ata e retificação do que faltar.",
       "formula": "Excelência, a defesa requer a retificação da ata para que conste [protesto/requerimento] formulado às [momento], com o respectivo fundamento e a decisão.",
@@ -429,9 +1121,13 @@
       "requerimento": true
     },
     {
-      "id": "dissolucao-conselho", "fase": "quesitacao", "ordem": 7,
+      "id": "dissolucao-conselho",
+      "fase": "quesitacao",
+      "ordem": 7,
       "titulo": "Dissolução do Conselho para diligência essencial",
-      "dispositivos": ["cpp-481"],
+      "dispositivos": [
+        "cpp-481"
+      ],
       "momento": "Quando surgir questão de fato essencial que não possa ser verificada na hora.",
       "pedido": "Dissolução do Conselho e realização da diligência; ou oposição à dissolução pedida pela acusação.",
       "formula": "Excelência, a verificação de [fato] é essencial para o julgamento e não pode ser feita imediatamente. A defesa requer a dissolução do Conselho, nos termos do art. 481 do CPP, com a realização da diligência. / A defesa se opõe à dissolução: o fato não é essencial e a prova dos autos basta.",
@@ -439,9 +1135,14 @@
       "requerimento": true
     },
     {
-      "id": "apelacao", "fase": "pos-veredito", "ordem": 1,
+      "id": "apelacao",
+      "fase": "pos-veredito",
+      "ordem": 1,
       "titulo": "Apelação com todas as alíneas",
-      "dispositivos": ["cpp-593-iii", "stf-sum-713"],
+      "dispositivos": [
+        "cpp-593-iii",
+        "stf-sum-713"
+      ],
       "momento": "Prazo de 5 dias após a sentença.",
       "pedido": "Interposição indicando todas as alíneas cabíveis do art. 593, III.",
       "formula": "A defesa interpõe apelação, com fundamento no art. 593, III, alíneas [a, c, d], do CPP.",
@@ -449,9 +1150,13 @@
       "requerimento": false
     },
     {
-      "id": "tema-1068", "fase": "pos-veredito", "ordem": 2,
+      "id": "tema-1068",
+      "fase": "pos-veredito",
+      "ordem": 2,
       "titulo": "Tema 1068 do STF: execução imediata da pena",
-      "dispositivos": ["stf-tema-1068"],
+      "dispositivos": [
+        "stf-tema-1068"
+      ],
       "momento": "Em caso de condenação, logo após a leitura da sentença.",
       "pedido": "Preparar desde antes a argumentação contra a prisão imediata nas hipóteses que a própria tese permite discutir.",
       "formula": "Excelência, a defesa requer que conste em ata sua manifestação sobre a execução imediata da pena: [fundamentos].",
