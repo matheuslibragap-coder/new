@@ -32,8 +32,8 @@ async function start() {
     banner: false,
     fps: { smoothStep: false },
   });
-  // ajuda para testes automáticos: posição de um tile na tela
-  Object.assign(window, {
+  // ajuda para testes automáticos (só no modo de desenvolvimento)
+  if (import.meta.env.DEV) Object.assign(window, {
     __game: game,
     __S: () => S,
     __bus: bus,

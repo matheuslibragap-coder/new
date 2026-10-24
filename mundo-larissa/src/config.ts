@@ -9,4 +9,4 @@ export const FONT = '"Trebuchet MS", "Segoe UI", "Helvetica Neue", Verdana, syst
 export const WALK_SPEED = 3.6;
 /** Quantas partidas por dia (por mini game) pagam a recompensa cheia. */
 export const FULL_REWARD_PLAYS = 3;
-export const REDUCED_FACTOR = 0.4;
+export const REDUCED_FACTOR = 0.5;

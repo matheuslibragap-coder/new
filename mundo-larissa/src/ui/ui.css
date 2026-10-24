@@ -109,6 +109,7 @@ body.in-minigame #hud, body.in-minigame #mapname, body.in-minigame #decor { disp
 }
 .modal.wide { width: min(1000px, 97vw); height: min(720px, 94vh); }
 .modal.small { width: min(420px, 94vw); }
+.modal.wide-small { width: min(640px, 96vw); }
 @keyframes popin { from { transform: scale(0.85); opacity: 0; } }
 .modal-head { padding: 14px 70px 6px 22px; }
 .modal-head h2 { margin: 0; font-size: 26px; color: var(--pink-deep); }

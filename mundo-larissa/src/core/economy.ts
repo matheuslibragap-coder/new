@@ -6,7 +6,7 @@ import { changed, S, todayStr } from './state';
 
 /**
  * ECONOMIA
- * - Mini games: 1★ = 15, 2★ = 30, 3★ = 50 moedas (reduzido para 40% depois de 3 partidas no dia).
+ * - Mini games: 1★ = 15, 2★ = 30, 3★ = 50 moedas (reduzido para 50% depois de 3 partidas no dia).
  * - Missões: 50 a 150 moedas.
  * - Subir de nível dá um bônus de moedas.
  * - Recompensa diária cresce com dias seguidos.
@@ -62,7 +62,7 @@ export function addXp(n: number) {
   const after = levelOf(S.xp);
   changed('xp');
   if (after > before) {
-    const bonus = 40 + after * 10;
+    const bonus = 60 + after * 15;
     addCoins(bonus, 'nivel');
     bus.emit('level:up', after, bonus);
   }

@@ -16,6 +16,8 @@ import { initHomeShop } from './homeShop';
 import { openHouses } from './housesPanel';
 import { openCityMap } from './cityMap';
 import { initFinale } from './finale';
+import { checkDailyReward } from './daily';
+import { showWelcome } from './welcome';
 import { openWardrobe } from './wardrobe';
 
 /** Liga a interface HTML aos eventos do jogo. */
@@ -36,4 +38,5 @@ export function initUI(game: Phaser.Game) {
   bus.on('world:travel', () => closeAllModals());
   bus.on('ui:citymap', openCityMap);
   initFinale();
+  setTimeout(() => showWelcome(checkDailyReward), 700);
 }
