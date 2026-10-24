@@ -20,6 +20,7 @@ Outros comandos:
 | `npm run validar` | Valida `caso.json` e `macetes.json` com o schema zod e confere as referências cruzadas |
 | `npm test` | Testes (simulador de quesitação e integridade dos dados) |
 | `npm run build` | Valida os dados, checa os tipos e gera `dist/` (dá para abrir `dist/index.html` sem servidor) |
+| `npm run build:arquivo` | Gera `dist-arquivo/index.html`: o app inteiro num único arquivo, que abre sem servidor (dá para mandar para o celular) |
 | `npm run verificacao` | Regenera `docs/verificacao.md` a partir dos status gravados em `macetes.json` |
 
 ## Módulos

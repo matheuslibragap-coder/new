@@ -10,7 +10,8 @@
     "validar": "tsx scripts/validar.ts",
     "verificacao": "tsx scripts/gerar-verificacao.ts",
     "test": "vitest run",
-    "dev:celular": "vite --host"
+    "dev:celular": "vite --host",
+    "build:arquivo": "npm run validar && vite build --config vite.arquivo.config.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -27,6 +28,7 @@
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vite": "^6.4.5",
+    "vite-plugin-singlefile": "^2.3.4",
     "vitest": "^3.2.7"
   }
 }
