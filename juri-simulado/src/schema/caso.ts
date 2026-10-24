@@ -38,7 +38,7 @@ export const EventoFato = z.object({
   momento: texto, // hora, ou "não consta nos autos"
   titulo: texto,
   descricao: texto,
-  relatoDe: texto, // quem conta: perícia, réu, Daniel...
+  relatoDe: texto, // quem conta: perícia, réu, testemunha...
   fonte: Fonte,
   impacto: Impacto,
 });
@@ -65,7 +65,7 @@ export const Prova = z.object({
 
 export const ProvaNegativa = Prova.extend({ respostaDefesa: texto });
 
-export const LinhaDaniel = z.object({
+export const LinhaTestemunha = z.object({
   id,
   tema: texto,
   categoria: z.enum(["viu", "nao-viu", "contra", "contexto"]),
@@ -193,9 +193,11 @@ export const CasoArquivo = z.object({
     favorece: z.array(Prova).min(1),
     dificulta: z.array(ProvaNegativa).min(1),
   }),
-  daniel: z.object({
+  /** Testemunha cujo relato é comparado fase a fase (polícia, juízo, plenário). */
+  testemunhaChave: z.object({
+    nome: texto,
     introducao: texto,
-    linhas: z.array(LinhaDaniel).min(1),
+    linhas: z.array(LinhaTestemunha).min(1),
   }),
   pontosAtencao: z.array(PontoAtencao).min(5),
   principio: texto,

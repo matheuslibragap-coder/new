@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run validar && tsc -b && vite build",
+    "build": "npm run validar && tsc -p tsconfig.json && vite build",
     "preview": "vite preview",
     "validar": "tsx scripts/validar.ts",
     "verificacao": "tsx scripts/gerar-verificacao.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "dev:celular": "vite --host"
   },
   "dependencies": {
     "react": "^18.3.1",

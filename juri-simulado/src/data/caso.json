@@ -91,7 +91,8 @@
       { "id": "pd-asfixia", "titulo": "Causa da morte: asfixia por estrangulamento", "descricao": "O laudo sustenta materialmente a qualificadora do inciso III, que a jurisprudência costuma tratar como objetiva.", "fonte": { "peca": "Laudo cadavérico", "folha": "fl. 40" }, "peso": "alto", "respostaDefesa": "A qualificadora pune quem escolhe o meio para matar. O mata-leão foi técnica de controle aplicada no meio de uma luta que ele não começou. Tese subsidiária: poucos minutos, no fim." }
     ]
   },
-  "daniel": {
+  "testemunhaChave": {
+    "nome": "Daniel Couto",
     "introducao": "Daniel Couto é a única testemunha presencial e serve aos dois lados. Use-o para o que ele VIU (o ataque inicial com o estoque) e desqualifique-o para o que ele NÃO VIU (o mata-leão, porque estava com a cabeça coberta). Células vazias significam que o estudo do caso não informa o que ele disse naquela fase.",
     "linhas": [
       { "id": "d-ataque", "tema": "Quem atacou primeiro", "categoria": "viu", "policia": "Diego “pulou com a escovinha”.", "juizo": "Diego “pulou com a escovinha”.", "plenario": "Diego “pulou com a escovinha”.", "semFase": null, "cresceu": false, "nota": "Confirmado em todas as fases. Na sustentação-modelo aparece a frase “foi o que morreu que pulou primeiro, com o estoque”; a fase exata dessa frase não consta nos autos." },
