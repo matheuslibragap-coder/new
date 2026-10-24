@@ -10,12 +10,16 @@ import { WorldScene } from './scenes/WorldScene';
 import { setHooks } from './ui/dom';
 import { icon } from './ui/icons';
 import { initUI } from './ui/index';
+import { initHouses } from './houses/houses';
+import { initDecor } from './houses/decor';
 
 async function start() {
   await loadOverrides();
   loadGame();
   checkUnlocks();
   setHooks(sfx, (n) => icon(n));
+  initHouses();
+  initDecor();
 
   const game = new Phaser.Game({
     type: Phaser.AUTO,

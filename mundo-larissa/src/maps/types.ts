@@ -11,6 +11,8 @@ export interface ObjPlace {
   x: number;
   y: number;
   flip?: boolean;
+  /** id do móvel colocado (só nas casas) */
+  uid?: number;
 }
 
 export interface WallObjPlace {

@@ -65,7 +65,9 @@ export class WorldScene extends Phaser.Scene {
   larissa!: Character;
   npcs: NpcRt[] = [];
   targets: Target[] = [];
-  objSprites: Phaser.GameObjects.GameObject[] = [];
+  objSprites: Phaser.GameObjects.Image[] = [];
+  fixedSprites: Phaser.GameObjects.Image[] = [];
+  furn = new Map<number, Phaser.GameObjects.Image>();
   portalAt = new Map<string, PortalDef>();
   hover!: Phaser.GameObjects.Graphics;
   marker!: Phaser.GameObjects.Graphics;
@@ -84,6 +86,8 @@ export class WorldScene extends Phaser.Scene {
     this.npcs = [];
     this.targets = [];
     this.objSprites = [];
+    this.fixedSprites = [];
+    this.furn = new Map();
     this.portalAt = new Map();
     this.traveling = false;
   }
@@ -111,6 +115,7 @@ export class WorldScene extends Phaser.Scene {
     const sp = this.spawnPoint();
     this.larissa = new Character(this, S.outfit, sp.x, sp.y);
     this.larissa.onStep = (x, y) => this.onLarissaStep(x, y);
+    if (WorldScene.decor?.active()) this.larissa.setVisible(false);
 
     this.setupCamera();
     this.setupInput();
@@ -187,45 +192,71 @@ export class WorldScene extends Phaser.Scene {
     return img;
   }
 
+  /** Posição/profundidade de um objeto com pegada w x d no tile (x, y). */
+  objPose(info: { w: number; d: number; flat: boolean }, x: number, y: number, flip: boolean) {
+    const fw = flip ? info.d : info.w;
+    const fd = flip ? info.w : info.d;
+    const bx = x + fw - 1;
+    const by = y + fd - 1;
+    const p = tileToWorld(bx, by);
+    return { x: p.x, y: p.y + HH, depth: info.flat ? -20000 + depthAt(x, y) : depthAt(bx, by) - 2, fw, fd };
+  }
+
+  /** Recria todos os objetos/móveis (usado ao decorar a casa). */
+  rebuildObjects() {
+    const m = getMap(this.mapId);
+    if (!m) return;
+    this.m = m;
+    for (const s of this.objSprites) s.destroy();
+    this.objSprites = [];
+    this.furn.clear();
+    this.blocked.fill(0);
+    for (const wo of m.wallObjects ?? []) this.addWallObject(wo.type, wo.side, wo.i);
+    this.buildObjects(m.objects);
+    for (const rt of this.npcs) if (!rt.def.wander) this.blocked[rt.def.y * this.W + rt.def.x] = 1;
+    const mg = m.minigame;
+    const mi = mg ? objInfo(mg.obj) : null;
+    if (mg && mi) for (let y = mg.y; y < mg.y + mi.d; y++) for (let x = mg.x; x < mg.x + mi.w; x++) this.blocked[y * this.W + x] = 1;
+  }
+
   /** Coloca objetos (cenário ou móveis) e marca tiles bloqueados. */
   buildObjects(list: ObjPlace[] = this.m.objects) {
     for (const o of list) this.addObject(o);
   }
 
-  addObject(o: ObjPlace): Phaser.GameObjects.Image | null {
+  addObject(o: ObjPlace, fixed = false): Phaser.GameObjects.Image | null {
     const info = objInfo(o.type);
     if (!info) {
       console.warn('Objeto desconhecido', o.type);
       return null;
     }
     if (info.wall) {
-      const side = o.x === 0 && !o.flip ? 'L' : 'R';
+      const side = o.flip ? 'R' : 'L';
       const idx = side === 'L' ? o.y : o.x;
-      return this.addWallObject(o.type, side, idx, `${info.artKey}:${side}`);
+      const img = this.addWallObject(o.type, side, idx, `${info.artKey}:${side}`);
+      if (o.uid !== undefined) this.furn.set(o.uid, img);
+      return img;
     }
-    const fw = o.flip ? info.d : info.w;
-    const fd = o.flip ? info.w : info.d;
-    const bx = o.x + fw - 1;
-    const by = o.y + fd - 1;
-    const p = tileToWorld(bx, by);
-    const img = artImage(this, p.x, p.y + HH, info.artKey);
+    const pose = this.objPose(info, o.x, o.y, !!o.flip);
+    const img = artImage(this, pose.x, pose.y, info.artKey);
     if (o.flip) {
       const a = getArt(info.artKey);
       img.setFlipX(true);
       img.setOrigin((a.w - a.ox) / a.w, a.oy / a.h);
     }
-    img.setDepth(info.flat ? -20000 + depthAt(o.x, o.y) : depthAt(bx, by) - 2);
+    img.setDepth(pose.depth);
     if (info.solid) {
-      for (let y = o.y; y < o.y + fd; y++) for (let x = o.x; x < o.x + fw; x++) if (this.inside(x, y)) this.blocked[y * this.W + x] = 1;
+      for (let y = o.y; y < o.y + pose.fd; y++) for (let x = o.x; x < o.x + pose.fw; x++) if (this.inside(x, y)) this.blocked[y * this.W + x] = 1;
     }
-    this.objSprites.push(img);
+    (fixed ? this.fixedSprites : this.objSprites).push(img);
+    if (o.uid !== undefined) this.furn.set(o.uid, img);
     return img;
   }
 
   private buildPortals() {
     for (const p of this.m.portals) {
       this.portalAt.set(`${p.x},${p.y}`, p);
-      const img = this.addObject({ type: 'portal', x: p.x, y: p.y })!;
+      const img = this.addObject({ type: 'portal', x: p.x, y: p.y }, true)!;
       const w = tileToWorld(p.x, p.y);
       const target = p.to === 'casa' ? null : getMap(p.to);
       const locked = target ? !isUnlocked(target.id) : false;
@@ -243,7 +274,7 @@ export class WorldScene extends Phaser.Scene {
   private buildStation() {
     const mg = this.m.minigame;
     if (!mg) return;
-    const img = this.addObject({ type: mg.obj, x: mg.x, y: mg.y });
+    const img = this.addObject({ type: mg.obj, x: mg.x, y: mg.y }, true);
     if (!img) return;
     const info = objInfo(mg.obj)!;
     const top = img.getBounds().top;
@@ -361,9 +392,20 @@ export class WorldScene extends Phaser.Scene {
   }
 
   // ------------------------------------------------------------------ câmera e entrada
+  resetCamera() {
+    const cam = this.cameras.main;
+    const w = this.scale.width;
+    const h = this.scale.height;
+    const z = Phaser.Math.Clamp(Math.min(w / 1000, (h - 70) / 640), 0.72, 1.5);
+    cam.setZoom(z);
+    cam.setFollowOffset(0, 30 / z);
+    cam.startFollow(this.larissa, true, 0.09, 0.09);
+  }
+
   private setupCamera() {
     const cam = this.cameras.main;
     const fit = () => {
+      if (WorldScene.decor?.active()) return;
       const w = this.scale.width;
       const h = this.scale.height;
       const z = Phaser.Math.Clamp(Math.min(w / 1000, (h - 70) / 640), 0.72, 1.5);

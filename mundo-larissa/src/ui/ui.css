@@ -215,10 +215,14 @@ body.in-minigame #hud, body.in-minigame #mapname, body.in-minigame #decor { disp
   position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255,250,245,0.97); border-top: 3px solid #f3d3e3;
   box-shadow: 0 -4px 14px rgba(74,54,87,0.12); padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px;
 }
-#decor .bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-#decor .strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 6px; min-height: 104px; }
-#decor .strip .card { min-width: 96px; min-height: 96px; padding: 4px; }
-#decor .strip .card img { width: 64px; height: 64px; }
+#decor .bar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+#decor .bar .btn { min-height: 44px; padding: 6px 12px; font-size: 15px; border-radius: 14px; }
+#decor .bar .tab { min-height: 40px; padding: 6px 10px; }
+#decor .bar strong { margin-right: 4px; }
+#decor .strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 6px; min-height: 100px; }
+#decor .strip .card { min-width: 92px; max-width: 92px; min-height: 92px; padding: 4px; }
+#decor .strip .card .nm { font-size: 11px; min-height: 0; }
+#decor .strip .card img { width: 58px; height: 58px; }
 #decor .hint { font-size: 14px; color: var(--ink-soft); }
 #decor .empty { padding: 20px; color: var(--ink-soft); }
 .house-card img { width: 150px !important; height: 100px !important; }
